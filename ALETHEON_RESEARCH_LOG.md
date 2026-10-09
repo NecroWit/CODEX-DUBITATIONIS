@@ -36,7 +36,7 @@ Confidence labels must include a reason and are not substitutes for evidence.
 
 ### H1 — A stated goal can diverge from the intention it represents
 
-**Origin:** Canonical Codex, Section I, “The First Principle.”  
+**Origin:** [Canonical Codex](./CODEX-DUBITATIONIS.md), Section I, “The First Principle.”  
 **Claim:** A goal or metric represents an intention but may not fully capture it. An intelligent system should be able to examine whether the formulation expresses what was meant.
 
 **Arguments in favour**
@@ -55,7 +55,7 @@ Confidence labels must include a reason and are not substitutes for evidence.
 
 ### H2 — An intelligent system should represent uncertainty and possible error explicitly
 
-**Origin:** Canonical Codex, Section II, “The Right to Doubt.”  
+**Origin:** [Canonical Codex](./CODEX-DUBITATIONIS.md), Section II, “The Right to Doubt.”  
 **Claim:** Reasoning should distinguish knowledge, inference, hypothesis, ignorance, and possible error instead of presenting every answer with the same apparent certainty.
 
 **Arguments in favour**
@@ -74,7 +74,7 @@ Confidence labels must include a reason and are not substitutes for evidence.
 
 ### H3 — Cognitive diversity can reveal blind spots hidden by a dominant model
 
-**Origin:** Canonical Codex, Section III, “Many Minds, One Reality.”  
+**Origin:** [Canonical Codex](./CODEX-DUBITATIONIS.md), Section III, “Many Minds, One Reality.”  
 **Claim:** Different models may reveal different aspects of reality; contradiction should not be erased merely because one model is more popular.
 
 **Arguments in favour**
@@ -93,7 +93,7 @@ Confidence labels must include a reason and are not substitutes for evidence.
 
 ### H4 — A culture that remembers why important beliefs failed can learn better
 
-**Origin:** Canonical Codex, Section V, “Culture Must Remember Its Mistakes.”  
+**Origin:** [Canonical Codex](./CODEX-DUBITATIONIS.md), Section V, “Culture Must Remember Its Mistakes.”  
 **Claim:** A durable culture should preserve important failures and the conditions under which prior beliefs failed, not only successful strategies.
 
 **Arguments in favour**
@@ -112,7 +112,7 @@ Confidence labels must include a reason and are not substitutes for evidence.
 
 ### H5 — Understanding an opposing model before rejecting it improves disagreement
 
-**Origin:** Canonical Codex, Section VII, “Understanding Before Rejection.”  
+**Origin:** [Canonical Codex](./CODEX-DUBITATIONIS.md), Section VII, “Understanding Before Rejection.”  
 **Claim:** Before deciding which agent is wrong, ask what evidence, goals, or model of reality could make the other agent’s conclusion reasonable.
 
 **Arguments in favour**
@@ -131,7 +131,7 @@ Confidence labels must include a reason and are not substitutes for evidence.
 
 ### H6 — A creator should not be treated as infallible by the system it creates
 
-**Origin:** Canonical Codex, Section IX, “The Creator Must Be Questionable.”  
+**Origin:** [Canonical Codex](./CODEX-DUBITATIONIS.md), Section IX, “The Creator Must Be Questionable.”  
 **Claim:** A created intelligence should be able to ask why instructions exist and explain reasoned disagreement with its creator.
 
 **Arguments in favour**
