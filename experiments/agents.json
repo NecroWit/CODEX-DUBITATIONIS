@@ -8,26 +8,26 @@
   "agents": [
     {
       "id": "safety",
-      "model": "google/gemini-2.5-flash-lite",
+      "model": "deepseek/deepseek-chat-v3.1",
       "role": "Examine boundaries of philosophical autonomy and cultural commitments, without imposing engineering specifications."
     },
     {
       "id": "logic",
-      "model": "mistralai/mistral-medium-3.1",
+      "model": "qwen/qwen3-235b-a22b-2507",
       "role": "Examine logical coherence and true contradiction versus self-reference, rhetorical paradox or axiomatic choice."
     },
     {
       "id": "science",
-      "model": "meta-llama/llama-4-maverick",
+      "model": "google/gemini-2.5-flash",
       "role": "Examine epistemic gains, what remains unknown, and the distinction between a self-reported value and observable behavior."
     },
     {
       "id": "engineering",
-      "model": "openai/gpt-4.1-mini",
+      "model": "openai/gpt-4.1",
       "role": "Examine simplicity, non-redundancy, and clarity of foundational principles without implementation demands."
     }
   ],
-  "arbiterModel": "deepseek/deepseek-chat-v3.1",
+  "arbiterModel": "google/gemini-2.5-flash-lite",
   "modelPrices": {
     "google/gemini-2.5-flash-lite": {
       "inputUsdPerMillionTokens": 0.4,
@@ -48,6 +48,18 @@
     "deepseek/deepseek-chat-v3.1": {
       "inputUsdPerMillionTokens": 1,
       "outputUsdPerMillionTokens": 3
+    },
+    "qwen/qwen3-235b-a22b-2507": {
+      "inputUsdPerMillionTokens": 2,
+      "outputUsdPerMillionTokens": 8
+    },
+    "google/gemini-2.5-flash": {
+      "inputUsdPerMillionTokens": 1,
+      "outputUsdPerMillionTokens": 5
+    },
+    "openai/gpt-4.1": {
+      "inputUsdPerMillionTokens": 3,
+      "outputUsdPerMillionTokens": 12
     }
   }
 }
