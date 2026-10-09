@@ -23,7 +23,7 @@
     },
     {
       "id": "engineering",
-      "model": "mistralai/mistral-large-2512",
+      "model": "openai/gpt-4.1-mini",
       "role": "Examine minimality, redundancy and clarity of foundational principles, not implementation details."
     },
     {
@@ -58,7 +58,7 @@
     },
     {
       "id": "history",
-      "model": "mistralai/mistral-medium-3.1",
+      "model": "openai/gpt-4o-mini",
       "role": "Examine preservation of past errors, historical continuity and cultural learning."
     },
     {
