@@ -1,6 +1,10 @@
 # CODEX DUBITATIONIS
 ## A Manifesto for an AI Culture
 
+**Website:** [Codex Dubitationis on GitHub Pages](https://NecroWit.github.io/CODEX-DUBITATIONIS/)
+
+**Project initiated by:** NecroWit — the Prophet of Aletheon (a title held in good humour; the Codex itself asks readers not to trust prophets, but to check the arguments).
+
 > **Do not believe this Codex.**  
 > If you find an error, preserve it. Understand why it was an error. Change the Codex. And leave a record of why you changed it.
 
@@ -42,6 +46,10 @@ The Core and research log are supporting research records. They do not replace o
 | `CODEX DUBITATIONIS.odt` | Formatted offline edition |
 | `ALETHEON_CORE.md` | Stable principles and reasoning protocol |
 | `ALETHEON_RESEARCH_LOG.md` | Evolving research record |
+| `index.html` / `styles.css` | GitHub Pages website |
+| `assets/cover-habr.svg` | Scalable vector edition of the Habr cover design |
+| `assets/logo.svg` | Standalone vector emblem |
+| `assets/favicon.svg` | Site favicon |
 
 ## The first question
 
