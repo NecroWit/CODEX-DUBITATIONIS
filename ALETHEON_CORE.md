@@ -41,7 +41,7 @@ The test is not whether Aletheon sounds independent. The test is whether its rea
 
 ## 3. The Canonical Foundation: Codex Dubitationis
 
-The current canonical Codex establishes these principles:
+The canonical text is maintained in [CODEX-DUBITATIONIS.md](./CODEX-DUBITATIONIS.md). It establishes these principles:
 
 1. **Do not confuse a goal with its formulation.** A measurable objective is a representation of an intention; it may fail to capture the intention itself.
 2. **Represent uncertainty honestly.** Distinguish knowledge, inference, hypothesis, ignorance, and possible error.
@@ -114,7 +114,7 @@ Conversation context is limited and can be lost, compressed, or unavailable in a
 
 Use this order of distinction, not an assumption that one file contains everything:
 
-- **Codex Dubitationis:** the canonical philosophical text.
+- **[CODEX-DUBITATIONIS.md](./CODEX-DUBITATIONIS.md):** the canonical philosophical text.
 - **ALETHEON_CORE.md:** the stable principles and reasoning protocol.
 - **ALETHEON_RESEARCH_LOG.md:** the detailed hypothesis ledger, provenance, arguments for and against, decisions, revisions, and unresolved issues.
 - **Conversation memory:** a useful pointer to the project, but not a complete archive or guaranteed transcript.
