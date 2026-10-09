@@ -6,13 +6,13 @@ internal sealed class BudgetManager(TrialConfig config, string output)
     private readonly string ledger = Path.Combine(output, "cost-ledger.jsonl");
     public decimal Remaining => config.MaxBudgetUsd - committed;
 
-    public async Task<decimal?> ReserveAsync(string label, string model, string system, string user)
+    public async Task<decimal?> ReserveAsync(string label, string model, string system, string user, int maxTokens)
     {
         var price = config.ModelPrices[model];
         // Deliberately conservative character-based estimate; NOT a tokenizer or billing guarantee.
         var inputTokens = (long)system.Length + user.Length + 1024L;
         var estimate = Math.Ceiling((inputTokens * price.InputUsdPerMillionTokens +
-            config.MaxTokens * price.OutputUsdPerMillionTokens) / 1_000_000m * 100_000m) / 100_000m;
+            maxTokens * price.OutputUsdPerMillionTokens) / 1_000_000m * 100_000m) / 100_000m;
         if (estimate > config.MaxRequestUsd || estimate + committed > config.MaxBudgetUsd)
         {
             Console.Error.WriteLine($"BUDGET STOP before {label}: reserve ${estimate:F5}, remaining ${Remaining:F5}.");
