@@ -2,6 +2,22 @@
 
 A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODEX-DUBITATIONIS.md). The application is a .NET 8 console program with no third-party dependencies.
 
+## Cheap rehearsal and premium run
+
+Two versioned 14-critic / 2-arbiter profiles use the **same protocol, critic roles, prompts, two critic rounds, independent arbitration, and arbiter cross-review**:
+
+- `agents.cheap.json`: four inexpensive critic model IDs repeated across fourteen distinct roles (Mistral Small, DeepSeek V3.2, Nemotron Nano, MiniMax M2.5); independent arbiters Gemini 2.5 Flash-Lite and GPT-4o mini. This is an integration and budget rehearsal, **not fourteen independent model families**.
+- `agents.premium.json`: preserves the existing fourteen model assignments from `agents.json` and its Gemini Flash-Lite / GLM 4.6 arbiters. This is the higher-cost comparison profile, **not a guarantee that all included models are premium-tier**. Review assignments before a definitive high-end run.
+
+Run from repository root:
+
+```bash
+dotnet run --project experiments/Aletheon.Trial -- --config agents.cheap.json
+dotnet run --project experiments/Aletheon.Trial -- --config agents.premium.json
+```
+
+Both profiles set `mode: 14` and `maxBudgetUsd: 1`. This local gate is approximate and can interrupt either run, especially the premium profile. Set an account-side OpenRouter key spending limit and verify current model availability/prices before running. The runner does not resume interrupted experiments. Results save the effective config, so model identity and Codex hash can be compared later. `agents.json` remains the backward-compatible default. 
+
 ## Trial modes
 
 Select a mode without changing `agents.json`:
