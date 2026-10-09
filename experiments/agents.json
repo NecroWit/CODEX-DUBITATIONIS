@@ -13,7 +13,7 @@
     },
     {
       "id": "logic",
-      "model": "qwen/qwen3-235b-a22b-instruct-2507",
+      "model": "qwen/qwen3-235b-a22b-2507",
       "role": "Examine formal coherence, axiom versus consequence, hidden assumptions and genuine counterexamples; distinguish self-reference from contradiction."
     },
     {
@@ -45,7 +45,7 @@
       "inputUsdPerMillionTokens": 1,
       "outputUsdPerMillionTokens": 5
     },
-    "qwen/qwen3-235b-a22b-instruct-2507": {
+    "qwen/qwen3-235b-a22b-2507": {
       "inputUsdPerMillionTokens": 1,
       "outputUsdPerMillionTokens": 4
     }
