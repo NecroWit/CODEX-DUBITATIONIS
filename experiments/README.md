@@ -1,4 +1,4 @@
-# Trial of Aletheon (v0.1)
+# Trial of Aletheon (v0.2)
 
 A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODEX-DUBITATIONIS.md). The application is a .NET 8 console program with no third-party dependencies.
 
@@ -10,14 +10,14 @@ A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODE
 
 ## Setup
 
-1. Edit [agents.json](agents.json): replace every `REPLACE_WITH_MODEL_ID` with real OpenRouter model IDs. For meaningful independence, select different model families/providers; assigning different roles to one model is not true model independence.
+1. Review [agents.json](agents.json): five model IDs are configured (four critics and a distinct GLM arbiter). Verify each is currently available on OpenRouter; replace unavailable versions before running. The arbiter must not also be a critic.
 2. Set your key in your local shell, **never in a tracked file**:
    - PowerShell: `$env:OPENROUTER_API_KEY = "your-key"`
    - Bash: `export OPENROUTER_API_KEY="your-key"`
 3. Configure the **local budget gate** in `agents.json`:
    - `maxBudgetUsd: 1` — at most $1 of *estimated/recorded* spending for one run by default.
    - `maxRequestUsd: 0.25` — block any request with an estimated cost above $0.25.
-   - `inputUsdPerMillionTokens: 10` and `outputUsdPerMillionTokens: 30` — conservative **price ceilings**, not automatically retrieved rates. **Verify that both are at least as high as the actual prices for every chosen model, including reasoning and other billed tokens.** Raise ceilings when needed; the program will then stop earlier.
+   - `modelPrices` — **manually configured estimates per model**, not live prices. Check current OpenRouter rates, including any reasoning-token billing, before running. Raise estimates if needed; local budget accounting is not a billing guarantee.
    - The runner reserves estimated worst-case cost **before** each request and saves a `cost-ledger.jsonl` ledger. If the API returns `usage.cost`, the ledger reconciles with that amount; otherwise the full estimate remains reserved. Failed requests keep their reservation.
    - **This is a best-effort local gate, not a guaranteed billing cap.** Token estimation is approximate, prices can change, and a provider may bill after a timeout. **For a true account-side safeguard, set a separate $1 credit limit on your OpenRouter API key in OpenRouter's key settings.** A key limit is the important protection; the app cannot enforce a hard external billing cap.
 4. From the **repository root**, run:
@@ -25,7 +25,7 @@ A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODE
    dotnet run --project experiments/Aletheon.Trial
    ```
 
-The runner reads `CODEX-DUBITATIONIS.md` from the repository root. Calls are sequential and may incur charges: with four critics, up to **nine API requests** (4 first round + 4 second round + 1 arbiter). Token usage and charges depend on the chosen models, output length, and large Round 2 prompts. **Start with inexpensive models and set account spending limits.** No automatic retries are made.
+The runner rejects incomplete replies (`finish_reason` other than `stop`), preserving raw output for diagnosis. Round 2 sends bounded excerpts of critics' reports rather than repeating the full Codex. The current prototype does **not** resume a stopped run: rerunning pays for round 1 again.\n\nThe runner reads `CODEX-DUBITATIONIS.md` from the repository root. Calls are sequential and may incur charges: with four critics, up to **nine API requests** (4 first round + 4 second round + 1 arbiter). Token usage and charges depend on the chosen models, output length, and large Round 2 prompts. **Start with inexpensive models and set account spending limits.** No automatic retries are made.
 
 ## Output
 
@@ -46,7 +46,7 @@ The `results/` directory is ignored by Git. Review results before intentionally 
 
 - The model judge is not ground truth. Model outputs may hallucinate or follow adversarial content despite the instructions.
 - Anonymous cross-review removes labels, not stylistic clues. Different providers may route to changing model versions.
-- This prototype uses sequential requests, no caching, no retries, a conservative local USD gate (not a provider-enforced hard cap), and no structured JSON output validation.
+- This prototype uses sequential requests, no caching or resume support, no retries, a conservative local USD gate (not a provider-enforced hard cap), and no structured JSON output validation.
 - Repeated runs and external review are necessary before claiming scientific evidence.
 - The canonical Codex is never edited by this program.
 
