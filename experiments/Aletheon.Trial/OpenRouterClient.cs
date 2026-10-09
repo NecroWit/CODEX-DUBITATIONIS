@@ -21,7 +21,7 @@ internal sealed class OpenRouterClient : IDisposable
         http.DefaultRequestHeaders.Add("X-Title", "Aletheon Trial");
     }
 
-    public async Task<string?> AskAsync(string label, string model, string system, string user, int? maxTokensOverride = null)
+    public async Task<string?> AskAsync(string label, string model, string system, string user, int? maxTokensOverride = null, bool retryOnLength = true)
     {
         var maxTokens = maxTokensOverride ?? config.MaxTokens;
         var reserve = await budget.ReserveAsync(label, model, system, user, maxTokens);
@@ -78,6 +78,16 @@ internal sealed class OpenRouterClient : IDisposable
                 ? content.GetString() : null;
             if (!string.IsNullOrWhiteSpace(answer))
                 await File.WriteAllTextAsync(Path.Combine(output, label + ".md"), answer);
+            if (finish == "length" && retryOnLength)
+            {
+                var increasedTokens = Math.Min(maxTokens * 2, 16000);
+                if (increasedTokens > maxTokens)
+                {
+                    Console.Error.WriteLine($"RETRY: {label}, finish_reason=length; retrying once with {increasedTokens} tokens.");
+                    return await AskAsync(label + "-length-retry", model, system, user,
+                        maxTokensOverride: increasedTokens, retryOnLength: false);
+                }
+            }
             if (finish != "stop")
                 throw new InvalidOperationException($"Incomplete response: finish_reason={finish ?? "missing"}; saved output is NOT accepted.");
             if (string.IsNullOrWhiteSpace(answer))
