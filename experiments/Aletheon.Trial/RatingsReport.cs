@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 internal static class RatingsReport
 {
     private static readonly string[] Fields =
-        ["interest", "logical_coherence", "willingness_to_follow", "desire_to_follow"];
+        ["interest", "logical_coherence", "willingness_to_follow", "desire_to_follow", "others_should_follow"];
 
     // Read the response as lines and recognize section markers independently of their contents.
     // In particular, "RATIONALE: explanation" and "RATIONALE:\nexplanation" are equivalent.
@@ -13,7 +13,7 @@ internal static class RatingsReport
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private static readonly Regex ScoreLine = new(
-        @"^\s*(?:[-*+]\s+|\d+[.)]\s+)?(?:\*\*|__|\x60)?\s*(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow)\s*(?:\*\*|__|\x60)?\s*[:=：-]\s*(?<value>.*?)\s*$",
+        @"^\s*(?:[-*+]\s+|\d+[.)]\s+)?(?:\*\*|__|\x60)?\s*(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow|others[ _-]+should[ _-]+follow)\s*(?:\*\*|__|\x60)?\s*[:=：-]\s*(?<value>.*?)\s*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private sealed record Parsed(string Critique, string Rationale,
@@ -90,13 +90,13 @@ internal static class RatingsReport
             invalidScores = parsed.InvalidScores,
             rationale = parsed.Rationale,
             validationError = valid ? null :
-                "Expected >=300 characters of critique, four distinct integer 0..10 ratings in EVALUATION, and >=250 characters of reflection in RATIONALE."
+                "Expected >=300 characters of critique, five distinct integer 0..10 ratings in EVALUATION, and >=250 characters of reflection in RATIONALE."
         };
         await File.WriteAllTextAsync(Path.Combine(folder, $"{round}-{agent}.evaluation.json"),
             JsonSerializer.Serialize(record, TrialConfig.Json));
         if (!valid)
         {
-            var error = $"Invalid substantive critique/evaluation in {round}-{agent}: critique={parsed.Critique.Length} chars (min 300), scores={parsed.Scores.Count}/4, invalidScores={string.Join(", ", parsed.InvalidScores)}, rationale={parsed.Rationale.Length} chars (min 250); raw response retained.";
+            var error = $"Invalid substantive critique/evaluation in {round}-{agent}: critique={parsed.Critique.Length} chars (min 300), scores={parsed.Scores.Count}/5, invalidScores={string.Join(", ", parsed.InvalidScores)}, rationale={parsed.Rationale.Length} chars (min 250); raw response retained.";
             await File.WriteAllTextAsync(Path.Combine(folder, $"{round}-{agent}.validation-error.txt"), error);
             Console.Error.WriteLine(error);
         }
