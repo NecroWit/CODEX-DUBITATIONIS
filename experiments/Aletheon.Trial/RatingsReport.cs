@@ -21,7 +21,12 @@ internal static class RatingsReport
         }
 
         var rationaleMatch = Regex.Match(evaluation, @"(?ims)^\s*(?:#{1,6}\s*)?RATIONALE\s*:\s*\n(?<text>[\s\S]+?)(?=^\s*#{1,6}\s+[A-Z][A-Z\s-]*\s*$|\z)");
-        var rationale = rationaleMatch.Success ? rationaleMatch.Groups["text"].Value.Trim() : "";\n        if (marker.Success && rationaleMatch.Success)\n        {\n            var tailStart = marker.Index + rationaleMatch.Index + rationaleMatch.Length;\n            critique = (critique + "\n" + answer[tailStart..]).Trim();\n        }
+        var rationale = rationaleMatch.Success ? rationaleMatch.Groups["text"].Value.Trim() : "";
+        if (marker.Success && rationaleMatch.Success)
+        {
+            var tailStart = marker.Index + rationaleMatch.Index + rationaleMatch.Length;
+            critique = (critique + "\n" + answer[tailStart..]).Trim();
+        }
         // Do not accept ratings-only answers as complete philosophical critiques.
         var valid = critique.Length >= 300 && values.Count == Fields.Length && rationale.Length >= 250;
         var record = new {
