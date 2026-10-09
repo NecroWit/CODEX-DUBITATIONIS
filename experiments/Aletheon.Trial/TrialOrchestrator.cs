@@ -79,7 +79,12 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
         {
             var answer = await AskValidatedAsync("round1-" + agent.Id, agent,
                 Rules + "\nAssigned lens: " + agent.Role + "\n" + IndependentChoice + "\n" + Ratings, "Independently critique the full Codex and justify your own principle choices BEFORE seeing any other critic:\n\n" + codex);
-            if (answer != null) round1[agent.Id] = answer;
+            if (answer is null)
+            {
+                Console.Error.WriteLine("round1 failed; stopping immediately.");
+                return false;
+            }
+            round1[agent.Id] = answer;
         }
         if (round1.Count != config.Agents.Count)
         {
@@ -97,7 +102,12 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
                 "Re-evaluate your report: retract weak objections, identify any genuinely new argument from peers, and distinguish independent agreement from agreement caused by reading peers. Preserve substantive disagreements. Focus on at most three foundational objections and their contribution to understanding, not technical edge cases. Include a BEFORE/AFTER CHOICES comparison with your independent KEEP/CHANGE/REJECT decisions, and distinguish changed reasoning from merely adopting peers\u0027 phrasing. Keep under 1000 words.";
             var answer = await AskValidatedAsync("round2-" + agent.Id, agent,
                 Rules + "\nAssigned lens: " + agent.Role + "\n" + IndependentChoice + "\n" + Ratings + "\nRevisit your initial KEEP/CHANGE/REJECT choices explicitly after cross-review; identify what changed and the particular argument that caused it, or justify why nothing changed. Re-score after cross-review; do not copy prior scores automatically.", prompt);
-            if (answer != null) round2[agent.Id] = answer;
+            if (answer is null)
+            {
+                Console.Error.WriteLine("round2 failed; stopping immediately.");
+                return false;
+            }
+            round2[agent.Id] = answer;
         }
         if (round2.Count != config.Agents.Count)
         {
