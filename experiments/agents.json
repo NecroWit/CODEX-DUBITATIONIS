@@ -18,7 +18,7 @@
     },
     {
       "id": "science",
-      "model": "google/gemini-2.0-flash-001",
+      "model": "deepseek/deepseek-chat-v3.1",
       "role": "Examine epistemic gains, what remains unknown, and the distinction between a self-reported value and observable behavior."
     },
     {
