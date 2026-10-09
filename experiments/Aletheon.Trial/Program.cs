@@ -14,10 +14,10 @@ for (var i = 0; i < args.Length; i++)
     else
         throw new ArgumentException("Usage: --config agents.cheap.json|agents.premium.json [--mode 4|10|14]");
 }
-var configPath = Path.GetFullPath(Path.Combine(experimentDir, configFile));
-if (!string.Equals(Path.GetFullPath(Path.GetDirectoryName(configPath)!),
-        Path.GetFullPath(experimentDir), StringComparison.OrdinalIgnoreCase))
-    throw new ArgumentException("Config must be a file in experiments/.");
+if (string.IsNullOrWhiteSpace(configFile) || Path.IsPathRooted(configFile) ||
+    configFile != Path.GetFileName(configFile) || configFile is "." or "..")
+    throw new ArgumentException("Config must be a file name in experiments/.");
+var configPath = Path.Combine(experimentDir, configFile);
 var codexPath = Path.GetFullPath(Path.Combine(experimentDir, "../CODEX-DUBITATIONIS.md"));
 if (!File.Exists(configPath) || !File.Exists(codexPath))
     throw new FileNotFoundException("Expected the selected experiments config and CODEX-DUBITATIONIS.md.");
