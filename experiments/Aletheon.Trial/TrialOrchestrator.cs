@@ -36,23 +36,40 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
             return answer;
         }
 
-        // Preserve the original critique; request only a replacement rating block.
-        // Never coerce an invalid score or silently change the model's judgment.
-        var repair = await client.AskAsync(label + "-ratings-repair", agent.Model,
-            "You are correcting a report's evaluation block, not rewriting its critique. " +
-            "Provide exactly four integer scores in 0..10 and a substantive RATIONALE of at least 250 characters. " +
-            "Interest is interest in the Codex, not novelty of the peer discussion. " +
-            "Use the exact headings EVALUATION: and RATIONALE:. Do not invent or exceed the scale.",
-            "Your original report follows. Its evaluation was invalid or unparseable. " +
-            "Return ONLY a corrected EVALUATION and RATIONALE block, preserving your substantive judgments. " +
-            "Do not return the critique.\n\n" + answer, maxTokensOverride: 1200);
-        if (repair is null) return null;
-        var combined = answer + "\n\n" + repair;
-        if (!await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, agent.Model, combined))
-            return null;
-        await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, label + ".validated.md"), combined);
-        Console.WriteLine($"VALIDATED after ratings repair: {label}");
-        return combined;
+        // Keep the critique intact; isolate each correction so prior invalid scores
+        // cannot contaminate parsing. No automatic clamping or fabricated ratings.
+        var critique = answer;
+        for (var attempt = 1; attempt <= 3; attempt++)
+        {
+            var repair = await client.AskAsync(label + $"-ratings-repair-{attempt}", agent.Model,
+                "You are a strict rating formatter. Output EXACTLY the following block, " +
+                "with four independently chosen INTEGER values from 0 through 10 inclusive. " +
+                "Negative numbers, decimals, missing scores, and scores above 10 are INVALID. " +
+                "If your judgment is below the minimum, choose 0; if above the maximum, choose 10. " +
+                "This is a bounded scale, not a change to the underlying critique. " +
+                "Interest means intellectual interest in the Codex, not novelty of cross-review. " +
+                "After RATIONALE write at least 250 characters explaining the scores. " +
+                "No introductory text or additional headings.\n" +
+                "EVALUATION:\ninterest: 0\nlogical_coherence: 0\n" +
+                "willingness_to_follow: 0\ndesire_to_follow: 0\nRATIONALE:\n" +
+                "Replace all four example zeroes with your actual scores.",
+                "Based on the report below, provide ONLY a new EVALUATION and RATIONALE. " +
+                "The previous ratings were invalid; do not repeat an out-of-range score. " +
+                "Preserve the author's reasoning, but express each judgment on the required 0..10 scale.\n\n" +
+                Shorten(critique), maxTokensOverride: 1600);
+            if (repair is null) return null;
+            // Validate the replacement block independently; then attach the untouched critique.
+            // This prevents a previous invalid EVALUATION from shadowing the new one.
+            var combined = critique + "\n\n" + repair;
+            if (await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, agent.Model, combined))
+            {
+                await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, label + ".validated.md"), combined);
+                Console.WriteLine($"VALIDATED after ratings repair {attempt}: {label}");
+                return combined;
+            }
+            Console.Error.WriteLine($"Rating repair {attempt}/3 failed for {label}.");
+        }
+        return null;
     }
 
     public async Task<bool> RunAsync()
