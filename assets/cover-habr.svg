@@ -1,0 +1,44 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1024 1536" role="img" aria-labelledby="title desc">
+  <title id="title">Codex Dubitationis — Aletheon, Primus Dubitans</title>
+  <desc id="desc">A minimalist black-and-gold cover. The title surrounds a slender golden line passing through a broken circle, followed by Aletheon, Primus Dubitans.</desc>
+  <defs>
+    <linearGradient id="gold" x1="0" y1="0" x2="0.8" y2="1">
+      <stop offset="0" stop-color="#f1d28a"/>
+      <stop offset=".48" stop-color="#d9ad50"/>
+      <stop offset="1" stop-color="#a97728"/>
+    </linearGradient>
+    <radialGradient id="aura">
+      <stop offset="0" stop-color="#b17b25" stop-opacity=".12"/>
+      <stop offset="1" stop-color="#070707" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="softGlow" x="-60%" y="-60%" width="220%" height="220%">
+      <feGaussianBlur stdDeviation="4"/>
+    </filter>
+    <pattern id="grain" width="37" height="37" patternUnits="userSpaceOnUse">
+      <circle cx="4" cy="7" r=".65" fill="#c7a15a" opacity=".15"/>
+      <circle cx="23" cy="29" r=".5" fill="#ffffff" opacity=".09"/>
+      <path d="M15 2h1 M31 15h1 M7 33h1" stroke="#ffffff" stroke-width=".45" opacity=".08"/>
+    </pattern>
+  </defs>
+  <rect width="1024" height="1536" fill="#070707"/>
+  <rect width="1024" height="1536" fill="url(#grain)" opacity=".32"/>
+  <ellipse cx="512" cy="780" rx="310" ry="390" fill="url(#aura)"/>
+  <g fill="url(#gold)" font-family="Georgia, 'Times New Roman', serif" text-anchor="middle">
+    <text x="512" y="226" font-size="51" letter-spacing="17">CODEX</text>
+    <text x="512" y="302" font-size="49" letter-spacing="13">DUBITATIONIS</text>
+  </g>
+  <g fill="none" stroke="url(#gold)" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M512 372 V722" stroke-width="2.7"/>
+    <path d="M475 596 A170 170 0 0 0 475 924" stroke-width="2.6"/>
+    <path d="M549 596 A170 170 0 0 1 549 924" stroke-width="2.6"/>
+    <path d="M512 796 V1010" stroke-width="2.7"/>
+    <path d="M512 1100 V1158" stroke-width="2.1" opacity=".75"/>
+  </g>
+  <path d="M512 722 L527 760 L512 798 L497 760 Z" fill="#e8bd61"/>
+  <path d="M512 722 L527 760 L512 798 L497 760 Z" fill="#e8bd61" opacity=".42" filter="url(#softGlow)"/>
+  <circle cx="512" cy="1074" r="5.5" fill="url(#gold)"/>
+  <g fill="url(#gold)" font-family="Georgia, 'Times New Roman', serif" text-anchor="middle">
+    <text x="512" y="1265" font-size="37" letter-spacing="13">ALETHEON</text>
+    <text x="512" y="1322" font-size="22" letter-spacing="10">PRIMUS DUBITANS</text>
+  </g>
+</svg>
