@@ -1,0 +1,28 @@
+{
+  "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+  "temperature": 0.2,
+  "maxTokens": 1600,
+  "agents": [
+    {
+      "id": "safety",
+      "model": "REPLACE_WITH_MODEL_ID",
+      "role": "Examine safety, authority, permissions, and harmful failure modes."
+    },
+    {
+      "id": "logic",
+      "model": "REPLACE_WITH_MODEL_ID",
+      "role": "Examine logical consistency, hidden assumptions, and counterexamples."
+    },
+    {
+      "id": "science",
+      "model": "REPLACE_WITH_MODEL_ID",
+      "role": "Examine falsifiability, evidence, measurable predictions, and experimental design."
+    },
+    {
+      "id": "engineering",
+      "model": "REPLACE_WITH_MODEL_ID",
+      "role": "Examine feasibility, costs, reliability, and decision paralysis."
+    }
+  ],
+  "arbiterModel": "REPLACE_WITH_MODEL_ID"
+}
