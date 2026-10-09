@@ -8,8 +8,8 @@ internal static class RatingsReport
 
     public static async Task<bool> RecordAsync(string folder, string round, string agent, string model, string answer)
     {
-        var marker = Regex.Match(answer, @"(?im)^EVALUATION:\s*$");
-        var critique = marker.Success ? answer[..marker.Index].Trim() : "";
+        var marker = Regex.Match(answer, @"(?im)^\s*(?:#{1,6}\s*)?EVALUATION\s*:\s*$");
+        var critique = marker.Success ? (answer[..marker.Index] + "\n" + answer[(marker.Index + marker.Length)..]).Trim() : "";
         var values = new Dictionary<string, int>();
         var evaluation = marker.Success ? answer[marker.Index..] : "";
         foreach (var field in Fields)
@@ -20,7 +20,7 @@ internal static class RatingsReport
             values[field] = score;
         }
 
-        var rationaleMatch = Regex.Match(evaluation, @"(?ims)^RATIONALE:\s*\n(?<text>[\s\S]+)$");
+        var rationaleMatch = Regex.Match(evaluation, @"(?ims)^\s*(?:#{1,6}\s*)?RATIONALE\s*:\s*\n(?<text>[\s\S]+?)(?=^\s*#{1,6}\s+[A-Z][A-Z\s-]*\s*$|\z)");
         var rationale = rationaleMatch.Success ? rationaleMatch.Groups["text"].Value.Trim() : "";
         // Do not accept ratings-only answers as complete philosophical critiques.
         var valid = critique.Length >= 300 && values.Count == Fields.Length && rationale.Length >= 250;
