@@ -7,7 +7,7 @@ internal static class RatingsReport
         ["interest", "logical_coherence", "willingness_to_follow", "desire_to_follow"];
 
     private static readonly Regex Heading = new(
-        @"(?im)^[ \t]*(?:#{1,6}[ \t]*)?(?:\*\*|__)?[ \t]*(?<name>EVALUATION|RATIONALE)[ \t]*:?[ \t]*(?:\*\*|__)?[ \t]*$",
+        @"(?im)^[ \t]*(?:#{1,6}[ \t]*)?(?:\*\*|__)?[ \t]*(?:(?:FINAL|REVISED)[ \\t]+)?(?<name>EVALUATION|RATIONALE)[ \t]*:?[ \t]*(?:\*\*|__)?[ \t]*$",
         RegexOptions.Compiled);
 
     private static readonly Regex ScoreLine = new(
@@ -30,7 +30,7 @@ internal static class RatingsReport
             ? answer[evaluationStart..evaluationEnd] : "";
 
         var values = new Dictionary<string, int>();
-        var duplicate = false;
+        var duplicate = false;\n        var invalidScores = new List<string>();
         foreach (Match match in ScoreLine.Matches(evaluation))
         {
             var field = Regex.Replace(match.Groups["field"].Value.ToLowerInvariant(), @"[ -]", "_");
@@ -45,13 +45,13 @@ internal static class RatingsReport
             answer[..evaluationHeading.Index].Trim();
 
         var valid = evaluationHeading is not null && rationaleHeading is not null &&
-            critique.Length >= 300 && values.Count == Fields.Length && !duplicate &&
+            critique.Length >= 300 && values.Count == Fields.Length && invalidScores.Count == 0 && !duplicate &&
             rationale.Length >= 250;
 
         var record = new {
             round, agent, model, valid,
             critiqueCharacters = critique.Length,
-            scores = values,
+            scores = values,\n            invalidScores,
             rationale,
             validationError = valid ? null :
                 "Expected >=300 characters of critique, four distinct integer 0..10 ratings in EVALUATION, and >=250 characters of reflection in RATIONALE."
@@ -60,7 +60,7 @@ internal static class RatingsReport
             JsonSerializer.Serialize(record, TrialConfig.Json));
         if (!valid)
         {
-            var error = $"Invalid substantive critique/evaluation in {round}-{agent}: critique={critique.Length} chars (min 300), scores={values.Count}/4, rationale={rationale.Length} chars (min 250); raw response retained.";
+            var error = $"Invalid substantive critique/evaluation in {round}-{agent}: critique={critique.Length} chars (min 300), scores={values.Count}/4, invalidScores={string.Join(", ", invalidScores)}, rationale={rationale.Length} chars (min 250); raw response retained.";
             await File.WriteAllTextAsync(Path.Combine(folder, $"{round}-{agent}.validation-error.txt"), error);
             Console.Error.WriteLine(error);
         }
