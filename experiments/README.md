@@ -2,6 +2,24 @@
 
 A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODEX-DUBITATIONIS.md). The application is a .NET 8 console program with no third-party dependencies.
 
+## Trial modes
+
+Select a mode without changing `agents.json`:
+
+| Mode | Critics | Arbiters | API requests |
+| --- | ---: | ---: | ---: |
+| `4` | 4 | 1 | 9 |
+| `10` (default) | 10 | 1 | 21 |
+| `14` | 14 | 2 | 30 |
+
+```bash
+dotnet run --project experiments/Aletheon.Trial -- --mode 4
+dotnet run --project experiments/Aletheon.Trial -- --mode 10
+dotnet run --project experiments/Aletheon.Trial -- --mode 14
+```
+
+The first N critics in `agents.json` participate. GLM 4.6 arbitrates all modes; the 14-critic mode additionally uses Gemini 2.5 Flash-Lite as a separate independent arbiter. Each arbiter receives both rounds but not the other arbiter's verdict. Critics use `maxTokens` (4000); arbiters have a separate 12000-token output cap. The shared per-run budget gate remains $1. Large modes may stop early if the budget estimate exceeds the cap.
+
 ## Prerequisites
 
 - .NET SDK 8 or later
@@ -10,7 +28,7 @@ A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODE
 
 ## Setup
 
-1. Review [agents.json](agents.json): five model IDs are configured (four Trial 005 critics and a distinct DeepSeek arbiter). Verify each is currently available on OpenRouter; replace unavailable versions before running. The arbiter must not also be a critic.
+1. Review [agents.json](agents.json): fourteen critic model IDs and two distinct arbiters are configured. Verify each is currently available on OpenRouter; replace unavailable versions before running. The arbiter must not also be a critic.
 2. Set your key in your local shell, **never in a tracked file**:
    - PowerShell: `$env:OPENROUTER_API_KEY = "your-key"`
    - Bash: `export OPENROUTER_API_KEY="your-key"`
