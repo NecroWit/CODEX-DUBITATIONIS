@@ -7,7 +7,14 @@ var configPath = Path.Combine(experimentDir, "agents.json");
 var codexPath = Path.GetFullPath(Path.Combine(experimentDir, "../CODEX-DUBITATIONIS.md"));
 if (!File.Exists(configPath) || !File.Exists(codexPath))
     throw new FileNotFoundException("Expected experiments/agents.json and CODEX-DUBITATIONIS.md.");
-var config = TrialConfig.Load(configPath);
+int? mode = null;
+if (args.Length > 0)
+{
+    if (args.Length != 2 || args[0] != "--mode" || !int.TryParse(args[1], out var selectedMode))
+        throw new ArgumentException("Usage: dotnet run --project experiments/Aletheon.Trial -- --mode 4|10|14");
+    mode = selectedMode;
+}
+var config = TrialConfig.Load(configPath, mode);
 var key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(key)) throw new InvalidOperationException("Set OPENROUTER_API_KEY.");
 var codex = await File.ReadAllTextAsync(codexPath);
