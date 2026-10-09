@@ -31,7 +31,10 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
         if (answer is null) return null;
         var round = label.StartsWith("round1-", StringComparison.Ordinal) ? "round1" : "round2";
         if (await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, agent.Model, answer))
+        {
+            Console.WriteLine($"VALIDATED: {label}");
             return answer;
+        }
 
         // Preserve the original critique; request only a replacement rating block.
         // Never coerce an invalid score or silently change the model's judgment.
