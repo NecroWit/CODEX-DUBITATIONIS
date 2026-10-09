@@ -1,9 +1,7 @@
 using System.Net.Http.Headers;
-using System.Net.Http.Json;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
-using System.Text.Json.Serialization;
 
 var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true, WriteIndented = true };
 var experimentDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
@@ -14,18 +12,24 @@ if (!File.Exists(configPath) || !File.Exists(codexPath))
 
 var config = JsonSerializer.Deserialize<TrialConfig>(await File.ReadAllTextAsync(configPath), options)
     ?? throw new InvalidOperationException("Invalid configuration.");
-if (config.Agents.Count < 2 || config.Agents.Select(a => a.Id).Distinct().Count() != config.Agents.Count)
+if (config.Agents.Count < 2 || config.Agents.Select(a => a.Id).Distinct(StringComparer.OrdinalIgnoreCase).Count() != config.Agents.Count)
     throw new InvalidOperationException("Configure at least two critics with unique IDs.");
-if (config.Agents.Any(a => a.Model.Contains("REPLACE_")) || config.ArbiterModel.Contains("REPLACE_"))
+if (config.Agents.Any(a => string.IsNullOrWhiteSpace(a.Model) || a.Model.Contains("REPLACE_")) || string.IsNullOrWhiteSpace(config.ArbiterModel) || config.ArbiterModel.Contains("REPLACE_"))
     throw new InvalidOperationException("Replace model placeholders in agents.json before running.");
 if (config.MaxTokens is < 100 or > 16000 || config.Temperature is < 0 or > 2)
     throw new InvalidOperationException("Invalid generation settings.");
 
+if (config.Agents.Any(a => string.IsNullOrWhiteSpace(a.Id) || a.Id.Any(c => !char.IsAsciiLetterOrDigit(c) && c != '-' && c != '_')))
+    throw new InvalidOperationException("Agent IDs must contain only ASCII letters, digits, '-' or '_'.");
+if (!Uri.TryCreate(config.Endpoint, UriKind.Absolute, out var endpoint) ||
+    endpoint.Scheme != Uri.UriSchemeHttps || endpoint.Host != "openrouter.ai" ||
+    endpoint.AbsolutePath != "/api/v1/chat/completions")
+    throw new InvalidOperationException("Only the HTTPS OpenRouter chat completions endpoint is supported.");
 var apiKey = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(apiKey)) throw new InvalidOperationException("Set OPENROUTER_API_KEY.");
 var codex = await File.ReadAllTextAsync(codexPath);
 var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(codex))).ToLowerInvariant();
-var output = Path.Combine(experimentDir, "results", DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss") + "-" + hash[..8]);
+var output = Path.Combine(experimentDir, "results", DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss-fffffff") + "-" + hash[..8]);
 Directory.CreateDirectory(output);
 await File.WriteAllTextAsync(Path.Combine(output, "codex.md"), codex);
 await File.WriteAllTextAsync(Path.Combine(output, "config.json"), JsonSerializer.Serialize(config, options));
@@ -54,7 +58,8 @@ async Task<string?> Ask(string label, string model, string system, string user)
         using var response = await http.SendAsync(request);
         var body = await response.Content.ReadAsStringAsync();
         await File.WriteAllTextAsync(Path.Combine(output, label + ".response.json"), body);
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+            throw new HttpRequestException($"OpenRouter returned HTTP {(int)response.StatusCode}; inspect {label}.response.json.");
         using var parsed = JsonDocument.Parse(body);
         var answer = parsed.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
         if (string.IsNullOrWhiteSpace(answer)) throw new InvalidOperationException("Model returned empty text.");
@@ -83,7 +88,12 @@ foreach (var agent in config.Agents)
         "Critically examine the following full Codex.\n\n" + codex);
     if (answer != null) round1[agent.Id] = answer;
 }
-if (round1.Count < 2) throw new InvalidOperationException("Fewer than two critics succeeded; see saved errors.");
+if (round1.Count < config.Agents.Count)
+{
+    Console.Error.WriteLine("Round 1 incomplete. Stopping before cross-review to avoid biased partial results and extra charges.");
+    Environment.ExitCode = 1;
+    return;
+}
 
 var round2 = new Dictionary<string, string>();
 foreach (var agent in config.Agents.Where(a => round1.ContainsKey(a.Id)))
@@ -93,6 +103,12 @@ foreach (var agent in config.Agents.Where(a => round1.ContainsKey(a.Id)))
     var prompt = $"CODEX:\n{codex}\n\nYOUR INITIAL REPORT:\n{round1[agent.Id]}\n\nOTHER CRITICS (ANONYMIZED):\n{others}\n\nRe-evaluate your own report. Concede genuine mistakes, challenge weak arguments, and rank the three strongest remaining testable counterexamples. Do not assume majority agreement implies truth.";
     var answer = await Ask("round2-" + agent.Id, agent.Model, rules + "\nYour assigned lens: " + agent.Role, prompt);
     if (answer != null) round2[agent.Id] = answer;
+}
+if (round2.Count < config.Agents.Count)
+{
+    Console.Error.WriteLine("Round 2 incomplete. Skipping arbitration; inspect saved errors.");
+    Environment.ExitCode = 1;
+    return;
 }
 var reports = string.Join("\n\n", round1.Select(kv => $"ROUND 1 [{kv.Key}]:\n{kv.Value}"))
     + "\n\n" + string.Join("\n\n", round2.Select(kv => $"ROUND 2 [{kv.Key}]:\n{kv.Value}"));
