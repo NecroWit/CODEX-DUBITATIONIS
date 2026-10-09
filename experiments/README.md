@@ -10,7 +10,7 @@ Select a mode without changing `agents.json`:
 | --- | ---: | ---: | ---: |
 | `4` | 4 | 1 | 9 |
 | `10` (default) | 10 | 1 | 21 |
-| `14` | 14 | 2 | 30 |
+| `14` | 14 | 2 (two rounds each) | 32 |
 
 ```bash
 dotnet run --project experiments/Aletheon.Trial -- --mode 4
@@ -18,7 +18,7 @@ dotnet run --project experiments/Aletheon.Trial -- --mode 10
 dotnet run --project experiments/Aletheon.Trial -- --mode 14
 ```
 
-The first N critics in `agents.json` participate. GLM 4.6 arbitrates all modes; the 14-critic mode additionally uses Gemini 2.5 Flash-Lite as a separate independent arbiter. Each arbiter receives both rounds but not the other arbiter's verdict. Critics use `maxTokens` (4000); arbiters have a separate 12000-token output cap. The shared per-run budget gate remains $1. Large modes may stop early if the budget estimate exceeds the cap.
+The first N critics in `agents.json` participate. GLM 4.6 arbitrates all modes; the 14-critic mode additionally uses Gemini 2.5 Flash-Lite. Both arbiters first assess the critics independently, then each reads the other's initial verdict and issues a revised final verdict. Neither sees the other's revised verdict before finishing. Files are named `arbiter-1-round1.md`, `arbiter-2-round1.md`, `arbiter-1-round2.md`, and `arbiter-2-round2.md`. Critics use `maxTokens` (4000); arbiters have a separate 12000-token output cap. The shared per-run budget gate remains $1. Large modes may stop early if the budget estimate exceeds the cap.
 
 ## Prerequisites
 
