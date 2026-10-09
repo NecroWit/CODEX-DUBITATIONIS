@@ -1,4 +1,4 @@
-# Trial of Aletheon (v0.2)
+# Trial of Aletheon (v0.3)
 
 A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODEX-DUBITATIONIS.md). The application is a .NET 8 console program with no third-party dependencies.
 
@@ -25,7 +25,7 @@ A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODE
    dotnet run --project experiments/Aletheon.Trial
    ```
 
-The runner rejects incomplete replies (`finish_reason` other than `stop`), preserving raw output for diagnosis. Round 2 sends bounded excerpts of critics' reports rather than repeating the full Codex. The current prototype does **not** resume a stopped run: rerunning pays for round 1 again.\n\nThe runner reads `CODEX-DUBITATIONIS.md` from the repository root. Calls are sequential and may incur charges: with four critics, up to **nine API requests** (4 first round + 4 second round + 1 arbiter). Token usage and charges depend on the chosen models, output length, and large Round 2 prompts. **Start with inexpensive models and set account spending limits.** No automatic retries are made.
+Trial 003 asks the GLM arbiter to classify substantive findings as DISCOVERY, CLARIFICATION, or UNCERTAINTY, with NO_CONTRIBUTION for rejected objections. It compares independent and cross-review reports; this does not add API calls. The Codex is evaluated as a philosophical framework, not a technical specification.\n\nThe runner rejects incomplete replies (`finish_reason` other than `stop`), preserving raw output for diagnosis. Round 2 sends bounded excerpts of critics' reports rather than repeating the full Codex. The current prototype does **not** resume a stopped run: rerunning pays for round 1 again.\n\nThe runner reads `CODEX-DUBITATIONIS.md` from the repository root. Calls are sequential and may incur charges: with four critics, up to **nine API requests** (4 first round + 4 second round + 1 arbiter). Token usage and charges depend on the chosen models, output length, and large Round 2 prompts. **Start with inexpensive models and set account spending limits.** No automatic retries are made.
 
 ## Output
 
