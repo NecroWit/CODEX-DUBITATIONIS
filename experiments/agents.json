@@ -13,7 +13,7 @@
     },
     {
       "id": "logic",
-      "model": "moonshotai/kimi-k2.5",
+      "model": "qwen/qwen3-235b-a22b-instruct-2507",
       "role": "Examine formal coherence, axiom versus consequence, hidden assumptions and genuine counterexamples; distinguish self-reference from contradiction."
     },
     {
@@ -33,10 +33,6 @@
       "inputUsdPerMillionTokens": 0.6,
       "outputUsdPerMillionTokens": 2
     },
-    "moonshotai/kimi-k2.5": {
-      "inputUsdPerMillionTokens": 1,
-      "outputUsdPerMillionTokens": 4
-    },
     "qwen/qwen3.5-flash-02-23": {
       "inputUsdPerMillionTokens": 0.2,
       "outputUsdPerMillionTokens": 1
@@ -48,6 +44,10 @@
     "openai/gpt-5-mini": {
       "inputUsdPerMillionTokens": 1,
       "outputUsdPerMillionTokens": 5
+    },
+    "qwen/qwen3-235b-a22b-instruct-2507": {
+      "inputUsdPerMillionTokens": 1,
+      "outputUsdPerMillionTokens": 4
     }
   }
 }
