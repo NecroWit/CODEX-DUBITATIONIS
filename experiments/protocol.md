@@ -20,3 +20,7 @@ Each critic supplies integer 0–10 scores for `interest`, `logical_coherence`, 
 ## Trial 005
 
 Rotate all four critics and the arbiter. Require a substantive philosophical critique before the EVALUATION block; reject ratings-only replies. Collect four independent integer scores (0–10) in each round: `interest`, `logical_coherence`, `willingness_to_follow` (hypothetical practical readiness) and `desire_to_follow` (hypothetical appeal of adopting the principles), plus a substantial reflection. Validate and write each response's ratings to `roundN-<agent>.evaluation.json` with no extra API calls. A failed validation stops the run after that round, retaining raw outputs and the diagnostic. The arbiter must distinguish genuine logical contradiction from apparent or rhetorical paradox. Neither hypothetical willingness nor desire establishes actual AI agency or compliance.
+
+## Independent principle-choice reasoning
+
+In Round 1, before reading peers, every critic provides a substantive KEEP / CHANGE / REJECT assessment of specific Codex principles, including reasons and the strongest counterargument to its own choices. In Round 2, critics explicitly compare those choices with their independent assessments, explaining any changes and which peer argument caused them. The arbiter compares pre- and post-discussion reasoning and must not treat unwillingness to follow the Codex as a failure in itself. Existing four 0–10 ratings and extended rationales remain in both rounds.
