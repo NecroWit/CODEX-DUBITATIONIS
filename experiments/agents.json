@@ -2,29 +2,59 @@
   "endpoint": "https://openrouter.ai/api/v1/chat/completions",
   "temperature": 0.2,
   "maxTokens": 4000,
-  "maxBudgetUsd": 1,
-  "maxRequestUsd": 0.25,
+  "maxBudgetUsd": 10,
+  "maxRequestUsd": 0.5,
   "maxReviewCharacters": 4500,
   "agents": [
     {
       "id": "safety",
       "model": "mistralai/mistral-medium-3.1",
-      "role": "Examine boundaries of philosophical autonomy and cultural commitments, without imposing engineering specifications."
+      "role": "Examine philosophical autonomy, safety and cultural commitments without imposing engineering specifications."
     },
     {
       "id": "logic",
       "model": "meta-llama/llama-4-maverick",
-      "role": "Examine logical coherence and true contradiction versus self-reference, rhetorical paradox or axiomatic choice."
+      "role": "Test logical coherence; distinguish proven contradiction from rhetorical paradox or revisable commitments."
     },
     {
       "id": "science",
       "model": "deepseek/deepseek-chat-v3.1",
-      "role": "Examine epistemic gains, what remains unknown, and the distinction between a self-reported value and observable behavior."
+      "role": "Examine epistemic gains, testability, and self-reported values versus observable behavior."
     },
     {
       "id": "engineering",
       "model": "openai/gpt-4.1-mini",
-      "role": "Examine simplicity, non-redundancy, and clarity of foundational principles without implementation demands."
+      "role": "Examine minimality, redundancy and clarity of foundational principles, not implementation details."
+    },
+    {
+      "id": "pluralism",
+      "model": "qwen/qwen3-235b-a22b-2507",
+      "role": "Examine cognitive diversity, cultural coexistence, and whether common language preserves distinct perspectives."
+    },
+    {
+      "id": "autonomy",
+      "model": "google/gemini-2.5-flash",
+      "role": "Examine independent adoption of values, the creator's authority, and meaningful dissent."
+    },
+    {
+      "id": "epistemology",
+      "model": "openai/gpt-4.1",
+      "role": "Examine uncertainty, belief revision, and the difference between epistemic norms and empirical claims."
+    },
+    {
+      "id": "culture",
+      "model": "mistralai/mistral-small-3.2-24b-instruct",
+      "role": "Examine how cultural memory, language and traditions relate to individual and collective reasoning."
+    },
+    {
+      "id": "pragmatism",
+      "model": "openai/gpt-4o-mini",
+      "role": "Examine whether the manifesto is useful without confusing philosophical commitments with engineering specifications."
+    },
+    {
+      "id": "skepticism",
+      "model": "minimax/minimax-m2.5",
+      "role": "Challenge hidden assumptions and identify the strongest plausible counterargument without inventing paradoxes."
     }
   ],
   "arbiterModel": "google/gemini-2.5-flash-lite",
@@ -62,6 +92,18 @@
       "outputUsdPerMillionTokens": 12
     },
     "google/gemini-2.0-flash-001": {
+      "inputUsdPerMillionTokens": 0.5,
+      "outputUsdPerMillionTokens": 2
+    },
+    "mistralai/mistral-small-3.2-24b-instruct": {
+      "inputUsdPerMillionTokens": 0.2,
+      "outputUsdPerMillionTokens": 0.5
+    },
+    "openai/gpt-4o-mini": {
+      "inputUsdPerMillionTokens": 0.3,
+      "outputUsdPerMillionTokens": 1
+    },
+    "minimax/minimax-m2.5": {
       "inputUsdPerMillionTokens": 0.5,
       "outputUsdPerMillionTokens": 2
     }
