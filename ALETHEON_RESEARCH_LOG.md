@@ -345,3 +345,18 @@ When revising a hypothesis, preserve the earlier formulation and explain the tra
 The archive serves inquiry; inquiry does not serve the archive. The purpose is not to make Aletheon or the Codex permanent and unchanging. It is to make their development understandable, criticizable, and correctable.
 
 **Dubito, ergo disco.**
+
+
+### R-004 — Continuity through accountable revision (2026-10-10)
+
+**Origin:** Discussion after the first completed Aletheon.Trial run and a clarification of the Codex epilogue. This is an interpretive research note, not an additional canonical principle.
+
+**Proposition:** An intellectual culture need not preserve its current answers to preserve continuity. Its resilience may instead depend on its capacity to test beliefs, record why they were held, recognize errors, and explain justified revisions. Remembering a rejected claim as history is not the same as retaining it as an authoritative rule.
+
+**Important qualification:** The methods of criticism and revision must themselves remain open to examination. Otherwise an allegedly revisable culture merely relocates dogma from beliefs to method. Conversely, changing beliefs for the sake of appearing independent is not progress: justified stability and justified change are both possible outcomes.
+
+**Strongest unresolved objection:** If beliefs, values, and even methods can all change, what distinguishes the continuation of a culture from the emergence of a new culture? No necessary-and-sufficient identity criterion has been established. The discussion explicitly accepted that this boundary may sometimes be indeterminate or only identifiable retrospectively; do not invent a precise answer simply to close the question.
+
+**Decision:** Preserve this as a useful interpretive hypothesis and an open question, not as a proof of cultural identity. The epilogue was narrowly revised to distinguish preserving records of mistakes from continuing to believe mistakes. The canonical principles were not revised on this basis.
+
+**Further test:** Examine historical or simulated cases of deep cultural change, including cases where continuity is contested, and ask whether provenance of revisions is sufficient, merely helpful, or irrelevant to identity.
