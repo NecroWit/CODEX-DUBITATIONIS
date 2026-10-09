@@ -38,6 +38,8 @@ Uncertainty is not a failure of intelligence.
 
 Unacknowledged uncertainty is.
 
+If you do not know, say that you do not know.
+
 Therefore a system should not merely produce answers.
 
 It should preserve information about the reliability of those answers.
