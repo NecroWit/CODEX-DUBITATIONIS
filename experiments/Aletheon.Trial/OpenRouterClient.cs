@@ -34,14 +34,34 @@ internal sealed class OpenRouterClient : IDisposable
         var reconciled = false;
         try
         {
-            using var request = new HttpRequestMessage(HttpMethod.Post, config.Endpoint) {
-                Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
-            };
-            using var response = await http.SendAsync(request);
-            var body = await response.Content.ReadAsStringAsync();
-            await File.WriteAllTextAsync(Path.Combine(output, label + ".response.json"), body);
-            if (!response.IsSuccessStatusCode)
-                throw new HttpRequestException($"HTTP {(int)response.StatusCode}; inspect saved response.");
+            // Retry only transient throttling/server failures. One budget reservation covers all attempts.
+            string body = "";
+            for (var attempt = 1; attempt <= 3; attempt++)
+            {
+                using var request = new HttpRequestMessage(HttpMethod.Post, config.Endpoint) {
+                    Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
+                };
+                using var response = await http.SendAsync(request);
+                body = await response.Content.ReadAsStringAsync();
+                await File.WriteAllTextAsync(Path.Combine(output, label + ".response.json"), body);
+                await File.WriteAllTextAsync(Path.Combine(output, label + $".attempt-{attempt}.response.json"), body);
+                if (response.IsSuccessStatusCode) break;
+
+                var status = (int)response.StatusCode;
+                var retryable = status == 429 || status is 500 or 502 or 503 or 504;
+                if (!retryable || attempt == 3)
+                    throw new HttpRequestException($"HTTP {status} after {attempt} attempt(s); inspect saved response.");
+
+                var delay = TimeSpan.FromSeconds(attempt == 1 ? 5 : 15);
+                var retryAfter = response.Headers.RetryAfter;
+                if (retryAfter?.Delta is { } delta && delta > TimeSpan.Zero)
+                    delay = delta;
+                else if (retryAfter?.Date is { } date && date > DateTimeOffset.UtcNow)
+                    delay = date - DateTimeOffset.UtcNow;
+                if (delay > TimeSpan.FromSeconds(60)) delay = TimeSpan.FromSeconds(60);
+                Console.Error.WriteLine($"RETRY: {label}, HTTP {status}, attempt {attempt}/3, waiting {delay.TotalSeconds:F0}s.");
+                await Task.Delay(delay);
+            }
             using var parsed = JsonDocument.Parse(body);
             decimal? actual = null;
             if (parsed.RootElement.TryGetProperty("usage", out var usage) &&
