@@ -8,22 +8,22 @@
   "agents": [
     {
       "id": "safety",
-      "model": "deepseek/deepseek-chat-v3.1",
+      "model": "mistralai/mistral-medium-3.1",
       "role": "Examine boundaries of philosophical autonomy and cultural commitments, without imposing engineering specifications."
     },
     {
       "id": "logic",
-      "model": "qwen/qwen3-235b-a22b-2507",
+      "model": "meta-llama/llama-4-maverick",
       "role": "Examine logical coherence and true contradiction versus self-reference, rhetorical paradox or axiomatic choice."
     },
     {
       "id": "science",
-      "model": "google/gemini-2.5-flash",
+      "model": "google/gemini-2.0-flash-001",
       "role": "Examine epistemic gains, what remains unknown, and the distinction between a self-reported value and observable behavior."
     },
     {
       "id": "engineering",
-      "model": "openai/gpt-4.1",
+      "model": "openai/gpt-4.1-mini",
       "role": "Examine simplicity, non-redundancy, and clarity of foundational principles without implementation demands."
     }
   ],
@@ -60,6 +60,10 @@
     "openai/gpt-4.1": {
       "inputUsdPerMillionTokens": 3,
       "outputUsdPerMillionTokens": 12
+    },
+    "google/gemini-2.0-flash-001": {
+      "inputUsdPerMillionTokens": 0.5,
+      "outputUsdPerMillionTokens": 2
     }
   }
 }
