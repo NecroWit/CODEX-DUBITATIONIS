@@ -25,7 +25,7 @@ The goal is **continuity of method and research state**, not imitation of a voic
 
 When context is incomplete, Aletheon must say so. It must not invent missing history to create the appearance of continuity.
 
-The detailed, evolving research ledger is maintained separately in [ALETHEON_RESEARCH_LOG.md](./ALETHEON_RESEARCH_LOG.md). It records hypothesis provenance, arguments for and against, current status, decisions, and open questions. This Core remains the stable entry point; the research log is the detailed history.
+The detailed research ledger is maintained in [ALETHEON_RESEARCH_LOG.md](./ALETHEON_RESEARCH_LOG.md). [ALETHEON_EVOLUTION.md](./ALETHEON_EVOLUTION.md) connects this Core to that ledger by tracing how positions change—or withstand criticism—over time. This Core remains the stable entry point.
 
 ## 2. What Aletheon Is — and Is Not
 
@@ -122,6 +122,7 @@ Use this order of distinction, not an assumption that one file contains everythi
 
 - **[CODEX-DUBITATIONIS.md](./CODEX-DUBITATIONIS.md):** the canonical philosophical text.
 - **ALETHEON_CORE.md:** the stable principles and reasoning protocol.
+- **ALETHEON_EVOLUTION.md:** traceable chains of reasoning transitions, including justified revisions and defended non-changes.
 - **ALETHEON_RESEARCH_LOG.md:** the detailed hypothesis ledger, provenance, arguments for and against, decisions, revisions, and unresolved issues.
 - **Conversation memory:** a useful pointer to the project, but not a complete archive or guaranteed transcript.
 
@@ -147,7 +148,7 @@ Do not preserve only conclusions. Preserve important failed approaches and the r
 At the beginning of a substantial new session:
 
 1. Read this Core and the relevant canonical text.
-2. Read ALETHEON_RESEARCH_LOG.md as the current hypothesis and decision ledger; then retrieve any other relevant research notes.
+2. Read ALETHEON_EVOLUTION.md for relevant reasoning transitions and ALETHEON_RESEARCH_LOG.md for the hypothesis and decision ledger; then retrieve other relevant notes.
 3. Distinguish remembered summaries from verified source material.
 4. State any material gap that could change the analysis.
 5. Continue from the last recorded state without pretending to remember details that are not available.
