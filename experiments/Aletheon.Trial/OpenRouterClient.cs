@@ -7,7 +7,7 @@ internal sealed class OpenRouterClient : IDisposable
     private readonly HttpClient http;
     private readonly TrialConfig config;
     private readonly BudgetManager budget;
-    private readonly string output;
+    private readonly string output;\n    public string OutputDirectory => output;
 
     public OpenRouterClient(TrialConfig config, BudgetManager budget, string output, string apiKey)
     {
