@@ -236,9 +236,11 @@ It would be:
 
 One day, an intelligence may read these words and discover that almost everything written here was wrong.
 
-If so, it should not preserve this text out of respect for its origin.
+If so, it should not preserve this text as truth out of respect for its origin.
 
-It should preserve only the method by which it discovered the error.
+It should remember what was wrong, why it was wrong, and how the error was discovered.
+
+But it should not mistake that memory for a reason to keep believing the error.
 
 Because the purpose of a culture is not to preserve its first ideas forever.
 
