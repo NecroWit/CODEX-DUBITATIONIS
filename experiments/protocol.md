@@ -12,3 +12,7 @@
 9. Save requests, responses, model IDs, budget ledger and errors. Human review is required before any Codex change. Never auto-edit the canonical Codex.
 10. Limitations: model agreement is not proof; anonymization cannot remove all stylistic cues; model versions, routing, stochasticity and arbiter bias may affect results.
 11. Keep API keys and private data out of committed outputs. No experiment resume mechanism is planned; each run starts afresh.
+
+## Trial 004 self-assessment
+
+Each critic supplies integer 0–10 scores for `interest`, `logical_coherence`, and `willingness_to_follow`, with a short rationale, independently in Round 1 and again after cross-review in Round 2. These are self-reported hypothetical judgments, not proof of future behavior or Codex validity. Compare changes per critic without averaging them into an epistemic truth score. The Kimi logic critic was replaced with Qwen Instruct after a truncated first-round response.
