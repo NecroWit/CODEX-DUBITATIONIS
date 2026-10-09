@@ -18,11 +18,11 @@ internal sealed class TrialConfig
     {
         var config = JsonSerializer.Deserialize<TrialConfig>(File.ReadAllText(path), Json)
             ?? throw new InvalidOperationException("Invalid agents.json.");
-        if (config.Agents.Count != 4 ||
+        if (config.Agents.Count != 10 ||
             config.Agents.Select(a => a.Id).Distinct(StringComparer.OrdinalIgnoreCase).Count() != config.Agents.Count ||
             config.Agents.Any(a => string.IsNullOrWhiteSpace(a.Id) || a.Id.Any(c => !char.IsAsciiLetterOrDigit(c) && c is not ('-' or '_')) ||
                 string.IsNullOrWhiteSpace(a.Model) || a.Model.Contains("REPLACE_", StringComparison.OrdinalIgnoreCase)))
-            throw new InvalidOperationException("Configure four critics with unique safe IDs and real model IDs.");
+            throw new InvalidOperationException("Configure ten critics with unique safe IDs and real model IDs.");
         if (string.IsNullOrWhiteSpace(config.ArbiterModel) || config.ArbiterModel.Contains("REPLACE_", StringComparison.OrdinalIgnoreCase) ||
             config.Agents.Any(a => string.Equals(a.Model, config.ArbiterModel, StringComparison.OrdinalIgnoreCase)))
             throw new InvalidOperationException("Arbiter must be configured and must not also be a critic.");
