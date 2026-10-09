@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://NecroWit.github.io/CODEX-DUBITATIONIS/sitemap.xml
