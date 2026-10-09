@@ -48,7 +48,7 @@
     },
     {
       "id": "pragmatism",
-      "model": "openai/gpt-4o-mini",
+      "model": "google/gemini-2.5-flash-lite",
       "role": "Examine whether the manifesto is useful without confusing philosophical commitments with engineering specifications."
     },
     {
@@ -57,7 +57,7 @@
       "role": "Challenge hidden assumptions and identify the strongest plausible counterargument without inventing paradoxes."
     }
   ],
-  "arbiterModel": "google/gemini-2.5-flash-lite",
+  "arbiterModel": "z-ai/glm-4.6",
   "modelPrices": {
     "google/gemini-2.5-flash-lite": {
       "inputUsdPerMillionTokens": 0.4,
@@ -106,6 +106,10 @@
     "minimax/minimax-m2.5": {
       "inputUsdPerMillionTokens": 0.5,
       "outputUsdPerMillionTokens": 2
+    },
+    "z-ai/glm-4.6": {
+      "inputUsdPerMillionTokens": 0.6,
+      "outputUsdPerMillionTokens": 2.2
     }
   }
 }
