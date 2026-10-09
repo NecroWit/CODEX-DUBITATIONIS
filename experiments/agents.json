@@ -53,7 +53,7 @@
     },
     {
       "id": "skepticism",
-      "model": "x-ai/grok-4.1-fast",
+      "model": "google/gemini-2.5-flash",
       "role": "Challenge hidden assumptions and identify the strongest plausible counterargument without inventing paradoxes."
     },
     {
