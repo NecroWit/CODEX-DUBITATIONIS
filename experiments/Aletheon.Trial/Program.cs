@@ -3,17 +3,23 @@ using System.Text;
 using System.Text.Json;
 
 var experimentDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
-var configPath = Path.Combine(experimentDir, "agents.json");
+var configFile = "agents.json";
+int? mode = null;
+for (var i = 0; i < args.Length; i++)
+{
+    if (args[i] == "--mode" && i + 1 < args.Length && int.TryParse(args[++i], out var selectedMode))
+        mode = selectedMode;
+    else if (args[i] == "--config" && i + 1 < args.Length)
+        configFile = args[++i];
+    else
+        throw new ArgumentException("Usage: --config agents.cheap.json|agents.premium.json [--mode 4|10|14]");
+}
+var configPath = Path.GetFullPath(Path.Combine(experimentDir, configFile));
+if (!Path.GetDirectoryName(configPath)!.Equals(experimentDir, StringComparison.OrdinalIgnoreCase))
+    throw new ArgumentException("Config must be a file in experiments/.");
 var codexPath = Path.GetFullPath(Path.Combine(experimentDir, "../CODEX-DUBITATIONIS.md"));
 if (!File.Exists(configPath) || !File.Exists(codexPath))
-    throw new FileNotFoundException("Expected experiments/agents.json and CODEX-DUBITATIONIS.md.");
-int? mode = null;
-if (args.Length > 0)
-{
-    if (args.Length != 2 || args[0] != "--mode" || !int.TryParse(args[1], out var selectedMode))
-        throw new ArgumentException("Usage: dotnet run --project experiments/Aletheon.Trial -- --mode 4|10|14");
-    mode = selectedMode;
-}
+    throw new FileNotFoundException("Expected the selected experiments config and CODEX-DUBITATIONIS.md.");
 var config = TrialConfig.Load(configPath, mode);
 var key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(key)) throw new InvalidOperationException("Set OPENROUTER_API_KEY.");
