@@ -25,6 +25,10 @@ if (!Uri.TryCreate(config.Endpoint, UriKind.Absolute, out var endpoint) ||
     endpoint.Scheme != Uri.UriSchemeHttps || endpoint.Host != "openrouter.ai" ||
     endpoint.AbsolutePath != "/api/v1/chat/completions")
     throw new InvalidOperationException("Only the HTTPS OpenRouter chat completions endpoint is supported.");
+if (config.MaxBudgetUsd <= 0 || config.MaxBudgetUsd > 10 || config.InputUsdPerMillionTokens <= 0 ||
+    config.OutputUsdPerMillionTokens <= 0 || config.MaxRequestUsd <= 0 ||
+    config.MaxRequestUsd > config.MaxBudgetUsd)
+    throw new InvalidOperationException("Set positive maxBudgetUsd (<= $10), maxRequestUsd, and model price ceilings in agents.json.");
 var apiKey = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(apiKey)) throw new InvalidOperationException("Set OPENROUTER_API_KEY.");
 var codex = await File.ReadAllTextAsync(codexPath);
@@ -35,6 +39,13 @@ await File.WriteAllTextAsync(Path.Combine(output, "codex.md"), codex);
 await File.WriteAllTextAsync(Path.Combine(output, "config.json"), JsonSerializer.Serialize(config, options));
 await File.WriteAllTextAsync(Path.Combine(output, "manifest.json"), JsonSerializer.Serialize(new { utc = DateTimeOffset.UtcNow, codexSha256 = hash, protocol = "v0.1" }, options));
 
+decimal committedUsd = 0m;
+var ledgerPath = Path.Combine(output, "cost-ledger.jsonl");
+async Task LogCost(string label, decimal reserve, decimal? reported, string status)
+{
+    var entry = JsonSerializer.Serialize(new { label, reservedUsd = reserve, reportedUsd = reported, chargedAgainstLocalBudgetUsd = reported ?? reserve, status, cumulativeUsd = committedUsd });
+    await File.AppendAllTextAsync(ledgerPath, entry + Environment.NewLine);
+}
 using var http = new HttpClient { Timeout = TimeSpan.FromMinutes(4) };
 http.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", apiKey);
 http.DefaultRequestHeaders.Add("HTTP-Referer", "https://github.com/NecroWit/CODEX-DUBITATIONIS");
@@ -48,6 +59,20 @@ async Task<string?> Ask(string label, string model, string system, string user)
         max_tokens = config.MaxTokens,
         messages = new[] { new { role = "system", content = system }, new { role = "user", content = user } }
     };
+    // Conservative input-token estimate: one token per UTF-16 code unit.
+    // This is NOT a provider-guaranteed token count or a hard billing cap.
+    var estimatedInputTokens = (long)system.Length + user.Length + 1024L;
+    var reserve = Math.Ceiling((estimatedInputTokens * config.InputUsdPerMillionTokens
+        + config.MaxTokens * config.OutputUsdPerMillionTokens) / 1_000_000m * 100_000m) / 100_000m;
+    if (reserve > config.MaxRequestUsd || committedUsd + reserve > config.MaxBudgetUsd)
+    {
+        Console.Error.WriteLine($"BUDGET STOP before {label}: estimated reserve ${reserve:F5}, remaining ${config.MaxBudgetUsd - committedUsd:F5}.");
+        await LogCost(label, reserve, null, "blocked-before-request");
+        return null;
+    }
+    // Reserve before any network activity; errors/timeouts may still be billed.
+    committedUsd += reserve;
+    await LogCost(label, reserve, null, "reserved-before-request");
     var requestJson = JsonSerializer.Serialize(payload, options);
     await File.WriteAllTextAsync(Path.Combine(output, label + ".request.json"), requestJson);
     try
@@ -61,6 +86,17 @@ async Task<string?> Ask(string label, string model, string system, string user)
         if (!response.IsSuccessStatusCode)
             throw new HttpRequestException($"OpenRouter returned HTTP {(int)response.StatusCode}; inspect {label}.response.json.");
         using var parsed = JsonDocument.Parse(body);
+        decimal? actualCost = null;
+        if (parsed.RootElement.TryGetProperty("usage", out var usage) &&
+            usage.TryGetProperty("cost", out var costElement) &&
+            costElement.ValueKind == JsonValueKind.Number &&
+            costElement.TryGetDecimal(out var cost) && cost >= 0)
+            actualCost = cost;
+        // Reconcile only when the provider explicitly reports cost.
+        // If cost is absent, retain the full reservation rather than assuming free usage.
+        if (actualCost.HasValue)
+            committedUsd = Math.Max(0m, committedUsd - reserve + actualCost.Value);
+        await LogCost(label, reserve, actualCost, "response-received");
         var answer = parsed.RootElement.GetProperty("choices")[0].GetProperty("message").GetProperty("content").GetString();
         if (string.IsNullOrWhiteSpace(answer)) throw new InvalidOperationException("Model returned empty text.");
         await File.WriteAllTextAsync(Path.Combine(output, label + ".md"), answer);
@@ -70,6 +106,7 @@ async Task<string?> Ask(string label, string model, string system, string user)
     catch (Exception e)
     {
         await File.WriteAllTextAsync(Path.Combine(output, label + ".error.txt"), e.ToString());
+        await LogCost(label, reserve, null, "error-reservation-retained");
         Console.Error.WriteLine($"FAILED: {label}: {e.Message}");
         return null;
     }
@@ -123,6 +160,10 @@ sealed class TrialConfig
     public string Endpoint { get; set; } = "https://openrouter.ai/api/v1/chat/completions";
     public double Temperature { get; set; } = 0.2;
     public int MaxTokens { get; set; } = 1600;
+    public decimal MaxBudgetUsd { get; set; } = 1m;
+    public decimal MaxRequestUsd { get; set; } = 0.25m;
+    public decimal InputUsdPerMillionTokens { get; set; } = 10m;
+    public decimal OutputUsdPerMillionTokens { get; set; } = 30m;
     public List<AgentConfig> Agents { get; set; } = new();
     public string ArbiterModel { get; set; } = "";
 }
