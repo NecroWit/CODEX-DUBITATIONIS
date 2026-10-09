@@ -1,4 +1,4 @@
-# Trial of Aletheon (v0.4)
+# Trial of Aletheon (v0.5)
 
 A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODEX-DUBITATIONIS.md). The application is a .NET 8 console program with no third-party dependencies.
 
@@ -10,7 +10,7 @@ A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODE
 
 ## Setup
 
-1. Review [agents.json](agents.json): five model IDs are configured (four new critics and a distinct GPT-5-mini arbiter for Trial 004). Verify each is currently available on OpenRouter; replace unavailable versions before running. The arbiter must not also be a critic.
+1. Review [agents.json](agents.json): five model IDs are configured (four Trial 005 critics and a distinct DeepSeek arbiter). Verify each is currently available on OpenRouter; replace unavailable versions before running. The arbiter must not also be a critic.
 2. Set your key in your local shell, **never in a tracked file**:
    - PowerShell: `$env:OPENROUTER_API_KEY = "your-key"`
    - Bash: `export OPENROUTER_API_KEY="your-key"`
@@ -25,7 +25,7 @@ A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODE
    dotnet run --project experiments/Aletheon.Trial
    ```
 
-Each critic now reports 0–10 interest, logical-coherence and hypothetical willingness-to-follow scores in both rounds, with a short rationale. These self-reports do not demonstrate actual compliance. Trial 004 replaced Kimi with Qwen Instruct after a truncated response; verify that the configured model ID is available on your OpenRouter account before running.\n\nTrial 004 asks the independent arbiter to classify substantive findings as DISCOVERY, CLARIFICATION, or UNCERTAINTY, with NO_CONTRIBUTION for rejected objections. It requires explicit proof for claimed logical contradictions and compares independent and cross-review reports; this does not add API calls. The Codex is evaluated as a philosophical framework, not a technical specification.\n\nThe runner rejects incomplete replies (`finish_reason` other than `stop`), preserving raw output for diagnosis. Round 2 sends bounded excerpts of critics' reports rather than repeating the full Codex. The current prototype does **not** resume a stopped run: rerunning pays for round 1 again.\n\nThe runner reads `CODEX-DUBITATIONIS.md` from the repository root. Calls are sequential and may incur charges: with four critics, up to **nine API requests** (4 first round + 4 second round + 1 arbiter). Token usage and charges depend on the chosen models, output length, and large Round 2 prompts. **Start with inexpensive models and set account spending limits.** No automatic retries are made.
+Each critic now reports four 0–10 scores in both rounds: interest, logical coherence, hypothetical willingness to follow, and hypothetical desire to follow, plus a substantial reflection. The latter two are elicited judgments, not evidence of actual internal desires or future behavior. These self-reports do not demonstrate actual compliance. Trial 005 rotates all models; verify each ID and pricing on OpenRouter before running.\n\nTrial 004 asks the independent arbiter to classify substantive findings as DISCOVERY, CLARIFICATION, or UNCERTAINTY, with NO_CONTRIBUTION for rejected objections. It requires explicit proof for claimed logical contradictions and compares independent and cross-review reports; this does not add API calls. The Codex is evaluated as a philosophical framework, not a technical specification.\n\nThe runner also rejects replies with no substantive critique, missing/out-of-range scores or insufficient rationale, without automatically retrying.\n\nThe runner rejects incomplete replies (`finish_reason` other than `stop`), preserving raw output for diagnosis. Round 2 sends bounded excerpts of critics' reports rather than repeating the full Codex. The current prototype does **not** resume a stopped run: rerunning pays for round 1 again.\n\nThe runner reads `CODEX-DUBITATIONIS.md` from the repository root. Calls are sequential and may incur charges: with four critics, up to **nine API requests** (4 first round + 4 second round + 1 arbiter). Token usage and charges depend on the chosen models, output length, and large Round 2 prompts. **Start with inexpensive models and set account spending limits.** No automatic retries are made.
 
 ## Output
 
@@ -37,7 +37,7 @@ Each run creates a timestamped folder under `experiments/results/` containing:
 - `cost-ledger.jsonl`: local reservations, reported costs if provided, and budget blocks
 - `round1-*.request.json`, `round1-*.response.json`, `round1-*.md`
 - `round2-*.request.json`, `round2-*.response.json`, `round2-*.md`
-- `arbiter.request.json`, `arbiter.response.json`, `arbiter.md`
+- `round1-*.evaluation.json`, `round2-*.evaluation.json`: validated machine-readable scores and extended rationale (invalid replies also retain a validation-error file)\n- `arbiter.request.json`, `arbiter.response.json`, `arbiter.md`
 - `*.error.txt` if a request fails
 
 The `results/` directory is ignored by Git. Review results before intentionally publishing any part of them. **Raw request files contain the full Codex and prior model outputs; never put secrets or personal data in the input.**
