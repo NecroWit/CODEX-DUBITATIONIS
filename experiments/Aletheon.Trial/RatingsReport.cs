@@ -13,7 +13,7 @@ internal static class RatingsReport
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private static readonly Regex ScoreLine = new(
-        @"^\s*(?:[-*+]\s+|\d+[.)]\s+)?(?:\*\*|__|\x60)?\s*(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow)\s*(?:\*\*|__|\x60)?\s*[:=：-]\s*(?:\*\*)?\s*(?<score>[+-]?\d+)(?:\s*/\s*10)?\s*(?:\*\*)?\s*$",
+        @"^\s*(?:[-*+]\s+|\d+[.)]\s+)?(?:\*\*|__|\x60)?\s*(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow)\s*(?:\*\*|__|\x60)?\s*[:=：-]\s*(?<value>.*?)\s*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private sealed record Parsed(string Critique, string Rationale,
@@ -56,9 +56,11 @@ internal static class RatingsReport
                 var match = ScoreLine.Match(lines[i]);
                 if (!match.Success) continue;
                 var field = Regex.Replace(match.Groups["field"].Value.ToLowerInvariant(), @"[ -]", "_");
-                if (!int.TryParse(match.Groups["score"].Value, out var score) || score is < 0 or > 10)
+                var number = Regex.Match(match.Groups["value"].Value, @"-?\d+");
+                if (!number.Success) continue;
+                if (!int.TryParse(number.Value, out var score) || score is < 0 or > 10)
                 {
-                    invalid.Add(field + "=" + match.Groups["score"].Value + " (expected 0..10)");
+                    invalid.Add(field + "=" + number.Value + " (expected 0..10)");
                     continue;
                 }
                 if (!scores.TryAdd(field, score)) duplicate = true;
