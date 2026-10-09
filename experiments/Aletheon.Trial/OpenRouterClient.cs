@@ -82,7 +82,7 @@ internal sealed class OpenRouterClient : IDisposable
                 throw new InvalidOperationException($"Incomplete response: finish_reason={finish ?? "missing"}; saved output is NOT accepted.");
             if (string.IsNullOrWhiteSpace(answer))
                 throw new InvalidOperationException("Empty model response.");
-            Console.WriteLine($"OK: {label}");
+            Console.WriteLine($"RECEIVED: {label}");
             return answer;
         }
         catch (Exception ex)
