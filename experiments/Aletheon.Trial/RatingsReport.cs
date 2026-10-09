@@ -7,11 +7,11 @@ internal static class RatingsReport
         ["interest", "logical_coherence", "willingness_to_follow", "desire_to_follow"];
 
     private static readonly Regex Heading = new(
-        @"(?im)^[ \t]*(?:#{1,6}[ \t]*)?(?:\\*\\*|__)?[ \t]*(?<name>EVALUATION|RATIONALE)[ \t]*:?[ \t]*(?:\\*\\*|__)?[ \t]*$",
+        @"(?im)^[ \t]*(?:#{1,6}[ \t]*)?(?:\*\*|__)?[ \t]*(?<name>EVALUATION|RATIONALE)[ \t]*:?[ \t]*(?:\*\*|__)?[ \t]*$",
         RegexOptions.Compiled);
 
     private static readonly Regex ScoreLine = new(
-        @"(?im)^[ \t]*(?:[-*+]|\\d+[.)])?[ \t]*(?:\\*\\*|__|\\`)?[ \t]*(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow)[ \t]*(?:\\*\\*|__|\\`)?[ \t]*[:=：-][ \t]*(?:\\*\\*)?[ \t]*(?<score>10|[0-9])(?:[ \t]*/[ \t]*10)?[ \t]*(?:\\*\\*)?[ \t]*$",
+        @"(?im)^[ \t]*(?:[-*+]|\d+[.)])?[ \t]*(?:\*\*|__|`)?[ \t]*(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow)[ \t]*(?:\*\*|__|`)?[ \t]*[:=：-][ \t]*(?:\*\*)?[ \t]*(?<score>10|[0-9])(?:[ \t]*/[ \t]*10)?[ \t]*(?:\*\*)?[ \t]*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     public static async Task<bool> RecordAsync(string folder, string round, string agent, string model, string answer)
