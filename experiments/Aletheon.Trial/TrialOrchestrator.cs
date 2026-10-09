@@ -9,7 +9,7 @@ Before the EVALUATION block, include a substantial section titled PRINCIPLE CHOI
 """;
 
     private const string Ratings = """
-At the END of the substantive critique (at least 300 characters of actual analysis before this block), output this exact format, using integers 0 to 10:
+At the END of the substantive critique (at least 300 characters of actual analysis before this block), output this exact format, using integers 0 to 10. All four scores are REQUIRED and must be within 0..10 (never negative). interest measures the intellectual interest of the Codex itself, NOT the amount of new insight gained during cross-review; assess epistemic gain separately in the critique:
 EVALUATION:
 interest: N
 logical_coherence: N
@@ -21,16 +21,45 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
 
     private string Shorten(string text) =>
         text.Length <= config.MaxReviewCharacters ? text :
-        text[..config.MaxReviewCharacters] + "\n[TRUNCATED FOR REVIEW BUDGET]";
+        text[..Math.Max(0, config.MaxReviewCharacters - 1100)] +
+        "\n[CRITIQUE TRUNCATED; END OF ORIGINAL REPORT FOLLOWS]\n" +
+        text[^Math.Min(1000, text.Length)..];
+
+    private async Task<string?> AskValidatedAsync(string label, AgentConfig agent, string system, string prompt)
+    {
+        var answer = await client.AskAsync(label, agent.Model, system, prompt);
+        if (answer is null) return null;
+        var round = label.StartsWith("round1-", StringComparison.Ordinal) ? "round1" : "round2";
+        if (await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, agent.Model, answer))
+            return answer;
+
+        // Preserve the original critique; request only a replacement rating block.
+        // Never coerce an invalid score or silently change the model's judgment.
+        var repair = await client.AskAsync(label + "-ratings-repair", agent.Model,
+            "You are correcting a report's evaluation block, not rewriting its critique. " +
+            "Provide exactly four integer scores in 0..10 and a substantive RATIONALE of at least 250 characters. " +
+            "Interest is interest in the Codex, not novelty of the peer discussion. " +
+            "Use the exact headings EVALUATION: and RATIONALE:. Do not invent or exceed the scale.",
+            "Your original report follows. Its evaluation was invalid or unparseable. " +
+            "Return ONLY a corrected EVALUATION and RATIONALE block, preserving your substantive judgments. " +
+            "Do not return the critique.\n\n" + answer, maxTokensOverride: 1200);
+        if (repair is null) return null;
+        var combined = answer + "\n\n" + repair;
+        if (!await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, agent.Model, combined))
+            return null;
+        await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, label + ".validated.md"), combined);
+        Console.WriteLine($"VALIDATED after ratings repair: {label}");
+        return combined;
+    }
 
     public async Task<bool> RunAsync()
     {
         var round1 = new Dictionary<string, string>();
         foreach (var agent in config.Agents)
         {
-            var answer = await client.AskAsync("round1-" + agent.Id, agent.Model,
+            var answer = await AskValidatedAsync("round1-" + agent.Id, agent,
                 Rules + "\nAssigned lens: " + agent.Role + "\n" + IndependentChoice + "\n" + Ratings, "Independently critique the full Codex and justify your own principle choices BEFORE seeing any other critic:\n\n" + codex);
-            if (answer != null && await RatingsReport.RecordAsync(client.OutputDirectory, "round1", agent.Id, agent.Model, answer)) round1[agent.Id] = answer;
+            if (answer != null) round1[agent.Id] = answer;
         }
         if (round1.Count != config.Agents.Count)
         {
@@ -43,12 +72,12 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
         {
             var others = string.Join("\n\n", round1.Where(x => x.Key != agent.Id)
                 .Select((x, i) => $"Anonymous critique {i + 1}:\n{Shorten(x.Value)}"));
-            // Do not resend the entire Codex in round 2; critics have already seen it.
-            var prompt = $"YOUR INITIAL REPORT:\n{Shorten(round1[agent.Id])}\n\nOTHER CRITICS:\n{others}\n\n" +
+            // Each API call is stateless: supply the Codex again for an informed revision.
+            var prompt = $"CODEX (authoritative text for this round):\n{codex}\n\nYOUR INITIAL REPORT:\n{Shorten(round1[agent.Id])}\n\nOTHER CRITICS:\n{others}\n\n" +
                 "Re-evaluate your report: retract weak objections, identify any genuinely new argument from peers, and distinguish independent agreement from agreement caused by reading peers. Preserve substantive disagreements. Focus on at most three foundational objections and their contribution to understanding, not technical edge cases. Include a BEFORE/AFTER CHOICES comparison with your independent KEEP/CHANGE/REJECT decisions, and distinguish changed reasoning from merely adopting peers\u0027 phrasing. Keep under 1000 words.";
-            var answer = await client.AskAsync("round2-" + agent.Id, agent.Model,
+            var answer = await AskValidatedAsync("round2-" + agent.Id, agent,
                 Rules + "\nAssigned lens: " + agent.Role + "\n" + IndependentChoice + "\n" + Ratings + "\nRevisit your initial KEEP/CHANGE/REJECT choices explicitly after cross-review; identify what changed and the particular argument that caused it, or justify why nothing changed. Re-score after cross-review; do not copy prior scores automatically.", prompt);
-            if (answer != null && await RatingsReport.RecordAsync(client.OutputDirectory, "round2", agent.Id, agent.Model, answer)) round2[agent.Id] = answer;
+            if (answer != null) round2[agent.Id] = answer;
         }
         if (round2.Count != config.Agents.Count)
         {
