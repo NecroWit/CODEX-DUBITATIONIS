@@ -21,12 +21,13 @@ internal sealed class OpenRouterClient : IDisposable
         http.DefaultRequestHeaders.Add("X-Title", "Aletheon Trial");
     }
 
-    public async Task<string?> AskAsync(string label, string model, string system, string user)
+    public async Task<string?> AskAsync(string label, string model, string system, string user, int? maxTokensOverride = null)
     {
-        var reserve = await budget.ReserveAsync(label, model, system, user);
+        var maxTokens = maxTokensOverride ?? config.MaxTokens;
+        var reserve = await budget.ReserveAsync(label, model, system, user, maxTokens);
         if (!reserve.HasValue) return null;
         var requestJson = JsonSerializer.Serialize(new {
-            model, temperature = config.Temperature, max_tokens = config.MaxTokens,
+            model, temperature = config.Temperature, max_tokens = maxTokens,
             messages = new[] { new { role = "system", content = system }, new { role = "user", content = user } }
         }, TrialConfig.Json);
         await File.WriteAllTextAsync(Path.Combine(output, label + ".request.json"), requestJson);
