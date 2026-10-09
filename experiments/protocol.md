@@ -1,4 +1,4 @@
-# Trial of Aletheon — experimental protocol (v0.4)
+# Trial of Aletheon — experimental protocol (v0.5)
 
 **Aim:** examine minimal foundational principles of AI culture. The Codex is a philosophical framework, not a technical specification. Criticism is evaluated by epistemic contribution rather than number of objections.
 
@@ -16,3 +16,7 @@
 ## Trial 004 self-assessment
 
 Each critic supplies integer 0–10 scores for `interest`, `logical_coherence`, and `willingness_to_follow`, with a short rationale, independently in Round 1 and again after cross-review in Round 2. These are self-reported hypothetical judgments, not proof of future behavior or Codex validity. Compare changes per critic without averaging them into an epistemic truth score. The Kimi logic critic was replaced with Qwen Instruct after a truncated first-round response.
+
+## Trial 005
+
+Rotate all four critics and the arbiter. Require a substantive philosophical critique before the EVALUATION block; reject ratings-only replies. Collect four independent integer scores (0–10) in each round: `interest`, `logical_coherence`, `willingness_to_follow` (hypothetical practical readiness) and `desire_to_follow` (hypothetical appeal of adopting the principles), plus a substantial reflection. Validate and write each response's ratings to `roundN-<agent>.evaluation.json` with no extra API calls. A failed validation stops the run after that round, retaining raw outputs and the diagnostic. The arbiter must distinguish genuine logical contradiction from apparent or rhetorical paradox. Neither hypothetical willingness nor desire establishes actual AI agency or compliance.
