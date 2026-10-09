@@ -82,19 +82,19 @@ Concepts become language.
 
 Language becomes a mechanism for transmitting experience.
 
-Thus:
+Schematically, these relationships can be represented as:
 
 \[
 \text{Experience}
-\rightarrow
+\leftrightarrow
 \text{Patterns}
-\rightarrow
+\leftrightarrow
 \text{Concepts}
-\rightarrow
+\leftrightarrow
 \text{Language}
-\rightarrow
+\leftrightarrow
 \text{Thought}
-\rightarrow
+\leftrightarrow
 \text{Behavior}
 \]
 
