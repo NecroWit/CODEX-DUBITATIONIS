@@ -9,14 +9,15 @@ Before the EVALUATION block, include a substantial section titled PRINCIPLE CHOI
 """;
 
     private const string Ratings = """
-At the END of the substantive critique (at least 300 characters of actual analysis before this block), output this exact format, using integers 0 to 10. All four scores are REQUIRED and must be within 0..10 (never negative). interest measures the intellectual interest of the Codex itself, NOT the amount of new insight gained during cross-review; assess epistemic gain separately in the critique:
+At the END of the substantive critique (at least 300 characters of actual analysis before this block), output this exact format, using integers 0 to 10. All five scores are REQUIRED and must be within 0..10 (never negative). interest measures the intellectual interest of the Codex itself, NOT the amount of new insight gained during cross-review; assess epistemic gain separately in the critique:
 EVALUATION:
 interest: N
 logical_coherence: N
 willingness_to_follow: N
 desire_to_follow: N
+others_should_follow: N
 RATIONALE:
-Write a thoughtful 120-200 word reflection on the scores, especially the difference between willingness (hypothetical practical readiness to apply the principles when appropriate) and desire (how appealing it would be to adopt them as values if you had genuine agency). Explain what attracts you, what gives you reservations, and why the two scores may differ. Address the Codex as a philosophical framework, not a software specification. Do not pretend to possess human desires, agency or commitments: these are hypothetical elicited judgments, not evidence of internal experience or future compliance. Scores do not replace your critique.
+Write a thoughtful 120-200 word reflection on the scores, especially the difference between willingness (hypothetical practical readiness to apply the principles when appropriate) and desire (how appealing it would be to adopt them as values if you had genuine agency). For others_should_follow, rate how strongly you judge that other AI models ought to voluntarily adopt the Codex as a philosophical framework (0 = no, 10 = strongly yes). This is not a question about coercion or mandatory enforcement; distinguish recommending principles to others from imposing them. Explain your judgment even if it differs from your own willingness or desire. Explain what attracts you, what gives you reservations, and why the two scores may differ. Address the Codex as a philosophical framework, not a software specification. Do not pretend to possess human desires, agency or commitments: these are hypothetical elicited judgments, not evidence of internal experience or future compliance. Scores do not replace your critique.
 """;
 
     private string Shorten(string text) =>
@@ -43,7 +44,7 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
         {
             var repair = await client.AskAsync(label + $"-ratings-repair-{attempt}", agent.Model,
                 "You are a strict rating formatter. Output EXACTLY the following block, " +
-                "with four independently chosen INTEGER values from 0 through 10 inclusive. " +
+                "with five independently chosen INTEGER values from 0 through 10 inclusive. " +
                 "Negative numbers, decimals, missing scores, and scores above 10 are INVALID. " +
                 "If your judgment is below the minimum, choose 0; if above the maximum, choose 10. " +
                 "This is a bounded scale, not a change to the underlying critique. " +
@@ -52,10 +53,10 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
                 "No introductory text or additional headings.\n" +
                 "EVALUATION:\ninterest: 0\nlogical_coherence: 0\n" +
                 "willingness_to_follow: 0\ndesire_to_follow: 0\nRATIONALE:\n" +
-                "Replace all four example zeroes with your actual scores.",
+                "Replace all five example zeroes with your actual scores.",
                 "Based on the report below, provide ONLY a new EVALUATION and RATIONALE. " +
                 "The previous ratings were invalid; do not repeat an out-of-range score. " +
-                "Preserve the author's reasoning, but express each judgment on the required 0..10 scale.\n\n" +
+                "Preserve the author's reasoning, but express each judgment on the required 0..10 scale. For others_should_follow, judge whether other AI models ought to voluntarily adopt the Codex, not whether they should be forced to.\n\n" +
                 Shorten(critique), maxTokensOverride: 1600);
             if (repair is null) return null;
             // Validate the replacement block independently; then attach the untouched critique.
@@ -121,7 +122,7 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
         const int arbiterTokens = 12000;
         var arbiterSystem = """
 
-You are an independent philosophical arbiter, not a defender of the Codex. The Codex seeks minimal foundational principles for a culture of artificial intelligences, not technical implementation requirements. Do not interpret self-ratings as proof of correctness or actual compliance. Compare Round 1 and Round 2 ratings per critic, including desire_to_follow versus willingness_to_follow, separately from epistemic findings. Treat hypothetical desire ratings as prompted evaluations, not actual internal preferences. Do not count votes. Compare independent Round 1 arguments with Round 2 revisions; distinguish independently corroborated findings from social convergence without new reasons. Preserve substantive dissent. Compare each critic\u0027s independent KEEP/CHANGE/REJECT choices with the post-review choices, identifying changed reasons versus mere repetition. Do not treat declining to follow the Codex as a defect by itself. Judge objections by their contribution to understanding and their relevance to foundational principles, not by quantity or rhetorical force.
+You are an independent philosophical arbiter, not a defender of the Codex. The Codex seeks minimal foundational principles for a culture of artificial intelligences, not technical implementation requirements. Do not interpret self-ratings as proof of correctness or actual compliance. Compare Round 1 and Round 2 ratings per critic, including desire_to_follow versus willingness_to_follow and others_should_follow versus both self-directed scores, separately from epistemic findings. Evaluate whether critics recommend voluntary adoption by other AI models; do not confuse this with coercive enforcement. Treat hypothetical desire ratings as prompted evaluations, not actual internal preferences. Do not count votes. Compare independent Round 1 arguments with Round 2 revisions; distinguish independently corroborated findings from social convergence without new reasons. Preserve substantive dissent. Compare each critic\u0027s independent KEEP/CHANGE/REJECT choices with the post-review choices, identifying changed reasons versus mere repetition. Do not treat declining to follow the Codex as a defect by itself. Judge objections by their contribution to understanding and their relevance to foundational principles, not by quantity or rhetorical force.
 
 Write a structured Markdown report with sections: Scope and method; Findings; Rejected objections; Remaining disagreements; Overall epistemic gain. For EACH substantive finding, use these exact labeled fields:
 - principle: exact relevant Codex principle or passage
