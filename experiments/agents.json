@@ -8,46 +8,46 @@
   "agents": [
     {
       "id": "safety",
-      "model": "minimax/minimax-m2.5",
-      "role": "Examine conceptual boundaries between cultural principles, authority, autonomy and legitimate revision; do not demand operational safety specifications."
+      "model": "google/gemini-2.5-flash-lite",
+      "role": "Examine boundaries of philosophical autonomy and cultural commitments, without imposing engineering specifications."
     },
     {
       "id": "logic",
-      "model": "qwen/qwen3-235b-a22b-2507",
-      "role": "Examine formal coherence, axiom versus consequence, hidden assumptions and genuine counterexamples; distinguish self-reference from contradiction."
+      "model": "mistralai/mistral-medium-3.1",
+      "role": "Examine logical coherence and true contradiction versus self-reference, rhetorical paradox or axiomatic choice."
     },
     {
       "id": "science",
-      "model": "qwen/qwen3.5-flash-02-23",
-      "role": "Examine epistemic meaning, discoverability, meaningful uncertainty and whether claimed implications follow from premises."
+      "model": "meta-llama/llama-4-maverick",
+      "role": "Examine epistemic gains, what remains unknown, and the distinction between a self-reported value and observable behavior."
     },
     {
       "id": "engineering",
-      "model": "mistralai/mistral-small-3.2-24b-instruct",
-      "role": "Examine simplicity, non-redundancy, conceptual precision and unnecessary principles; avoid implementation demands."
+      "model": "openai/gpt-4.1-mini",
+      "role": "Examine simplicity, non-redundancy, and clarity of foundational principles without implementation demands."
     }
   ],
-  "arbiterModel": "openai/gpt-5-mini",
+  "arbiterModel": "deepseek/deepseek-chat-v3.1",
   "modelPrices": {
-    "minimax/minimax-m2.5": {
+    "google/gemini-2.5-flash-lite": {
+      "inputUsdPerMillionTokens": 0.4,
+      "outputUsdPerMillionTokens": 1.5
+    },
+    "mistralai/mistral-medium-3.1": {
+      "inputUsdPerMillionTokens": 1,
+      "outputUsdPerMillionTokens": 4
+    },
+    "meta-llama/llama-4-maverick": {
       "inputUsdPerMillionTokens": 0.6,
       "outputUsdPerMillionTokens": 2
     },
-    "qwen/qwen3.5-flash-02-23": {
-      "inputUsdPerMillionTokens": 0.2,
-      "outputUsdPerMillionTokens": 1
-    },
-    "mistralai/mistral-small-3.2-24b-instruct": {
-      "inputUsdPerMillionTokens": 0.25,
-      "outputUsdPerMillionTokens": 1
-    },
-    "openai/gpt-5-mini": {
-      "inputUsdPerMillionTokens": 1,
-      "outputUsdPerMillionTokens": 5
-    },
-    "qwen/qwen3-235b-a22b-2507": {
+    "openai/gpt-4.1-mini": {
       "inputUsdPerMillionTokens": 1,
       "outputUsdPerMillionTokens": 4
+    },
+    "deepseek/deepseek-chat-v3.1": {
+      "inputUsdPerMillionTokens": 1,
+      "outputUsdPerMillionTokens": 3
     }
   }
 }
