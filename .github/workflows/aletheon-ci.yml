@@ -1,0 +1,24 @@
+name: Validate Aletheon Trial
+on:
+  push:
+    paths:
+      - 'experiments/**'
+      - '.github/workflows/aletheon-ci.yml'
+  pull_request:
+    paths:
+      - 'experiments/**'
+      - '.github/workflows/aletheon-ci.yml'
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      - name: Build
+        run: dotnet build experiments/Aletheon.Trial/Aletheon.Trial.csproj --configuration Release --warnaserror
+      - name: Validate JSON configuration
+        run: python3 -m json.tool experiments/agents.json > /dev/null
