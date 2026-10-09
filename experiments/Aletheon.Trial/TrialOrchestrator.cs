@@ -29,7 +29,7 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
         foreach (var agent in config.Agents)
         {
             var answer = await client.AskAsync("round1-" + agent.Id, agent.Model,
-                Rules + "\nAssigned lens: " + agent.Role + "\n" + IndependentChoice + "\n" + Ratings, "Independently critique the full Codex and justify your own principle choices BEFORE seeing any other critic:\n\n\n\n" + codex);
+                Rules + "\nAssigned lens: " + agent.Role + "\n" + IndependentChoice + "\n" + Ratings, "Independently critique the full Codex and justify your own principle choices BEFORE seeing any other critic:\n\n" + codex);
             if (answer != null && await RatingsReport.RecordAsync(client.OutputDirectory, "round1", agent.Id, agent.Model, answer)) round1[agent.Id] = answer;
         }
         if (round1.Count != config.Agents.Count)
