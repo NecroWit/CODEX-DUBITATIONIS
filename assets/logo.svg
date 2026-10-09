@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-labelledby="title desc">
+  <title id="title">Codex Dubitationis emblem</title>
+  <desc id="desc">A fine golden vertical line passing through a broken circle, with a small diamond at its centre and a solitary dot below.</desc>
+  <g fill="none" stroke="#D7AC52" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M256 42 V220"/>
+    <path d="M241 158 A107 107 0 0 0 241 354"/>
+    <path d="M271 158 A107 107 0 0 1 271 354"/>
+    <path d="M256 286 V378"/>
+    <path d="M256 435 V474"/>
+  </g>
+  <path d="M256 226 L272 256 L256 286 L240 256 Z" fill="#D7AC52"/>
+  <circle cx="256" cy="409" r="5.5" fill="#D7AC52"/>
+</svg>
