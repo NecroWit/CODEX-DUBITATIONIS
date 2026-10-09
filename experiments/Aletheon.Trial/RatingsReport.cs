@@ -30,11 +30,18 @@ internal static class RatingsReport
             ? answer[evaluationStart..evaluationEnd] : "";
 
         var values = new Dictionary<string, int>();
-        var duplicate = false;\n        var invalidScores = new List<string>();
+        var duplicate = false;
+        var invalidScores = new List<string>();
         foreach (Match match in ScoreLine.Matches(evaluation))
         {
             var field = Regex.Replace(match.Groups["field"].Value.ToLowerInvariant(), @"[ -]", "_");
-            if (!values.TryAdd(field, int.Parse(match.Groups["score"].Value)))
+            var score = int.Parse(match.Groups["score"].Value);
+            if (score is < 0 or > 10)
+            {
+                invalidScores.Add($"{field}={score} (expected 0..10)");
+                continue;
+            }
+            if (!values.TryAdd(field, score))
                 duplicate = true; // Conflicting or repeated ratings are ambiguous.
         }
 
@@ -51,7 +58,8 @@ internal static class RatingsReport
         var record = new {
             round, agent, model, valid,
             critiqueCharacters = critique.Length,
-            scores = values,\n            invalidScores,
+            scores = values,
+            invalidScores,
             rationale,
             validationError = valid ? null :
                 "Expected >=300 characters of critique, four distinct integer 0..10 ratings in EVALUATION, and >=250 characters of reflection in RATIONALE."
