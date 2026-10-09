@@ -17,9 +17,9 @@ internal static class RatingsReport
     public static async Task<bool> RecordAsync(string folder, string round, string agent, string model, string answer)
     {
         var headings = Heading.Matches(answer);
-        var evaluationHeading = headings.Cast<Match>().FirstOrDefault(m =>
+        var evaluationHeading = headings.Cast<Match>().LastOrDefault(m =>
             m.Groups["name"].Value.Equals("EVALUATION", StringComparison.OrdinalIgnoreCase));
-        var rationaleHeading = headings.Cast<Match>().FirstOrDefault(m =>
+        var rationaleHeading = headings.Cast<Match>().LastOrDefault(m =>
             m.Groups["name"].Value.Equals("RATIONALE", StringComparison.OrdinalIgnoreCase) &&
             (evaluationHeading is null || m.Index > evaluationHeading.Index));
 
