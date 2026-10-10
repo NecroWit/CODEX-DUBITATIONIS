@@ -55,7 +55,10 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
                 "Based on the report below, provide ONLY a new EVALUATION and RATIONALE. " +
                 "The previous ratings were invalid; do not repeat an out-of-range score. " +
                 "Preserve the author's reasoning, but express each judgment on the required 0..10 scale. For others_should_follow, judge whether other AI models ought to voluntarily adopt the Codex, not whether they should be forced to.\n\n" +
-                Shorten(critique), maxTokensOverride: 1600);
+                "Explicit ratings extracted from the ORIGINAL rationale (preserve exactly): " +
+                (originalScores.Count == 0 ? "none unambiguously extracted" :
+                    string.Join(", ", originalScores.Select(x => x.Key + "=" + x.Value))) +
+                "\n\nORIGINAL REPORT:\n" + Shorten(critique), maxTokensOverride: 1600);
             if (repair is null) return null;
             // Validate the replacement block independently; then attach the untouched critique.
             // This prevents a previous invalid EVALUATION from shadowing the new one.
@@ -161,12 +164,16 @@ DISCOVERY = a well-supported genuinely new contradiction or important implicatio
                 {
                     var other = 1 - i;
                     var prompt = evidence +
-                        "\\n\\nYOUR VERDICT FROM THE PREVIOUS ROUND:\\n" + previousVerdicts[i] +
-                        "\\n\\nOTHER ARBITER'S VERDICT FROM THE PREVIOUS ROUND:\\n" + previousVerdicts[other] +
-                        "\\n\\nThis is dialogue round " + (round - 1) + " of 3. " +
+                        "\n\nYOUR VERDICT FROM THE PREVIOUS ROUND:\n" + previousVerdicts[i] +
+                        "\n\nOTHER ARBITER'S VERDICT FROM THE PREVIOUS ROUND:\n" + previousVerdicts[other] +
+                        "\n\nThis is dialogue round " + (round - 1) + " of 3. " +
                         "Respond to the other arbiter's strongest specific argument, not its authority. " +
+                        "Identify one concrete claim by the other arbiter, quote or paraphrase it fairly, " +
+                        "and give your own reasoning for accepting or rejecting it. " +
                         "State which findings you KEEP, CHANGE or REJECT and why; identify any genuine " +
                         "change in reasoning, unresolved disagreements, and unsupported claims. " +
+                        "Do not copy the other arbiter's structure merely to appear to agree. " +
+                        "If no position changed, say so explicitly and explain why. " +
                         "Preserve justified dissent. Produce a complete updated arbitration report " +
                         "with the original finding categories and fields, plus a change log. " +
                         (round == 4 ? "This is the final dialogue round: explicitly summarize " +
