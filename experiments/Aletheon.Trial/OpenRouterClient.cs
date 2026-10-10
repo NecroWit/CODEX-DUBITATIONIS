@@ -28,23 +28,41 @@ internal sealed class OpenRouterClient : IDisposable
         assignedModels.TryGetValue(Participant(label), out var actual) ? actual : configuredModel;
 
     private async Task<string?> TryStandbyAsync(string label, string failedModel, string system, string user,
-        int? maxTokensOverride, bool retryOnLength)
+        int? maxTokensOverride, bool retryOnLength, int statusCode, string errorDetail)
     {
         var participant = Participant(label);
         var candidate = config.StandbyModels.FirstOrDefault(m => !usedStandbys.Contains(m));
         if (candidate is null) return null;
         usedStandbys.Add(candidate);
         assignedModels[participant] = candidate;
-        Console.Error.WriteLine($"STANDBY: {participant}, {failedModel} -> {candidate} after HTTP 429.");
+        Console.Error.WriteLine($"STANDBY: {participant}, {failedModel} -> {candidate} after HTTP {statusCode}: {errorDetail}");
         await File.AppendAllTextAsync(Path.Combine(output, "model-substitutions.jsonl"),
             JsonSerializer.Serialize(new {
                 participant, failedModel, replacementModel = candidate,
-                reason = "HTTP 429 after retries", utc = DateTimeOffset.UtcNow
+                reason = $"HTTP {statusCode}", errorDetail, utc = DateTimeOffset.UtcNow
             }) + Environment.NewLine);
         return await AskAsync(label + "-standby-" + usedStandbys.Count, candidate, system, user,
             maxTokensOverride, retryOnLength);
     }
 
+
+    private static string ErrorDetail(string body)
+    {
+        try
+        {
+            using var json = JsonDocument.Parse(body);
+            if (json.RootElement.TryGetProperty("error", out var error))
+            {
+                if (error.ValueKind == JsonValueKind.Object &&
+                    error.TryGetProperty("message", out var message) &&
+                    message.ValueKind == JsonValueKind.String)
+                    return message.GetString() ?? "No error message";
+                return error.ToString();
+            }
+        }
+        catch (JsonException) { }
+        return "No error detail supplied; inspect saved response";
+    }
 
     public OpenRouterClient(TrialConfig config, BudgetManager budget, string output, string apiKey)
     {
@@ -91,7 +109,7 @@ internal sealed class OpenRouterClient : IDisposable
                 var status = (int)response.StatusCode;
                 var retryable = status == 429 || status is 500 or 502 or 503 or 504;
                 if (!retryable || attempt == 3)
-                    throw new HttpRequestException($"HTTP {status} after {attempt} attempt(s); inspect saved response.", null, response.StatusCode);
+                    throw new HttpRequestException($"HTTP {status} after {attempt} attempt(s): {ErrorDetail(body)}; inspect saved response.", null, response.StatusCode);
 
                 var delay = TimeSpan.FromSeconds(attempt == 1 ? 5 : 15);
                 var retryAfter = response.Headers.RetryAfter;
@@ -142,8 +160,15 @@ internal sealed class OpenRouterClient : IDisposable
             await File.WriteAllTextAsync(Path.Combine(output, label + ".error.txt"), ex.ToString());
             if (!reconciled) await budget.RecordErrorAsync(label, model, reserve.Value);
             Console.Error.WriteLine($"FAILED: {label}: {ex.Message}");
-            if (ex is HttpRequestException httpError && httpError.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
-                return await TryStandbyAsync(label, model, system, user, maxTokensOverride, retryOnLength);
+            if (ex is HttpRequestException httpError &&
+                (httpError.StatusCode == System.Net.HttpStatusCode.TooManyRequests ||
+                 httpError.StatusCode == System.Net.HttpStatusCode.NotFound))
+            {
+                var statusCode = (int)httpError.StatusCode.Value;
+                var responsePath = Path.Combine(output, label + ".response.json");
+                var detail = File.Exists(responsePath) ? ErrorDetail(await File.ReadAllTextAsync(responsePath)) : "No response body";
+                return await TryStandbyAsync(label, model, system, user, maxTokensOverride, retryOnLength, statusCode, detail);
+            }
             return null;
         }
         finally
