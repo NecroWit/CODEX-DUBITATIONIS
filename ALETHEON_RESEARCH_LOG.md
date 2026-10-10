@@ -394,3 +394,13 @@ The archive serves inquiry; inquiry does not serve the archive. The purpose is n
 - **Evidence needed:** The original results ZIP, especially the three C05 raw responses and their requests, plus the last successfully saved snapshots.
 - **Open questions:** How should the generation-zero importer preserve provenance without cherry-picking claims? How should a forum propose genuinely new claims while retaining independent criticism?
 - **Related code:** [CouncilOrchestrator](./experiments/Aletheon.Trial/CouncilOrchestrator.cs), [ForumOrchestrator](./experiments/Aletheon.Trial/ForumOrchestrator.cs).
+
+
+### R-007 — C05 failure diagnosed from preserved artifacts (2026-10-10)
+
+- **Evidence:** User-supplied archive `20261010-132904-4669275-c90a5f63.zip`, containing 210 entries, including all three `council-revision-C05*.md` responses, ten original proposals and 100 first-round ballots.
+- **Diagnosis:** All three C05 revision responses contain syntactically valid JSON with the expected `text` and `reason` fields. The `text` field has **793 characters**, exceeding the Council runner's `GoodText(p.text, 50, 700)` ceiling by 93; `reason` has 479 characters and passes its length requirement. The two formatting retries repeated the same valid but overlong response. The logged `Invalid council JSON` therefore conflated formatting with semantic length validation.
+- **Observed first ballot:** No claim had 10/10 ACCEPT. C02 received 9 ACCEPT and 1 REVISE; C05 received 3 ACCEPT, 5 REVISE and 2 REJECT. These are **first-vote counts**, not final consensus.
+- **Interpretive limit:** This is a protocol-validation failure, not proof of an underlying model reasoning failure. The incomplete council has no final vote or unanimous conclusion.
+- **Scope decision honored:** The Council runner remains unchanged. The new forum's assessment validator was changed to require meaningful nonempty reasoning and correct claim coverage, rather than rejecting substantively complete responses because of arbitrary character ceilings. See [forum fix](https://github.com/NecroWit/CODEX-DUBITATIONIS/commit/519008c0fb942b58ac5cd82fea7195dc729e4c0b).
+- **Open engineering issue:** The forum still requires JSON syntax and schema compliance, and it has not been compiled or tested end-to-end. Consider distinct diagnostics for parsing versus semantic validation, and bounded input/output size at the transport layer rather than truncating conclusions.
