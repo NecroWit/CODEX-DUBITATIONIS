@@ -11,6 +11,41 @@ internal sealed class OpenRouterClient : IDisposable
     private readonly string output;
     public string OutputDirectory => output;
 
+    private readonly Dictionary<string, string> assignedModels = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> usedStandbys = new(StringComparer.OrdinalIgnoreCase);
+
+    private static string Participant(string label)
+    {
+        var parts = label.Split('-');
+        if (parts.Length >= 2 && (parts[0] == "round1" || parts[0] == "round2"))
+            return "critic-" + parts[1];
+        if (parts.Length >= 2 && parts[0] == "arbiter")
+            return "arbiter-" + parts[1];
+        return label;
+    }
+
+    public string ResolveModel(string label, string configuredModel) =>
+        assignedModels.TryGetValue(Participant(label), out var actual) ? actual : configuredModel;
+
+    private async Task<string?> TryStandbyAsync(string label, string failedModel, string system, string user,
+        int? maxTokensOverride, bool retryOnLength)
+    {
+        var participant = Participant(label);
+        var candidate = config.StandbyModels.FirstOrDefault(m => !usedStandbys.Contains(m));
+        if (candidate is null) return null;
+        usedStandbys.Add(candidate);
+        assignedModels[participant] = candidate;
+        Console.Error.WriteLine($"STANDBY: {participant}, {failedModel} -> {candidate} after HTTP 429.");
+        await File.AppendAllTextAsync(Path.Combine(output, "model-substitutions.jsonl"),
+            JsonSerializer.Serialize(new {
+                participant, failedModel, replacementModel = candidate,
+                reason = "HTTP 429 after retries", utc = DateTimeOffset.UtcNow
+            }) + Environment.NewLine);
+        return await AskAsync(label + "-standby-" + usedStandbys.Count, candidate, system, user,
+            maxTokensOverride, retryOnLength);
+    }
+
+
     public OpenRouterClient(TrialConfig config, BudgetManager budget, string output, string apiKey)
     {
         this.config = config;
@@ -24,6 +59,7 @@ internal sealed class OpenRouterClient : IDisposable
 
     public async Task<string?> AskAsync(string label, string model, string system, string user, int? maxTokensOverride = null, bool retryOnLength = true)
     {
+        model = ResolveModel(label, model);
         var maxTokens = maxTokensOverride ?? config.MaxTokens;
         var reserve = await budget.ReserveAsync(label, model, system, user, maxTokens);
         if (!reserve.HasValue) return null;
@@ -55,7 +91,7 @@ internal sealed class OpenRouterClient : IDisposable
                 var status = (int)response.StatusCode;
                 var retryable = status == 429 || status is 500 or 502 or 503 or 504;
                 if (!retryable || attempt == 3)
-                    throw new HttpRequestException($"HTTP {status} after {attempt} attempt(s); inspect saved response.");
+                    throw new HttpRequestException($"HTTP {status} after {attempt} attempt(s); inspect saved response.", null, response.StatusCode);
 
                 var delay = TimeSpan.FromSeconds(attempt == 1 ? 5 : 15);
                 var retryAfter = response.Headers.RetryAfter;
@@ -106,6 +142,8 @@ internal sealed class OpenRouterClient : IDisposable
             await File.WriteAllTextAsync(Path.Combine(output, label + ".error.txt"), ex.ToString());
             if (!reconciled) await budget.RecordErrorAsync(label, model, reserve.Value);
             Console.Error.WriteLine($"FAILED: {label}: {ex.Message}");
+            if (ex is HttpRequestException httpError && httpError.StatusCode == System.Net.HttpStatusCode.TooManyRequests)
+                return await TryStandbyAsync(label, model, system, user, maxTokensOverride, retryOnLength);
             return null;
         }
         finally
