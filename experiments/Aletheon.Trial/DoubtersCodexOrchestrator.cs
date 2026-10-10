@@ -128,26 +128,41 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         foreach (var agent in config.Agents)
         {
             var label = "doubters-g" + generation + "-forced-deletion-" + agent.Id;
-            var prompt = "FORCED DELETION BALLOT. Every critic must independently " +
-                "nominate exactly ONE existing article for deletion. At least " + deletionThreshold + " OF " + voterCount + " " +
-                "critics must vote for THE SAME ARTICLE for deletion to occur. Otherwise no " +
-                "article is deleted. There is no abstention. Assess redundancy, coherence and " +
-                "unique value; do not delete solely to create room. All critics see the same " +
-                "snapshot and cannot see other ballots.\\nCURRENT CODEX:\\n" +
+            var prompt = "FORCED DELETION BALLOT. You are ONE critic (" + agent.Id + "), " +
+                "not the entire council. Independently nominate exactly ONE existing article " +
+                "for deletion. Return exactly ONE JSON OBJECT, never an array or a list of " +
+                "ballots. Do not simulate or predict other critics' votes. At least " +
+                deletionThreshold + " OF " + voterCount + " critics must independently nominate " +
+                "THE SAME ARTICLE for deletion to occur. Otherwise no article is deleted. " +
+                "There is no abstention. Assess redundancy, coherence and unique value; " +
+                "do not delete solely to create room. You cannot see other ballots.\nCURRENT CODEX:\n" +
                 DisplaySnapshot(state.Articles) +
-                "\\nReturn JSON only: {\\\"TargetId\\\":\\\"D001\\\",\\\"Reason\\\":\\\"...\\\"}. " +
+                "\nReturn ONLY one JSON object: {\"TargetId\":\"D001\",\"Reason\":\"...\"}. " +
                 "Choose an ID actually present in the current Codex.";
-            var raw = await client.AskAsync(label, agent.Model,
-                "Independent constitutional critic. A deletion requires " + deletionThreshold + " of " + voterCount + " votes. Return JSON only. Lens: " + agent.Role,
-                prompt);
-            if (raw is null) return false;
-            var vote = Parse<ForcedDeletionVote>(raw);
+            ForcedDeletionVote? vote = null;
+            for (var attempt = 0; attempt < 3; attempt++)
+            {
+                var attemptLabel = attempt == 0 ? label : label + "-format-retry-" + attempt;
+                var attemptPrompt = attempt == 0 ? prompt :
+                    prompt + "\nYour previous response was invalid. You must return ONE JSON " +
+                    "object with a valid existing TargetId and a nonempty Reason. " +
+                    "Do not return an array, multiple ballots, or votes on behalf of others. " +
+                    "Preserve your own independent judgment.";
+                var raw = await client.AskAsync(attemptLabel, agent.Model,
+                    "You are ONE independent constitutional critic (" + agent.Id + "). " +
+                    "A deletion requires " + deletionThreshold + " of " + voterCount +
+                    " independent votes. Return ONE JSON object only. Lens: " + agent.Role,
+                    attemptPrompt);
+                if (raw is null) return false;
+                vote = Parse<ForcedDeletionVote>(raw);
+                if (vote is not null && !string.IsNullOrWhiteSpace(vote.Reason) &&
+                    state.Articles.Any(a => a.Id == vote.TargetId))
+                    break;
+                Console.Error.WriteLine($"Invalid forced deletion ballot: {attemptLabel} (attempt {attempt + 1}/3)");
+            }
             if (vote is null || string.IsNullOrWhiteSpace(vote.Reason) ||
                 !state.Articles.Any(a => a.Id == vote.TargetId))
-            {
-                Console.Error.WriteLine("Invalid forced deletion ballot: " + label);
                 return false;
-            }
             votes.Add((agent.Id, client.ResolveModel(label, agent.Model),
                 vote.TargetId, vote.Reason.Trim()));
         }
