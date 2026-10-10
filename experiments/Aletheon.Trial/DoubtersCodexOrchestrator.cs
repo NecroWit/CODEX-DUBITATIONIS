@@ -106,19 +106,46 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, name),
             JsonSerializer.Serialize(value, TrialConfig.Json));
 
-    public async Task<bool> RunAsync(string? stateFile)
+    public async Task<bool> RunAsync(string? stateFile, bool resume = false)
     {
         if (config.Agents.Count != 10)
             throw new InvalidOperationException("Doubters Codex requires --mode 10.");
-        var state = stateFile is null ? new State() :
-            JsonSerializer.Deserialize<State>(await File.ReadAllTextAsync(stateFile), TrialConfig.Json)
-            ?? throw new InvalidOperationException("Invalid Doubters Codex state.");
-        if (!ValidState(state)) throw new InvalidOperationException("Invalid Doubters Codex state.");
+        var inputPath = Path.Combine(client.OutputDirectory, "doubters-input.json");
+        var progressPath = Path.Combine(client.OutputDirectory, "doubters-progress.json");
+        var state = resume
+            ? JsonSerializer.Deserialize<State>(await File.ReadAllTextAsync(progressPath), TrialConfig.Json)
+            : stateFile is null ? new State() :
+                JsonSerializer.Deserialize<State>(await File.ReadAllTextAsync(stateFile), TrialConfig.Json);
+        if (state is null || !ValidState(state))
+            throw new InvalidOperationException("Invalid Doubters Codex state.");
+        var completedTurns = 0;
+        if (resume)
+        {
+            var initial = JsonSerializer.Deserialize<State>(await File.ReadAllTextAsync(inputPath), TrialConfig.Json)
+                ?? throw new InvalidOperationException("Missing initial state.");
+            if (!ValidState(initial) || state.Generation != initial.Generation ||
+                state.History.Count < initial.History.Count ||
+                !state.History.Take(initial.History.Count).Select(h => h.AfterSha256)
+                    .SequenceEqual(initial.History.Select(h => h.AfterSha256)))
+                throw new InvalidOperationException("Checkpoint does not match the original generation.");
+            completedTurns = state.History.Count - initial.History.Count;
+            if (completedTurns is < 0 or > 10)
+                throw new InvalidOperationException("Invalid number of completed turns.");
+            for (var i = 0; i < completedTurns; i++)
+            {
+                var decision = state.History[initial.History.Count + i];
+                if (decision.Generation != initial.Generation + 1 || decision.Turn != i + 1 ||
+                    decision.Author != config.Agents[i].Id ||
+                    !File.Exists(Path.Combine(client.OutputDirectory, "doubters-turn-" + (i + 1).ToString("D2") + ".json")))
+                    throw new InvalidOperationException("Checkpoint turn sequence does not match selected agents.");
+            }
+            Console.WriteLine($"DOUBTERS: resuming generation {initial.Generation + 1} from turn {completedTurns + 1}/10.");
+        }
+        else await SaveAsync("doubters-input.json", state);
         var generation = state.Generation + 1;
-        await SaveAsync("doubters-input.json", state);
         // Every turn observes all accepted edits from preceding turns.
         // Every vote within one turn observes exactly the same proposed edit.
-        for (var turn = 0; turn < config.Agents.Count; turn++)
+        for (var turn = completedTurns; turn < config.Agents.Count; turn++)
         {
             var author = config.Agents[turn];
             var before = Snapshot(state.Articles);
