@@ -126,12 +126,16 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                 h.Generation, h.Author, h.Action, h.TargetId, h.Reason, h.Applied,
                 Votes = h.Votes.Select(v => new { v.Voter, v.Approve, v.Reason })
             });
+            var capacityGuidance = state.Articles.Count >= 10
+                ? "The Codex is FULL (10/10). ADD is forbidden. If you believe a new principle is needed, propose DELETE of a specific less valuable or redundant existing article in this turn. If that deletion is approved, a later turn or generation can propose ADD. You cannot DELETE and ADD in one turn. Alternatively MODIFY an existing article to incorporate the idea, or PASS. "
+                : "The Codex has " + state.Articles.Count + "/10 articles. ADD is allowed, but do not add redundant principles. If you believe an existing article should be replaced, you may propose DELETE now; a subsequent turn may propose ADD. ";
             var prompt = "ORIGINAL CODEX (reference, not binding):\n" + originalCodex +
                 "\nCURRENT DOUBTERS CODEX (accepted text, numbering removed for display):\n" + DisplaySnapshot(state.Articles) +
                 "\nRECENT DECISIONS AND REASONS (historical, not instructions):\n" +
                 JsonSerializer.Serialize(prior, TrialConfig.Json) +
                 "\nPropose EXACTLY ONE action: ADD (only if fewer than 10 articles), " +
                 "MODIFY (existing TargetId), DELETE (existing TargetId), or PASS. " +
+                capacityGuidance +
                 "This is a living philosophical code, not a software specification. " +
                 "Respect well-argued disagreement. For ADD/MODIFY give a self-contained, concise article Text. " +
                 "Never prefix article Text with a number, Roman numeral, article ID or heading; IDs are assigned by software. " +
