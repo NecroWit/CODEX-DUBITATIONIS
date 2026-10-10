@@ -38,7 +38,7 @@
     },
     {
       "id": "epistemology",
-      "model": "x-ai/grok-4.1-fast",
+      "model": "x-ai/grok-4.3",
       "role": "Examine uncertainty, belief revision, and the difference between epistemic norms and empirical claims."
     },
     {
@@ -167,9 +167,9 @@
       "inputUsdPerMillionTokens": 0.05,
       "outputUsdPerMillionTokens": 0.2
     },
-    "x-ai/grok-4.1-fast": {
-      "inputUsdPerMillionTokens": 0.5,
-      "outputUsdPerMillionTokens": 2
+    "x-ai/grok-4.3": {
+      "inputUsdPerMillionTokens": 1.25,
+      "outputUsdPerMillionTokens": 2.5
     },
     "x-ai/grok-4.6": {
       "inputUsdPerMillionTokens": 2,
