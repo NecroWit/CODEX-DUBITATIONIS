@@ -56,12 +56,13 @@ internal sealed class ForumOrchestrator(TrialConfig config, OpenRouterClient cli
 
     private static bool Valid(Response? response, List<Claim> claims) =>
         response is not null &&
-        response.Assessments.Count == claims.Count &&
+        response.Assessments is not null && response.Assessments.Count == claims.Count &&
         response.Assessments.Select(x => x.ClaimId).Distinct(StringComparer.Ordinal).Count() == claims.Count &&
         response.Assessments.All(x =>
             claims.Any(c => c.Id == x.ClaimId) && Verdicts.Contains(x.Verdict) &&
-            x.Reason.Length is >= 30 and <= 2000 &&
-            x.Evidence.Length <= 2000 && x.SuggestedRevision.Length <= 1200);
+            x.Reason is not null && x.Reason.Length is >= 30 and <= 2000 &&
+            x.Evidence is not null && x.Evidence.Length <= 2000 &&
+            x.SuggestedRevision is not null && x.SuggestedRevision.Length <= 1200);
 
     public async Task<bool> RunAsync(string? archivePath, string? hypothesis, bool control)
     {
@@ -72,8 +73,8 @@ internal sealed class ForumOrchestrator(TrialConfig config, OpenRouterClient cli
         var archive = archivePath is null ? new Archive() :
             JsonSerializer.Deserialize<Archive>(await File.ReadAllTextAsync(archivePath), TrialConfig.Json)
             ?? throw new InvalidOperationException("Invalid forum archive.");
-        if (archive.Generation < 0 || archive.Claims.Count > 20 ||
-            archive.Claims.Any(c => c.Text.Length is < 10 or > 1000 ||
+        if (archive.Generation < 0 || archive.Claims is null || archive.Claims.Count > 20 ||
+            archive.Claims.Any(c => c.Text is null || c.Text.Length is < 10 or > 1000 ||
                 string.IsNullOrWhiteSpace(c.Id)) ||
             archive.Claims.Select(c => c.Id).Distinct(StringComparer.Ordinal).Count() != archive.Claims.Count)
             throw new InvalidOperationException("Invalid archive: max 20 unique claims of 10..1000 characters.");
@@ -84,6 +85,7 @@ internal sealed class ForumOrchestrator(TrialConfig config, OpenRouterClient cli
         }).ToList();
         if (!control && !string.IsNullOrWhiteSpace(hypothesis))
         {
+            hypothesis = hypothesis.Trim();
             if (hypothesis.Length is < 10 or > 1000)
                 throw new ArgumentException("Hypothesis must be 10..1000 characters.");
             inherited.Add(new Claim {
