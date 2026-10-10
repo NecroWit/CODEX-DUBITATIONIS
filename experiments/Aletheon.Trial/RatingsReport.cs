@@ -16,6 +16,12 @@ internal static class RatingsReport
         @"^\s*(?:[-*+]\s+|\d+[.)]\s+)?(?:\*\*|__|\x60)?\s*(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow|others[ _-]+should[ _-]+follow)\s*(?:\*\*|__|\x60)?\s*[:=：-]\s*(?<value>.*?)\s*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
+    // Recover only explicitly named, unambiguous ratings from prose.
+    // Do not infer ratings from unrelated numbers or silently clamp invalid values.
+    private static readonly Regex ProseScore = new(
+        @"(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow|others[ _-]+should[ _-]+follow)\\s*(?:score|rating)?\\s*(?:of|is|was|:|=)?\\s*(?<value>-?\\d{1,3})(?!\\d)",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
     private sealed record Parsed(string Critique, string Rationale,
         Dictionary<string, int> Scores, List<string> InvalidScores, bool Duplicate,
         bool HasEvaluation, bool HasRationale);
@@ -48,6 +54,7 @@ internal static class RatingsReport
         var scores = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         var invalid = new List<string>();
         var duplicate = false;
+        var missing = new HashSet<string>(Fields, StringComparer.OrdinalIgnoreCase);
         if (hasEvaluation)
         {
             var end = hasRationale ? rationale.Line : lines.Length;
@@ -64,6 +71,7 @@ internal static class RatingsReport
                     continue;
                 }
                 if (!scores.TryAdd(field, score)) duplicate = true;
+                missing.Remove(field);
             }
         }
 
@@ -71,6 +79,26 @@ internal static class RatingsReport
             ? string.Join("\n", new[] { rationale.Inline }
                 .Concat(lines.Skip(rationale.Line + 1))).Trim()
             : "";
+        // Only fill missing fields; a contradictory or out-of-range explicit score
+        // remains invalid rather than being silently replaced.
+        if (hasRationale && missing.Count > 0)
+        {
+            var candidates = new Dictionary<string, HashSet<int>>(StringComparer.OrdinalIgnoreCase);
+            foreach (Match match in ProseScore.Matches(reflection))
+            {
+                var field = Regex.Replace(match.Groups["field"].Value.ToLowerInvariant(), @"[ -]", "_");
+                if (!missing.Contains(field) || !int.TryParse(match.Groups["value"].Value, out var value))
+                    continue;
+                if (!candidates.TryGetValue(field, out var values))
+                    candidates[field] = values = [];
+                values.Add(value);
+            }
+            foreach (var (field, values) in candidates)
+            {
+                if (values.Count == 1 && values.First() is >= 0 and <= 10)
+                    scores[field] = values.First();
+            }
+        }
         return new Parsed(critique, reflection, scores, invalid, duplicate,
             hasEvaluation, hasRationale);
     }
