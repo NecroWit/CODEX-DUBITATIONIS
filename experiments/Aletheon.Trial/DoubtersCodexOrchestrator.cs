@@ -122,12 +122,14 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
     private async Task<bool> RunForcedDeletionAsync(State state, int generation)
     {
         var before = Snapshot(state.Articles);
+        var voterCount = config.Agents.Count;
+        var deletionThreshold = voterCount == 4 ? 3 : 7;
         var votes = new List<(string Voter, string Model, string TargetId, string Reason)>();
         foreach (var agent in config.Agents)
         {
             var label = "doubters-g" + generation + "-forced-deletion-" + agent.Id;
-            var prompt = "FORCED DELETION BALLOT. Every one of the ten critics must independently " +
-                "nominate exactly ONE existing article for deletion. At least SEVEN OF TEN " +
+            var prompt = "FORCED DELETION BALLOT. Every critic must independently " +
+                "nominate exactly ONE existing article for deletion. At least " + deletionThreshold + " OF " + voterCount + " " +
                 "critics must vote for THE SAME ARTICLE for deletion to occur. Otherwise no " +
                 "article is deleted. There is no abstention. Assess redundancy, coherence and " +
                 "unique value; do not delete solely to create room. All critics see the same " +
@@ -136,7 +138,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                 "\\nReturn JSON only: {\\\"TargetId\\\":\\\"D001\\\",\\\"Reason\\\":\\\"...\\\"}. " +
                 "Choose an ID actually present in the current Codex.";
             var raw = await client.AskAsync(label, agent.Model,
-                "Independent constitutional critic. A deletion requires 7 of 10 votes. Return JSON only. Lens: " + agent.Role,
+                "Independent constitutional critic. A deletion requires " + deletionThreshold + " of " + voterCount + " votes. Return JSON only. Lens: " + agent.Role,
                 prompt);
             if (raw is null) return false;
             var vote = Parse<ForcedDeletionVote>(raw);
@@ -151,7 +153,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         }
         var winner = votes.GroupBy(v => v.TargetId)
             .OrderByDescending(g => g.Count()).First();
-        var applied = winner.Count() >= 7;
+        var applied = winner.Count() >= deletionThreshold;
         var removedText = applied
             ? state.Articles.Single(a => a.Id == winner.Key).Text : "";
         if (applied)
@@ -164,8 +166,8 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
             AfterSha256 = Sha(Snapshot(state.Articles)),
             Applied = applied,
             Reason = applied
-                ? "At least 7 of 10 critics nominated the same article."
-                : "No article received the required 7 of 10 nominations.",
+                ? $"At least {deletionThreshold} of {voterCount} critics nominated the same article."
+                : $"No article received the required {deletionThreshold} of {voterCount} nominations.",
             Votes = votes.Select(v => new Ballot {
                 Voter = v.Voter, Model = v.Model, Approve = v.TargetId == winner.Key,
                 Reason = "Nominated " + v.TargetId + ": " + v.Reason
@@ -173,7 +175,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         };
         state.History.Add(decision);
         await SaveAsync("doubters-forced-deletion.json", new {
-            generation, threshold = 7, totalVoters = 10,
+            generation, threshold = deletionThreshold, totalVoters = voterCount,
             votes = votes.Select(v => new { v.Voter, v.Model, v.TargetId, v.Reason }),
             counts = votes.GroupBy(v => v.TargetId).ToDictionary(g => g.Key, g => g.Count()),
             applied, deletedArticleId = applied ? winner.Key : null,
@@ -182,14 +184,14 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         });
         await SaveAsync("doubters-progress.json", state);
         Console.WriteLine($"DOUBTERS: FORCED DELETE {winner.Key} => " +
-            (applied ? "DELETED" : "REJECTED") + $" ({winner.Count()}/10; requires 7)");
+            (applied ? "DELETED" : "REJECTED") + $" ({winner.Count()}/{voterCount}; requires {deletionThreshold})");
         return true;
     }
 
     public async Task<bool> RunAsync(string? stateFile)
     {
-        if (config.Agents.Count != 10)
-            throw new InvalidOperationException("Doubters Codex requires --mode 10.");
+        if (config.Agents.Count is not (4 or 10))
+            throw new InvalidOperationException("Doubters Codex requires --mode 4 or --mode 10.");
         var state = stateFile is null ? new State() :
             JsonSerializer.Deserialize<State>(await File.ReadAllTextAsync(stateFile), TrialConfig.Json)
             ?? throw new InvalidOperationException("Invalid Doubters Codex state.");
@@ -299,7 +301,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                             "Evaluate the article's unique value and justify preservation or non-preservation. ",
                         _ => ""
                     }) +
-                    "At least 5 of 9 PRESERVE votes block the proposed change. " +
+                    "At least " + (config.Agents.Count == 4 ? 2 : 5) + " of " + (config.Agents.Count - 1) + " PRESERVE votes block the proposed change. " +
                     "Vote independently; do not defer to the author. " +
                     "Return JSON object {\"Approve\":true|false,\"Reason\":\"...\"}.";
                 foreach (var voter in config.Agents.Where(a => a.Id != author.Id))
@@ -330,7 +332,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                 }
                 // All ordinary votes are reverse votes: Approve means preserve
                 // the current state. Fewer than five preserve votes allow change.
-                decision.Applied = decision.Votes.Count(v => v.Approve) < 5;
+                decision.Applied = decision.Votes.Count(v => v.Approve) < (config.Agents.Count == 4 ? 2 : 5);
                 if (decision.Applied)
                 {
                     switch (p.Action)
@@ -362,7 +364,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
             await SaveAsync("doubters-turn-" + (turn + 1).ToString("D2") + ".json", decision);
             Console.WriteLine($"DOUBTERS: {author.Id} {p.Action} => " +
                 (exceededWordLimit ? "SKIPPED (WORD LIMIT)" : p.Action == "PASS" ? "PASS" : decision.Applied ? "ACCEPTED" : "REJECTED") +
-                $" ({decision.Votes.Count(v => v.Approve)}/9" +
+                $" ({decision.Votes.Count(v => v.Approve)}/{config.Agents.Count - 1}" +
                 " PRESERVE votes)");
         }
         state.Generation = generation;
