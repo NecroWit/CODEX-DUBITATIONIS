@@ -71,9 +71,8 @@ internal sealed class ForumOrchestrator(TrialConfig config, OpenRouterClient cli
         response.Assessments.Select(x => x.ClaimId).Distinct(StringComparer.Ordinal).Count() == claims.Count &&
         response.Assessments.All(x =>
             claims.Any(c => c.Id == x.ClaimId) && Verdicts.Contains(x.Verdict) &&
-            x.Reason is not null && x.Reason.Length is >= 30 and <= 2000 &&
-            x.Evidence is not null && x.Evidence.Length <= 2000 &&
-            x.SuggestedRevision is not null && x.SuggestedRevision.Length <= 1200);
+            !string.IsNullOrWhiteSpace(x.Reason) &&
+            x.Evidence is not null && x.SuggestedRevision is not null);
 
     public async Task<bool> RunAsync(string? archivePath, string? hypothesis, bool control)
     {
@@ -146,7 +145,7 @@ internal sealed class ForumOrchestrator(TrialConfig config, OpenRouterClient cli
             var parsed = Parse(answer);
             if (!Valid(parsed, inherited))
             {
-                Console.Error.WriteLine("Invalid forum ballot: " + label + ". Raw response retained.");
+                Console.Error.WriteLine("Invalid forum ballot schema or missing required reasoning: " + label + ". Raw response retained.");
                 return false;
             }
             ballots.AddRange(parsed!.Assessments.Select(a => new Recorded(agent.Id,
