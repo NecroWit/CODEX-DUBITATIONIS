@@ -108,3 +108,19 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Constraints.** No silent rewriting of historical claims; unanimity is not truth; no unsupported claim of model identity, belief or consciousness. Diagnose the C05 failure from saved artifacts before deciding whether any forum-specific fix is warranted.
 
 **Trace.** [Research Log R-006](./ALETHEON_RESEARCH_LOG.md); [forum protocol](./experiments/FORUM-DUBITANTIUM.ru.md).
+
+
+### E-005 — Codex Dubitantium: a separate, voted and historically accountable text
+
+**Date:** 2026-10-10  
+**Status:** Implemented experimental protocol; compilation and live behavior not yet verified
+
+**Origin.** After examining the first, incomplete Council of Ten ballot, the collaborator proposed a parallel ten-article “Codex of the Doubters” governed by the models themselves through explicit votes. The original Codex must remain unchanged.
+
+**Mechanism.** Each of ten participants may propose ADD (while fewer than ten articles), MODIFY, DELETE or PASS once per generation. For a proposed change, the other nine vote with reasons; at least five approvals apply the edit. The state preserves permanent article IDs, all proposals (including rejected ones), author and actual model, full ballot arguments, generation and before/after content hashes. The readable codex is a derived output, not the source of historical truth.
+
+**Epistemic constraint.** Voting measures acceptance under a prompt, not truth, agency or stable convictions. The project must retain minority objections, the precise wording before revision and the origin of each adopted change. This is a new experimental artifact, not an amendment to Aletheon's canonical Core or to the original Codex.
+
+**Open problems.** Test whether serial proposal order creates lock-in; verify that the persistent archive can be audited over many generations; distinguish a voted cultural norm from a merely popular formulation; connect this protocol to Forum Dubitantium only after independent validation.
+
+**Trace.** [Implementation](./experiments/Aletheon.Trial/DoubtersCodexOrchestrator.cs); [protocol](./experiments/CODEX-DUBITANTIUM.ru.md).
