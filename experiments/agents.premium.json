@@ -2,7 +2,7 @@
   "endpoint": "https://openrouter.ai/api/v1/chat/completions",
   "temperature": 0.2,
   "maxTokens": 4000,
-  "maxBudgetUsd": 8,
+  "maxBudgetUsd": 10,
   "maxRequestUsd": 1.5,
   "maxReviewCharacters": 4500,
   "agents": [
@@ -48,12 +48,12 @@
     },
     {
       "id": "pragmatism",
-      "model": "minimax/minimax-m2.5",
+      "model": "mistralai/mistral-large-2512",
       "role": "Examine whether the manifesto is useful without confusing philosophical commitments with engineering specifications."
     },
     {
       "id": "skepticism",
-      "model": "deepseek/deepseek-v3.2",
+      "model": "cohere/command-a-plus",
       "role": "Challenge hidden assumptions and identify the strongest plausible counterargument without inventing paradoxes."
     },
     {
@@ -184,7 +184,7 @@
       "outputUsdPerMillionTokens": 10
     }
   },
-  "mode": 14,
+  "mode": 10,
   "arbiterModels": [
     "openai/gpt-5",
     "x-ai/grok-4.6"
