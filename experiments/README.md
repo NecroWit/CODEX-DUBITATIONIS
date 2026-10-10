@@ -4,7 +4,7 @@ A reproducible, adversarial multi-model critique of [Codex Dubitationis](../CODE
 
 ## Cheap rehearsal and premium run
 
-Two versioned 14-critic / 2-arbiter profiles use the **same protocol, critic roles, prompts, two critic rounds, independent arbitration, and arbiter cross-review**:
+Two versioned 14-critic / 2-arbiter-capable profiles use the **same protocol, critic roles, prompts, two critic rounds, independent arbitration, and three rounds of arbiter dialogue**:
 
 - `agents.cheap.json`: four inexpensive critic model IDs repeated across fourteen distinct roles (Mistral Small, DeepSeek V3.2, Nemotron Nano, MiniMax M2.5); independent arbiters Gemini 2.5 Flash-Lite and GPT-4o mini. This is an integration and budget rehearsal, **not fourteen independent model families**.
 - `agents.premium.json`: preserves the existing fourteen model assignments from `agents.json` and its Gemini Flash-Lite / GLM 4.6 arbiters. This is the higher-cost comparison profile, **not a guarantee that all included models are premium-tier**. Review assignments before a definitive high-end run.
@@ -16,25 +16,31 @@ dotnet run --project experiments/Aletheon.Trial -- --config agents.cheap.json
 dotnet run --project experiments/Aletheon.Trial -- --config agents.premium.json
 ```
 
-Both profiles set `mode: 14` and `maxBudgetUsd: 1`. This local gate is approximate and can interrupt either run, especially the premium profile. Set an account-side OpenRouter key spending limit and verify current model availability/prices before running. The runner does not resume interrupted experiments. Results save the effective config, so model identity and Codex hash can be compared later. `agents.json` remains the backward-compatible default. 
+Both profiles default to `mode: 14` and `maxBudgetUsd: 1`. This local gate is approximate and can interrupt either run, especially the premium profile. Set an account-side OpenRouter key spending limit and verify current model availability/prices before running. The runner does not resume interrupted experiments. Results save the effective config, so model identity and Codex hash can be compared later. `agents.json` remains the backward-compatible default. 
 
 ## Trial modes
 
-Select a mode without changing `agents.json`:
-
-| Mode | Critics | Arbiters | API requests |
+| Mode | Critics | Arbiters | Main API requests |
 | --- | ---: | ---: | ---: |
-| `4` | 4 | 1 | 9 |
-| `10` (default) | 10 | 1 | 21 |
-| `14` | 14 | 2 (two rounds each) | 32 |
+| `4` | 4 | 1 independent | 9 |
+| `10` | 10 | 2, with three dialogue rounds | 28 |
+| `14` | 14 | 2, with three dialogue rounds | 36 |
+
+Two critic rounds are followed by independent arbiter verdicts (round 1). Each arbiter then reads the **previous completed round** of the other's verdict and responds for three dialogue rounds (rounds 2, 3, 4). Neither sees the other arbiter's reply from the current round. Final reports are `arbiter-1-round4.md` and `arbiter-2-round4.md`. These counts exclude retries/ratings repairs.
+
+Run the inexpensive integration test on ten critics first:
 
 ```bash
-dotnet run --project experiments/Aletheon.Trial -- --mode 4
-dotnet run --project experiments/Aletheon.Trial -- --mode 10
-dotnet run --project experiments/Aletheon.Trial -- --mode 14
+dotnet run --project experiments/Aletheon.Trial -- --config agents.cheap.json --mode 10
 ```
 
-The first N critics in `agents.json` participate. GLM 4.6 arbitrates all modes; the 14-critic mode additionally uses Gemini 2.5 Flash-Lite. Both arbiters first assess the critics independently, then each reads the other's initial verdict and issues a revised final verdict. Neither sees the other's revised verdict before finishing. Files are named `arbiter-1-round1.md`, `arbiter-2-round1.md`, `arbiter-1-round2.md`, and `arbiter-2-round2.md`. Critics use `maxTokens` (4000); arbiters have a separate 12000-token output cap. The shared per-run budget gate remains $1. Large modes may stop early if the budget estimate exceeds the cap.
+For the subsequent fourteen-critic integration run:
+
+```bash
+dotnet run --project experiments/Aletheon.Trial -- --config agents.cheap.json --mode 14
+```
+
+For the later model-quality comparison, `agents.premium.json` already includes GLM 4.6 as the second arbiter, but **its critic lineup is not yet a finalized expensive-model roster**. Review current OpenRouter availability, pricing and budget limits before running that profile. All modes retain the five critic ratings including `others_should_follow`. 
 
 ## Prerequisites
 
