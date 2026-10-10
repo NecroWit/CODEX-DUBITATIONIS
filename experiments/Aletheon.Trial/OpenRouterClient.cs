@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using System.Net.Http.Headers;
 using System.Text;
 using System.Text.Json;
@@ -32,12 +33,16 @@ internal sealed class OpenRouterClient : IDisposable
         }, TrialConfig.Json);
         await File.WriteAllTextAsync(Path.Combine(output, label + ".request.json"), requestJson);
         var reconciled = false;
+        var elapsed = Stopwatch.StartNew();
+        var attempts = 0;
+        var completed = false;
         try
         {
             // Retry only transient throttling/server failures. One budget reservation covers all attempts.
             string body = "";
             for (var attempt = 1; attempt <= 3; attempt++)
             {
+                attempts = attempt;
                 using var request = new HttpRequestMessage(HttpMethod.Post, config.Endpoint) {
                     Content = new StringContent(requestJson, Encoding.UTF8, "application/json")
                 };
@@ -92,7 +97,8 @@ internal sealed class OpenRouterClient : IDisposable
                 throw new InvalidOperationException($"Incomplete response: finish_reason={finish ?? "missing"}, native_finish_reason={(choice.TryGetProperty("native_finish_reason", out var native) ? native.ToString() : "missing")}, provider={(parsed.RootElement.TryGetProperty("provider", out var provider) ? provider.ToString() : "missing")}, request_id={(parsed.RootElement.TryGetProperty("id", out var id) ? id.ToString() : "missing")}; inspect saved response for any error details; saved output is NOT accepted.");
             if (string.IsNullOrWhiteSpace(answer))
                 throw new InvalidOperationException("Empty model response.");
-            Console.WriteLine($"RECEIVED: {label}");
+            completed = true;
+            Console.WriteLine($"RECEIVED: {label} ({elapsed.Elapsed.TotalSeconds:F1}s, {attempts} HTTP attempt(s))");
             return answer;
         }
         catch (Exception ex)
@@ -101,6 +107,20 @@ internal sealed class OpenRouterClient : IDisposable
             if (!reconciled) await budget.RecordErrorAsync(label, model, reserve.Value);
             Console.Error.WriteLine($"FAILED: {label}: {ex.Message}");
             return null;
+        }
+        finally
+        {
+            elapsed.Stop();
+            // A length retry has its own label and timing record.
+            // The parent call's elapsed time includes its child retry, so use
+            // the per-attempt records for additive latency comparisons.
+            await File.AppendAllTextAsync(Path.Combine(output, "request-timings.jsonl"),
+                JsonSerializer.Serialize(new {
+                    label, model, elapsedSeconds = Math.Round(elapsed.Elapsed.TotalSeconds, 3),
+                    httpAttempts = attempts, completed,
+                    includesLengthRetry = !completed && retryOnLength &&
+                        File.Exists(Path.Combine(output, label + "-length-retry.request.json"))
+                }) + Environment.NewLine);
         }
     }
 
