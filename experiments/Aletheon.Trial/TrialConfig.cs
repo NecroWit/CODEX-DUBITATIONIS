@@ -10,6 +10,7 @@ internal sealed class TrialConfig
     public List<AgentConfig> Agents { get; set; } = new();
     public string ArbiterModel { get; set; } = "";
     public List<string> ArbiterModels { get; set; } = new();
+    public List<string> StandbyModels { get; set; } = new();
     public int Mode { get; set; } = 10;
     public Dictionary<string, ModelPrice> ModelPrices { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public int MaxReviewCharacters { get; set; } = 4500;
@@ -45,7 +46,14 @@ internal sealed class TrialConfig
             endpoint.AbsolutePath != "/api/v1/chat/completions" || !string.IsNullOrEmpty(endpoint.Query) ||
             !string.IsNullOrEmpty(endpoint.UserInfo))
             throw new InvalidOperationException("Only the HTTPS OpenRouter chat completions endpoint is supported.");
-        foreach (var model in config.Agents.Select(a => a.Model).Concat(config.ArbiterModels))
+        if (config.StandbyModels.Count != 0 &&
+            (config.StandbyModels.Count != 5 ||
+             config.StandbyModels.Any(string.IsNullOrWhiteSpace) ||
+             config.StandbyModels.Distinct(StringComparer.OrdinalIgnoreCase).Count() != 5 ||
+             config.StandbyModels.Any(m => config.Agents.Any(a => string.Equals(a.Model, m, StringComparison.OrdinalIgnoreCase)) ||
+                                           config.ArbiterModels.Contains(m, StringComparer.OrdinalIgnoreCase))))
+            throw new InvalidOperationException("Configure exactly five distinct standby models, different from active critics and arbiters.");
+        foreach (var model in config.Agents.Select(a => a.Model).Concat(config.ArbiterModels).Concat(config.StandbyModels))
             if (!config.ModelPrices.TryGetValue(model, out var price) ||
                 price.InputUsdPerMillionTokens <= 0 || price.OutputUsdPerMillionTokens <= 0)
                 throw new InvalidOperationException($"Missing positive modelPrices entry for {model}.");
