@@ -65,6 +65,16 @@ await File.WriteAllTextAsync(Path.Combine(output, "config.json"), JsonSerializer
 await File.WriteAllTextAsync(Path.Combine(output, "manifest.json"),
     JsonSerializer.Serialize(new { utc = DateTimeOffset.UtcNow, codexSha256 = hash, protocol = "v0.5" }, TrialConfig.Json));
 Console.WriteLine($"Experiment output: {output}");
+if (doubters && doubtersState is null)
+{
+    var latest = Path.Combine(experimentDir, "doubters", "latest.json");
+    if (File.Exists(latest))
+    {
+        doubtersState = latest;
+        Console.WriteLine("Doubters: loading latest completed generation from " + latest);
+    }
+    else Console.WriteLine("Doubters: no previous generation; starting from empty codex.");
+}
 var budget = new BudgetManager(config, output);
 using var client = new OpenRouterClient(config, budget, output, key);
 if (!(doubters
