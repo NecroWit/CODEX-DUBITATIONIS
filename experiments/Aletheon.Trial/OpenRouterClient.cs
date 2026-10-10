@@ -89,7 +89,7 @@ internal sealed class OpenRouterClient : IDisposable
                 }
             }
             if (finish != "stop")
-                throw new InvalidOperationException($"Incomplete response: finish_reason={finish ?? "missing"}; saved output is NOT accepted.");
+                throw new InvalidOperationException($"Incomplete response: finish_reason={finish ?? "missing"}, native_finish_reason={(choice.TryGetProperty("native_finish_reason", out var native) ? native.ToString() : "missing")}, provider={(parsed.RootElement.TryGetProperty("provider", out var provider) ? provider.ToString() : "missing")}, request_id={(parsed.RootElement.TryGetProperty("id", out var id) ? id.ToString() : "missing")}; inspect saved response for any error details; saved output is NOT accepted.");
             if (string.IsNullOrWhiteSpace(answer))
                 throw new InvalidOperationException("Empty model response.");
             Console.WriteLine($"RECEIVED: {label}");
