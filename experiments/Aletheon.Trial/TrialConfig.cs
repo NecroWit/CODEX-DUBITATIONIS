@@ -34,7 +34,7 @@ internal sealed class TrialConfig
             config.Agents.Any(a => config.ArbiterModels.Contains(a.Model, StringComparer.OrdinalIgnoreCase)))
             throw new InvalidOperationException("Configure two distinct arbiters, neither used as a critic.");
         config.Agents = config.Agents.Take(config.Mode).ToList();
-        config.ArbiterModels = config.ArbiterModels.Take(config.Mode == 14 ? 2 : 1).ToList();
+        config.ArbiterModels = config.ArbiterModels.Take(config.Mode >= 10 ? 2 : 1).ToList();
         config.ArbiterModel = config.ArbiterModels[0];
         if (config.MaxTokens is < 100 or > 16000 || config.Temperature is < 0 or > 2 ||
             config.MaxBudgetUsd is <= 0 or > 10 || config.MaxRequestUsd <= 0 || config.MaxRequestUsd > config.MaxBudgetUsd ||
