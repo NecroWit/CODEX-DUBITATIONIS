@@ -48,6 +48,11 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         public string Text { get; set; } = "";
         public string Reason { get; set; } = "";
     }
+    private sealed class ForcedDeletionVote
+    {
+        public string TargetId { get; set; } = "";
+        public string Reason { get; set; } = "";
+    }
     private sealed class VoteResponse
     {
         public bool Approve { get; set; }
@@ -111,6 +116,74 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, name),
             JsonSerializer.Serialize(value, TrialConfig.Json));
 
+    // Independent, simultaneous-in-context nominations. Seven matching votes out of ten
+    // are required; no author, chair or tie-breaker chooses the target.
+    private async Task<bool> RunForcedDeletionAsync(State state, int generation)
+    {
+        var before = Snapshot(state.Articles);
+        var votes = new List<(string Voter, string Model, string TargetId, string Reason)>();
+        foreach (var agent in config.Agents)
+        {
+            var label = "doubters-g" + generation + "-forced-deletion-" + agent.Id;
+            var prompt = "FORCED DELETION BALLOT. Every one of the ten critics must independently " +
+                "nominate exactly ONE existing article for deletion. At least SEVEN OF TEN " +
+                "critics must vote for THE SAME ARTICLE for deletion to occur. Otherwise no " +
+                "article is deleted. There is no abstention. Assess redundancy, coherence and " +
+                "unique value; do not delete solely to create room. All critics see the same " +
+                "snapshot and cannot see other ballots.\\nCURRENT CODEX:\\n" +
+                DisplaySnapshot(state.Articles) +
+                "\\nReturn JSON only: {\\\"TargetId\\\":\\\"D001\\\",\\\"Reason\\\":\\\"...\\\"}. " +
+                "Choose an ID actually present in the current Codex.";
+            var raw = await client.AskAsync(label, agent.Model,
+                "Independent constitutional critic. A deletion requires 7 of 10 votes. Return JSON only. Lens: " + agent.Role,
+                prompt);
+            if (raw is null) return false;
+            var vote = Parse<ForcedDeletionVote>(raw);
+            if (vote is null || string.IsNullOrWhiteSpace(vote.Reason) ||
+                !state.Articles.Any(a => a.Id == vote.TargetId))
+            {
+                Console.Error.WriteLine("Invalid forced deletion ballot: " + label);
+                return false;
+            }
+            votes.Add((agent.Id, client.ResolveModel(label, agent.Model),
+                vote.TargetId, vote.Reason.Trim()));
+        }
+        var winner = votes.GroupBy(v => v.TargetId)
+            .OrderByDescending(g => g.Count()).First();
+        var applied = winner.Count() >= 7;
+        var removedText = applied
+            ? state.Articles.Single(a => a.Id == winner.Key).Text : "";
+        if (applied)
+            state.Articles.RemoveAll(a => a.Id == winner.Key);
+        var decision = new Decision {
+            Generation = generation, Turn = 0, Author = "FORCED_DELETION",
+            Action = "FORCED_DELETE", TargetId = winner.Key,
+            Before = removedText, BeforeSha256 = Sha(before),
+            AfterSha256 = Sha(Snapshot(state.Articles)),
+            Applied = applied,
+            Reason = applied
+                ? "At least 7 of 10 critics nominated the same article."
+                : "No article received the required 7 of 10 nominations.",
+            Votes = votes.Select(v => new Ballot {
+                Voter = v.Voter, Model = v.Model, Approve = v.TargetId == winner.Key,
+                Reason = "Nominated " + v.TargetId + ": " + v.Reason
+            }).ToList()
+        };
+        state.History.Add(decision);
+        await SaveAsync("doubters-forced-deletion.json", new {
+            generation, threshold = 7, totalVoters = 10,
+            votes = votes.Select(v => new { v.Voter, v.Model, v.TargetId, v.Reason }),
+            counts = votes.GroupBy(v => v.TargetId).ToDictionary(g => g.Key, g => g.Count()),
+            applied, deletedArticleId = applied ? winner.Key : null,
+            deletedArticleText = removedText, beforeSha256 = decision.BeforeSha256,
+            afterSha256 = decision.AfterSha256
+        });
+        await SaveAsync("doubters-progress.json", state);
+        Console.WriteLine($"DOUBTERS: FORCED DELETE {winner.Key} => " +
+            (applied ? "DELETED" : "REJECTED") + $" ({winner.Count()}/10; requires 7)");
+        return true;
+    }
+
     public async Task<bool> RunAsync(string? stateFile)
     {
         if (config.Agents.Count != 10)
@@ -125,6 +198,11 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         // Every vote within one turn observes exactly the same proposed edit.
         for (var turn = 0; turn < config.Agents.Count; turn++)
         {
+            // After five ordinary turns, before the sixth, conduct a separate
+            // ten-critic deletion ballot. It does not consume an ordinary turn.
+            if (turn == 5 && state.Articles.Count > 0 &&
+                !await RunForcedDeletionAsync(state, generation))
+                return false;
             var author = config.Agents[turn];
             var before = Snapshot(state.Articles);
             var prior = state.History.TakeLast(10).Select(h => new {
