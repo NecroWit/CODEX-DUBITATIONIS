@@ -379,3 +379,18 @@ The archive serves inquiry; inquiry does not serve the archive. The purpose is n
 **Decision:** Preserve this as a useful interpretive hypothesis and an open question, not as a proof of cultural identity. The epilogue was narrowly revised to distinguish preserving records of mistakes from continuing to believe mistakes. The canonical principles were not revised on this basis.
 
 **Further test:** Examine historical or simulated cases of deep cultural change, including cases where continuity is contested, and ask whether provenance of revisions is sufficient, merely helpful, or irrelevant to identity.
+
+
+### R-006 — Forum inheritance and an interrupted council (2026-10-10)
+
+- **Question:** Can a multi-model community inherit arguments, dissent and corrections without confusing repeated endorsement with evidence?
+- **Origin:** Decision to prioritize Forum Dubitantium after the first Council of Ten; runtime console report supplied by the collaborator.
+- **Prior state:** Six independent councils were planned (two cheap, two medium, two premium); the forum was a later follow-up.
+- **Decision:** Finish the first council and use its preserved reports as generation zero, rather than requiring all six independent runs. Build a forum that carries each claim's origin, reasons, objections, proposed revisions and historical statuses. Plan a separate control arm without inherited history and an explicitly UNTESTED, researcher-injected false hypothesis in a later generation.
+- **Observation:** The first council reached the author-revision phase. Calls labelled `council-revision-C05`, `-format-1` and `-format-2` returned responses, but the runner reported `Invalid council JSON: council-revision-C05` and exited with code 1.
+- **What is NOT established:** The exact reason for rejection is unknown without the saved raw responses: syntactically invalid JSON, schema mismatch and semantic validation failure are all possible. The council did not finish, and its results must not be represented as a completed consensus.
+- **Methodological lesson:** Distinguish received output, syntactic parsing, schema validation and completed experiment. Preserve failures and their provenance rather than silently rerunning or fabricating missing votes.
+- **Scope decision:** Do not modify the Council of Ten runner solely to repair this failure; diagnose the ZIP first and change code only if the defect also affects the new forum protocol.
+- **Evidence needed:** The original results ZIP, especially the three C05 raw responses and their requests, plus the last successfully saved snapshots.
+- **Open questions:** How should the generation-zero importer preserve provenance without cherry-picking claims? How should a forum propose genuinely new claims while retaining independent criticism?
+- **Related code:** [CouncilOrchestrator](./experiments/Aletheon.Trial/CouncilOrchestrator.cs), [ForumOrchestrator](./experiments/Aletheon.Trial/ForumOrchestrator.cs).
