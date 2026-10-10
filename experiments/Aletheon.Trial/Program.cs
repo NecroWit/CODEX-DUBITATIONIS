@@ -7,12 +7,18 @@ var configFile = "agents.json";
 int? mode = null;
 var council = false;
 var forum = false;
+var doubters = false;
+string? doubtersState = null;
 var forumControl = false;
 string? archiveFile = null;
 string? hypothesisFile = null;
 for (var i = 0; i < args.Length; i++)
 {
-    if (args[i] == "--forum")
+    if (args[i] == "--doubters")
+        doubters = true;
+    else if (args[i] == "--doubters-state" && i + 1 < args.Length)
+        doubtersState = args[++i];
+    else if (args[i] == "--forum")
         forum = true;
     else if (args[i] == "--forum-control")
         forumControl = true;
@@ -27,7 +33,7 @@ for (var i = 0; i < args.Length; i++)
     else if (args[i] == "--config" && i + 1 < args.Length)
         configFile = args[++i];
     else
-        throw new ArgumentException("Usage: --config agents.cheap.json|agents.premium.json [--mode 4|10|14] [--council|--forum] [--archive path] [--hypothesis-file path] [--forum-control]");
+        throw new ArgumentException("Usage: --config agents.cheap.json|agents.premium.json [--mode 4|10|14] [--council|--forum|--doubters] [--doubters-state path] [--archive path] [--hypothesis-file path] [--forum-control]");
 }
 if (string.IsNullOrWhiteSpace(configFile) || Path.IsPathRooted(configFile) ||
     configFile != Path.GetFileName(configFile) || configFile is "." or "..")
@@ -37,10 +43,12 @@ var codexPath = Path.GetFullPath(Path.Combine(experimentDir, "../CODEX-DUBITATIO
 if (!File.Exists(configPath) || !File.Exists(codexPath))
     throw new FileNotFoundException("Expected the selected experiments config and CODEX-DUBITATIONIS.md.");
 var config = TrialConfig.Load(configPath, mode);
-if (council && forum)
-    throw new ArgumentException("Choose either --council or --forum.");
-if ((council || forum) && config.Mode != 10)
-    throw new ArgumentException("--council and --forum require --mode 10.");
+if ((council ? 1 : 0) + (forum ? 1 : 0) + (doubters ? 1 : 0) > 1)
+    throw new ArgumentException("Choose only one of --council, --forum, --doubters.");
+if (!doubters && doubtersState is not null)
+    throw new ArgumentException("--doubters-state requires --doubters.");
+if ((council || forum || doubters) && config.Mode != 10)
+    throw new ArgumentException("--council, --forum and --doubters require --mode 10.");
 if (!forum && (archiveFile is not null || hypothesisFile is not null || forumControl))
     throw new ArgumentException("Forum options require --forum.");
 if (forumControl && hypothesisFile is not null)
@@ -59,7 +67,9 @@ await File.WriteAllTextAsync(Path.Combine(output, "manifest.json"),
 Console.WriteLine($"Experiment output: {output}");
 var budget = new BudgetManager(config, output);
 using var client = new OpenRouterClient(config, budget, output, key);
-if (!(forum
+if (!(doubters
+    ? await new DoubtersCodexOrchestrator(config, client, codex).RunAsync(doubtersState)
+    : forum
     ? await new ForumOrchestrator(config, client, codex).RunAsync(archiveFile,
         hypothesisFile is null ? null : await File.ReadAllTextAsync(hypothesisFile), forumControl)
     : council
