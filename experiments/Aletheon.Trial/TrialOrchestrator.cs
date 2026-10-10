@@ -95,6 +95,7 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
         }
 
         var round2 = new Dictionary<string, string>();
+        var excluded = new List<string>();
         foreach (var agent in config.Agents)
         {
             var others = string.Join("\n\n", round1.Where(x => x.Key != agent.Id)
@@ -106,19 +107,33 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
                 Rules + "\nAssigned lens: " + agent.Role + "\n" + IndependentChoice + "\n" + Ratings + "\nRevisit your initial KEEP/CHANGE/REJECT choices explicitly after cross-review; identify what changed and the particular argument that caused it, or justify why nothing changed. Re-score after cross-review; do not copy prior scores automatically.", prompt);
             if (answer is null)
             {
+                if (client.WasRound2RateLimited(agent.Id))
+                {
+                    excluded.Add(agent.Id);
+                    await File.AppendAllTextAsync(Path.Combine(client.OutputDirectory, "excluded-critics.jsonl"),
+                        System.Text.Json.JsonSerializer.Serialize(new {
+                            critic = agent.Id, reason = "HTTP 429 in round 2; no replacement",
+                            round1Preserved = true, includedInPairedAnalysis = false,
+                            utc = DateTimeOffset.UtcNow
+                        }) + Environment.NewLine);
+                    Console.Error.WriteLine($"EXCLUDED: {agent.Id} from paired comparison and arbitration.");
+                    continue;
+                }
                 Console.Error.WriteLine("round2 failed; stopping immediately.");
                 return false;
             }
             round2[agent.Id] = answer;
         }
-        if (round2.Count != config.Agents.Count)
+        if (round2.Count == 0)
         {
-            Console.Error.WriteLine("Round 2 incomplete; skipping arbitration.");
+            Console.Error.WriteLine("No paired critics remain; skipping arbitration.");
             return false;
         }
+        if (excluded.Count > 0)
+            Console.WriteLine($"Paired critics: {round2.Count}; excluded after round-two HTTP 429: {string.Join(", ", excluded)}.");
 
         // Supply both stages so the arbiter can distinguish independent findings from convergence.
-        var initialReports = string.Join("\n\n", round1.Select(x => $"INDEPENDENT CRITIC {x.Key}:\n{Shorten(x.Value)}"));
+        var initialReports = string.Join("\n\n", round1.Where(x => round2.ContainsKey(x.Key)).Select(x => $"INDEPENDENT CRITIC {x.Key}:\n{Shorten(x.Value)}"));
         var revisedReports = string.Join("\n\n", round2.Select(x => $"AFTER CROSS-REVIEW {x.Key}:\n{Shorten(x.Value)}"));
         const int arbiterTokens = 12000;
         var arbiterSystem = """
