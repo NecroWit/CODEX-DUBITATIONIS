@@ -9,7 +9,6 @@ var council = false;
 var forum = false;
 var doubters = false;
 string? doubtersState = null;
-string? doubtersResume = null;
 var forumControl = false;
 string? archiveFile = null;
 string? hypothesisFile = null;
@@ -19,8 +18,6 @@ for (var i = 0; i < args.Length; i++)
         doubters = true;
     else if (args[i] == "--doubters-state" && i + 1 < args.Length)
         doubtersState = args[++i];
-    else if (args[i] == "--doubters-resume" && i + 1 < args.Length)
-        doubtersResume = args[++i];
     else if (args[i] == "--forum")
         forum = true;
     else if (args[i] == "--forum-control")
@@ -36,7 +33,7 @@ for (var i = 0; i < args.Length; i++)
     else if (args[i] == "--config" && i + 1 < args.Length)
         configFile = args[++i];
     else
-        throw new ArgumentException("Usage: --config agents.cheap.json|agents.premium.json [--mode 4|10|14] [--council|--forum|--doubters] [--doubters-state path] [--doubters-resume results-directory] [--archive path] [--hypothesis-file path] [--forum-control]");
+        throw new ArgumentException("Usage: --config agents.cheap.json|agents.premium.json [--mode 4|10|14] [--council|--forum|--doubters] [--doubters-state path] [--archive path] [--hypothesis-file path] [--forum-control]");
 }
 if (string.IsNullOrWhiteSpace(configFile) || Path.IsPathRooted(configFile) ||
     configFile != Path.GetFileName(configFile) || configFile is "." or "..")
@@ -48,10 +45,8 @@ if (!File.Exists(configPath) || !File.Exists(codexPath))
 var config = TrialConfig.Load(configPath, mode);
 if ((council ? 1 : 0) + (forum ? 1 : 0) + (doubters ? 1 : 0) > 1)
     throw new ArgumentException("Choose only one of --council, --forum, --doubters.");
-if (!doubters && (doubtersState is not null || doubtersResume is not null))
+if (!doubters && doubtersState is not null)
     throw new ArgumentException("--doubters-state requires --doubters.");
-if (doubtersResume is not null && doubtersState is not null)
-    throw new ArgumentException("--doubters-resume and --doubters-state are mutually exclusive.");
 if ((council || forum || doubters) && config.Mode != 10)
     throw new ArgumentException("--council, --forum and --doubters require --mode 10.");
 if (!forum && (archiveFile is not null || hypothesisFile is not null || forumControl))
@@ -62,21 +57,15 @@ var key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(key)) throw new InvalidOperationException("Set OPENROUTER_API_KEY.");
 var codex = await File.ReadAllTextAsync(codexPath);
 var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(codex))).ToLowerInvariant();
-var output = doubtersResume is null
-    ? Path.Combine(experimentDir, "results",
-        DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss-fffffff") + "-" + hash[..8])
-    : Path.GetFullPath(doubtersResume);
-if (doubtersResume is not null && (!Directory.Exists(output) ||
-    !File.Exists(Path.Combine(output, "doubters-progress.json")) ||
-    !File.Exists(Path.Combine(output, "doubters-input.json"))))
-    throw new ArgumentException("Resume directory must contain doubters-progress.json and doubters-input.json.");
+var output = Path.Combine(experimentDir, "results",
+    DateTimeOffset.UtcNow.ToString("yyyyMMdd-HHmmss-fffffff") + "-" + hash[..8]);
 Directory.CreateDirectory(output);
 await File.WriteAllTextAsync(Path.Combine(output, "codex.md"), codex);
 await File.WriteAllTextAsync(Path.Combine(output, "config.json"), JsonSerializer.Serialize(config, TrialConfig.Json));
 await File.WriteAllTextAsync(Path.Combine(output, "manifest.json"),
     JsonSerializer.Serialize(new { utc = DateTimeOffset.UtcNow, codexSha256 = hash, protocol = "v0.5" }, TrialConfig.Json));
 Console.WriteLine($"Experiment output: {output}");
-if (doubters && doubtersState is null && doubtersResume is null)
+if (doubters && doubtersState is null)
 {
     var latest = Path.Combine(experimentDir, "doubters", "latest.json");
     if (File.Exists(latest))
@@ -89,7 +78,7 @@ if (doubters && doubtersState is null && doubtersResume is null)
 var budget = new BudgetManager(config, output);
 using var client = new OpenRouterClient(config, budget, output, key);
 if (!(doubters
-    ? await new DoubtersCodexOrchestrator(config, client, codex).RunAsync(doubtersState, doubtersResume is not null)
+    ? await new DoubtersCodexOrchestrator(config, client, codex).RunAsync(doubtersState)
     : forum
     ? await new ForumOrchestrator(config, client, codex).RunAsync(archiveFile,
         hypothesisFile is null ? null : await File.ReadAllTextAsync(hypothesisFile), forumControl)
