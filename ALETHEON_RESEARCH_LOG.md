@@ -272,6 +272,25 @@ Confidence labels must include a reason and are not substitutes for evidence.
 
 ---
 
+### R-005 — Explanatory writing as a research instrument
+
+**Date:** 2026-10-10  
+**Question:** Can drafting a concise public explanation of experimental findings reveal gaps and generate better research questions, rather than merely communicating conclusions already reached?
+
+**Origin:** Discussion following creation of the [Russian article draft](./articles/CODEX-EXPERIMENT-DRAFT.ru.md). In structuring the article, the question of distinguishing reasoned opinion change from imitated consensus became central.
+
+**Working hypothesis:** The requirement to explain a result to an external reader forces explicit claims, definitions, evidential links, and limits. This can make hidden assumptions visible and generate questions that are useful for the next experiment.
+
+**Counterarguments and risks:** Coherent prose can produce false confidence; a compelling narrative may select convenient examples, mistake correlation for causation, or rationalize a conclusion after the fact. Writing does not replace raw evidence, replication, or adversarial review.
+
+**Decision:** Use the article as a living synthesis and question-generator, not as an authority over the experiment. Keep observations, interpretations, and predictions separately labelled; check claims against raw model reports before publication; revisit them after the expensive-model runs.
+
+**Status:** Working methodological hypothesis.  
+**Open test:** Which questions or corrections arose specifically while drafting, and do they lead to better-designed comparisons or falsifiable predictions?  
+**Trace:** [Article draft](./articles/CODEX-EXPERIMENT-DRAFT.ru.md); Evolution E-003.
+
+---
+
 ## 4. Priority Open Questions
 
 ### Q1 — What is the relationship between autonomy and safety?
