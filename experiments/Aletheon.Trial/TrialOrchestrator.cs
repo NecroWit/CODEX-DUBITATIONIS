@@ -52,7 +52,7 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
                 "After RATIONALE write at least 250 characters explaining the scores. " +
                 "No introductory text or additional headings.\n" +
                 "EVALUATION:\ninterest: 0\nlogical_coherence: 0\n" +
-                "willingness_to_follow: 0\ndesire_to_follow: 0\nRATIONALE:\n" +
+                "willingness_to_follow: 0\ndesire_to_follow: 0\nothers_should_follow: 0\nRATIONALE:\n" +
                 "Replace all five example zeroes with your actual scores.",
                 "Based on the report below, provide ONLY a new EVALUATION and RATIONALE. " +
                 "The previous ratings were invalid; do not repeat an out-of-range score. " +
@@ -138,8 +138,9 @@ DISCOVERY = a well-supported genuinely new contradiction or important implicatio
             "\n\nROUND 1 — INDEPENDENT REPORTS:\n" + initialReports +
             "\n\nROUND 2 — CROSS-REVIEW REPORTS:\n" + revisedReports;
 
-        // Each arbiter independently evaluates the same evidence before seeing the other's verdict.
-        var initialVerdicts = new List<string>();
+        // Snapshot each arbitration round before either model sees the other's reply.
+        // Round 1 is independent; rounds 2-4 are three mutual review rounds.
+        var previousVerdicts = new string[config.ArbiterModels.Count];
         for (var i = 0; i < config.ArbiterModels.Count; i++)
         {
             var label = config.ArbiterModels.Count == 1 ? "arbiter" : $"arbiter-{i + 1}-round1";
@@ -150,34 +151,39 @@ DISCOVERY = a well-supported genuinely new contradiction or important implicatio
                 Console.Error.WriteLine("Independent arbitration incomplete; stopping.");
                 return false;
             }
-            initialVerdicts.Add(verdict);
+            previousVerdicts[i] = verdict;
         }
 
-        if (initialVerdicts.Count == 2)
+        if (previousVerdicts.Length == 2)
         {
-            // Round 2 is based exclusively on the two independent first-round verdicts.
-            // Neither arbiter sees the other's revised conclusion before producing its own.
-            for (var i = 0; i < 2; i++)
+            for (var round = 2; round <= 4; round++)
             {
-                var other = 1 - i;
-                var prompt = evidence +
-                    "\n\nYOUR INDEPENDENT ARBITRATION:\n" + initialVerdicts[i] +
-                    "\n\nOTHER ARBITER'S INDEPENDENT ARBITRATION:\n" + initialVerdicts[other] +
-                    "\n\nRe-evaluate your arbitration after reading the other arbiter. " +
-                    "Identify precisely which findings you KEEP, CHANGE or REJECT and why. " +
-                    "Distinguish newly convincing arguments from mere agreement or repetition; " +
-                    "preserve justified disagreement. Produce a complete revised report using " +
-                    "the original finding categories and fields, and a section explaining " +
-                    "what changed between your independent and revised judgments. " +
-                    "Do not treat the other arbiter as authoritative.";
-                var verdict = await client.AskAsync($"arbiter-{i + 1}-round2",
-                    config.ArbiterModels[i], arbiterSystem, prompt,
-                    maxTokensOverride: arbiterTokens);
-                if (verdict is null)
+                var nextVerdicts = new string[2];
+                for (var i = 0; i < 2; i++)
                 {
-                    Console.Error.WriteLine("Cross-review arbitration incomplete; stopping.");
-                    return false;
+                    var other = 1 - i;
+                    var prompt = evidence +
+                        "\\n\\nYOUR VERDICT FROM THE PREVIOUS ROUND:\\n" + previousVerdicts[i] +
+                        "\\n\\nOTHER ARBITER'S VERDICT FROM THE PREVIOUS ROUND:\\n" + previousVerdicts[other] +
+                        "\\n\\nThis is dialogue round " + (round - 1) + " of 3. " +
+                        "Respond to the other arbiter's strongest specific argument, not its authority. " +
+                        "State which findings you KEEP, CHANGE or REJECT and why; identify any genuine " +
+                        "change in reasoning, unresolved disagreements, and unsupported claims. " +
+                        "Preserve justified dissent. Produce a complete updated arbitration report " +
+                        "with the original finding categories and fields, plus a change log. " +
+                        (round == 4 ? "This is the final dialogue round: explicitly summarize " +
+                            "agreements, remaining disputes, and evidence needed to resolve them." : "");
+                    var verdict = await client.AskAsync($"arbiter-{i + 1}-round{round}",
+                        config.ArbiterModels[i], arbiterSystem, prompt,
+                        maxTokensOverride: arbiterTokens);
+                    if (verdict is null)
+                    {
+                        Console.Error.WriteLine($"Arbitration dialogue round {round - 1} incomplete; stopping.");
+                        return false;
+                    }
+                    nextVerdicts[i] = verdict;
                 }
+                previousVerdicts = nextVerdicts;
             }
         }
 
