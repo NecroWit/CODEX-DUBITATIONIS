@@ -12,6 +12,8 @@ internal sealed class OpenRouterClient : IDisposable
     public string OutputDirectory => output;
 
     private readonly Dictionary<string, string> assignedModels = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> round2RateLimited = new(StringComparer.OrdinalIgnoreCase);
+    public bool WasRound2RateLimited(string id) => round2RateLimited.Contains(id);
     private readonly HashSet<string> usedStandbys = new(StringComparer.OrdinalIgnoreCase);
 
     private static string Participant(string label)
@@ -160,6 +162,12 @@ internal sealed class OpenRouterClient : IDisposable
             await File.WriteAllTextAsync(Path.Combine(output, label + ".error.txt"), ex.ToString());
             if (!reconciled) await budget.RecordErrorAsync(label, model, reserve.Value);
             Console.Error.WriteLine($"FAILED: {label}: {ex.Message}");
+            if (ex is HttpRequestException httpError && httpError.StatusCode == System.Net.HttpStatusCode.TooManyRequests && label.StartsWith("round2-", StringComparison.Ordinal))
+            {
+                round2RateLimited.Add(Participant(label)["critic-".Length..]);
+                Console.Error.WriteLine($"EXCLUDED: {Participant(label)}, HTTP 429 in round 2; no model substitution.");
+                return null;
+            }
             if (ex is HttpRequestException httpError &&
                 (httpError.StatusCode == System.Net.HttpStatusCode.TooManyRequests ||
                  httpError.StatusCode == System.Net.HttpStatusCode.NotFound))
