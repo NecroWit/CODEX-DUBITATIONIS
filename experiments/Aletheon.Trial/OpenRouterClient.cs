@@ -182,11 +182,11 @@ internal sealed class OpenRouterClient : IDisposable
                 Console.Error.WriteLine($"EXCLUDED: {Participant(label)}, HTTP 429 in round 2; no model substitution.");
                 return null;
             }
-            if (ex is HttpRequestException httpError &&
-                (httpError.StatusCode == System.Net.HttpStatusCode.TooManyRequests ||
-                 httpError.StatusCode == System.Net.HttpStatusCode.NotFound))
+            if (ex is HttpRequestException standbyError &&
+                (standbyError.StatusCode == System.Net.HttpStatusCode.TooManyRequests ||
+                 standbyError.StatusCode == System.Net.HttpStatusCode.NotFound))
             {
-                var statusCode = (int)httpError.StatusCode.Value;
+                var statusCode = (int)standbyError.StatusCode.Value;
                 var responsePath = Path.Combine(output, label + ".response.json");
                 var detail = File.Exists(responsePath) ? ErrorDetail(await File.ReadAllTextAsync(responsePath)) : "No response body";
                 return await TryStandbyAsync(label, model, system, user, maxTokensOverride, retryOnLength, statusCode, detail);
