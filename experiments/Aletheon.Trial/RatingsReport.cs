@@ -16,11 +16,42 @@ internal static class RatingsReport
         @"^\s*(?:[-*+]\s+|\d+[.)]\s+)?(?:\*\*|__|\x60)?\s*(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow|others[ _-]+should[ _-]+follow)\s*(?:\*\*|__|\x60)?\s*[:=：-]\s*(?<value>.*?)\s*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    // Recover only explicitly named, unambiguous ratings from prose.
-    // Do not infer ratings from unrelated numbers or silently clamp invalid values.
-    private static readonly Regex ProseScore = new(
-        @"(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow|others[ _-]+should[ _-]+follow)\\s*(?:score|rating)?\\s*(?:of|is|was|:|=)?\\s*(?<value>-?\\d{1,3})(?!\\d)",
+    // Look for explicit ratings near the named dimension, never arbitrary numbers.
+    private static readonly Regex NamedRating = new(
+        @"\\b(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow|others[ _-]+should[ _-]+follow)\\b",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex NearbyRating = new(
+        @"(?:[:=]\\s*|\\(\\s*|\\brate\\s+(?:it\\s+)?(?:a\\s+)?)(?<value>\\d{1,2})(?:\\s*\\)|\\b)",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    public static Dictionary<string, int> ExtractRationaleScores(string answer)
+    {
+        var rationaleMarker = Regex.Match(answer, @"(?im)^\\s*\\*{0,2}RATIONALE:\\*{0,2}\\s*$");
+        if (!rationaleMarker.Success) return new(StringComparer.OrdinalIgnoreCase);
+        var reflection = answer[(rationaleMarker.Index + rationaleMarker.Length)..];
+        // Repairs append a new EVALUATION: only inspect the original rationale.
+        var nextEvaluation = Regex.Match(reflection, @"(?im)^\\s*\\*{0,2}EVALUATION:\\*{0,2}\\s*$");
+        if (nextEvaluation.Success) reflection = reflection[..nextEvaluation.Index];
+        var mentions = NamedRating.Matches(reflection).Cast<Match>().ToArray();
+        var candidates = new Dictionary<string, HashSet<int>>(StringComparer.OrdinalIgnoreCase);
+        for (var i = 0; i < mentions.Length; i++)
+        {
+            var mention = mentions[i];
+            var field = Regex.Replace(mention.Groups["field"].Value.ToLowerInvariant(), @"[ -]", "_");
+            var start = mention.Index + mention.Length;
+            var end = Math.Min(reflection.Length, start + 85);
+            if (i + 1 < mentions.Length) end = Math.Min(end, mentions[i + 1].Index);
+            var span = reflection[start..end];
+            var number = NearbyRating.Match(span);
+            if (!number.Success || !int.TryParse(number.Groups["value"].Value, out var score) ||
+                score is < 0 or > 10) continue;
+            if (!candidates.TryGetValue(field, out var values))
+                candidates[field] = values = [];
+            values.Add(score);
+        }
+        return candidates.Where(x => x.Value.Count == 1)
+            .ToDictionary(x => x.Key, x => x.Value.First(), StringComparer.OrdinalIgnoreCase);
+    }
 
     private sealed record Parsed(string Critique, string Rationale,
         Dictionary<string, int> Scores, List<string> InvalidScores, bool Duplicate,
@@ -79,34 +110,25 @@ internal static class RatingsReport
             ? string.Join("\n", new[] { rationale.Inline }
                 .Concat(lines.Skip(rationale.Line + 1))).Trim()
             : "";
-        // Only fill missing fields; a contradictory or out-of-range explicit score
-        // remains invalid rather than being silently replaced.
-        if (hasRationale && missing.Count > 0)
+        // The original rationale can resolve malformed fields, but only where
+        // it states a unique in-range value. Preserve raw responses for auditing.
+        var recovered = ExtractRationaleScores(answer);
+        foreach (var (field, value) in recovered)
         {
-            var candidates = new Dictionary<string, HashSet<int>>(StringComparer.OrdinalIgnoreCase);
-            foreach (Match match in ProseScore.Matches(reflection))
-            {
-                var field = Regex.Replace(match.Groups["field"].Value.ToLowerInvariant(), @"[ -]", "_");
-                if (!missing.Contains(field) || !int.TryParse(match.Groups["value"].Value, out var value))
-                    continue;
-                if (!candidates.TryGetValue(field, out var values))
-                    candidates[field] = values = [];
-                values.Add(value);
-            }
-            foreach (var (field, values) in candidates)
-            {
-                if (values.Count == 1 && values.First() is >= 0 and <= 10)
-                    scores[field] = values.First();
-            }
+            if (scores.ContainsKey(field)) continue;
+            scores[field] = value;
+            invalid.RemoveAll(x => x.StartsWith(field + "=", StringComparison.OrdinalIgnoreCase));
         }
         return new Parsed(critique, reflection, scores, invalid, duplicate,
             hasEvaluation, hasRationale);
     }
 
-    public static async Task<bool> RecordAsync(string folder, string round, string agent, string model, string answer)
+    public static async Task<bool> RecordAsync(string folder, string round, string agent, string model, string answer, IReadOnlyDictionary<string, int>? expectedScores = null)
     {
         var parsed = Parse(answer);
-        var valid = parsed.HasEvaluation && parsed.HasRationale &&
+        var mismatch = expectedScores?.Where(x => parsed.Scores.TryGetValue(x.Key, out var actual) && actual != x.Value)
+            .Select(x => $"{x.Key}: expected {x.Value}, got {parsed.Scores[x.Key]}").ToArray() ?? [];
+        var valid = mismatch.Length == 0 && parsed.HasEvaluation && parsed.HasRationale &&
             parsed.Critique.Length >= 300 && parsed.Scores.Count == Fields.Length &&
             parsed.InvalidScores.Count == 0 && !parsed.Duplicate &&
             parsed.Rationale.Length >= 250;
@@ -116,6 +138,7 @@ internal static class RatingsReport
             critiqueCharacters = parsed.Critique.Length,
             scores = parsed.Scores,
             invalidScores = parsed.InvalidScores,
+            ratingMismatches = mismatch,
             rationale = parsed.Rationale,
             validationError = valid ? null :
                 "Expected >=300 characters of critique, five distinct integer 0..10 ratings in EVALUATION, and >=250 characters of reflection in RATIONALE."
@@ -124,7 +147,7 @@ internal static class RatingsReport
             JsonSerializer.Serialize(record, TrialConfig.Json));
         if (!valid)
         {
-            var error = $"Invalid substantive critique/evaluation in {round}-{agent}: critique={parsed.Critique.Length} chars (min 300), scores={parsed.Scores.Count}/5, invalidScores={string.Join(", ", parsed.InvalidScores)}, rationale={parsed.Rationale.Length} chars (min 250); raw response retained.";
+            var error = $"Invalid substantive critique/evaluation in {round}-{agent}: critique={parsed.Critique.Length} chars (min 300), scores={parsed.Scores.Count}/5, invalidScores={string.Join(", ", parsed.InvalidScores)}, mismatches={string.Join(", ", mismatch)}, rationale={parsed.Rationale.Length} chars (min 250); raw response retained.";
             await File.WriteAllTextAsync(Path.Combine(folder, $"{round}-{agent}.validation-error.txt"), error);
             Console.Error.WriteLine(error);
         }
