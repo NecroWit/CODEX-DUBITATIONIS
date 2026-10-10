@@ -54,29 +54,36 @@ internal static class RatingsReport
             .ToDictionary(x => x.Key, x => x.Value.First(), StringComparer.OrdinalIgnoreCase);
     }
 
-    // Some critics provide a final Before/After score table instead of EVALUATION.
-    // Accept only a clearly labelled revised-score table with all five rows.
-    // Never let a later formatting repair silently overwrite these original scores.
+    // Parse the final AFTER scores, never the BEFORE scores or a formatting repair.
+    // Both Markdown tables and bullet lists occur in actual critic responses.
     private static readonly Regex RevisedScoreRow = new(
-        @"^\s*\|\s*\*\*?(?<field>interest|logical_coherence|willingness_to_follow|desire_to_follow|others_should_follow)\*\*?\s*\|\s*\d{1,2}\s*\|\s*(?<after>\d{1,2})\s*\|",
+        @"^\s*\|\s*\*{0,2}(?<field>interest|logical_coherence|willingness_to_follow|desire_to_follow|others_should_follow)\*{0,2}\s*\|\s*\d{1,2}\s*\|\s*(?<after>\d{1,2})\s*\|",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+    private static readonly Regex RevisedScoreBullet = new(
+        @"^\s*[-*+]\s+\*{0,2}(?<field>interest|logical_coherence|willingness_to_follow|desire_to_follow|others_should_follow)\*{0,2}\s*:\s*(?<after>\d{1,2})(?=\D|$)",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    private static Dictionary<string, int> ExtractRevisedTable(string answer)
+    private static (Dictionary<string, int> Scores, string Rationale) ExtractRevisedScores(string answer)
     {
+        var empty = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         var heading = Regex.Match(answer, @"(?im)^\s*#{1,6}\s*REVISED SCORES\s*$");
-        if (!heading.Success) return new(StringComparer.OrdinalIgnoreCase);
-        var tail = answer[heading.Index..];
-        var nextHeading = Regex.Match(tail[heading.Length..], @"(?m)^\s*#{1,6}\s+");
-        if (nextHeading.Success) tail = tail[..(heading.Length + nextHeading.Index)];
+        if (!heading.Success) return (empty, "");
+        var tail = answer[(heading.Index + heading.Length)..];
+        var nextHeading = Regex.Match(tail, @"(?m)^\s*#{1,6}\s+");
+        if (nextHeading.Success) tail = tail[..nextHeading.Index];
+        var after = Regex.Match(tail, @"(?im)^\s*\*{0,2}After cross-review:\*{0,2}\s*$");
+        if (after.Success) tail = tail[(after.Index + after.Length)..];
         var scores = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
         foreach (var line in tail.Split('\n'))
         {
             var match = RevisedScoreRow.Match(line);
-            if (!match.Success || !int.TryParse(match.Groups["after"].Value, out var score) ||
+            if (!match.Success) match = RevisedScoreBullet.Match(line);
+            if (!match.Success) continue;
+            if (!int.TryParse(match.Groups["after"].Value, out var score) ||
                 score is < 0 or > 10 || !scores.TryAdd(match.Groups["field"].Value.ToLowerInvariant(), score))
-                return new(StringComparer.OrdinalIgnoreCase);
+                return (empty, "");
         }
-        return scores.Count == Fields.Length ? scores : new(StringComparer.OrdinalIgnoreCase);
+        return scores.Count == Fields.Length ? (scores, tail.Trim()) : (empty, "");
     }
 
     private sealed record Parsed(string Critique, string Rationale,
@@ -136,22 +143,13 @@ internal static class RatingsReport
             ? string.Join("\n", new[] { rationale.Inline }
                 .Concat(lines.Skip(rationale.Line + 1))).Trim()
             : "";
-        // The original rationale can resolve malformed fields, but only where
-        // it states a unique in-range value. Preserve raw responses for auditing.
-        // Only use table fallback when the canonical EVALUATION is absent.
+        // A complete revised-score section contains both five AFTER values and
+        // per-score explanations. Treat those explanations as the rationale.
         if (!hasEvaluation)
         {
-            var tableScores = ExtractRevisedTable(answer);
-            if (tableScores.Count == Fields.Length)
-            {
-                var reflectionHeading = Regex.Match(answer,
-                    @"(?im)^\s*#{1,6}\s*RATIONALE FOR REVISED SCORES\s*$");
-                var tableReflection = reflectionHeading.Success
-                    ? answer[(reflectionHeading.Index + reflectionHeading.Length)..].Trim()
-                    : "";
-                if (tableReflection.Length >= 250)
-                    return new Parsed(critique, tableReflection, tableScores, invalid, false, true, true);
-            }
+            var (revisedScores, revisedRationale) = ExtractRevisedScores(answer);
+            if (revisedScores.Count == Fields.Length && revisedRationale.Length >= 250)
+                return new Parsed(critique, revisedRationale, revisedScores, invalid, false, true, true);
         }
         var recovered = ExtractRationaleScores(answer);
         foreach (var (field, value) in recovered)
