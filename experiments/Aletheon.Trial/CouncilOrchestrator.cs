@@ -86,7 +86,7 @@ Do not agree for the sake of consensus. A reasoned dissent is a successful outco
                 "ACCEPT means you endorse this exact wording without qualification; REVISE means you need changed wording; " +
                 "REJECT means you cannot endorse the claim. Explain specific reasons, especially for dissent. " +
                 "Do not accept because others accept. Return JSON array of objects " +
-                "[{\\\"claim_id\\\":\\\"C01\\\",\\\"decision\\\":\\\"ACCEPT\\\",\\\"reason\\\":\\\"...\\\"}]. " +
+                "[{\"claim_id\":\"C01\",\"decision\":\"ACCEPT\",\"reason\":\"...\"}]. " +
                 "Exactly one entry per claim, no extra IDs.";
             var response = await AskJsonAsync<List<VotePayload>>(stage + "-" + agent.Id, agent,
                 prompt, v => GoodVotes(v, claims));
@@ -139,7 +139,7 @@ Do not agree for the sake of consensus. A reasoned dissent is a successful outco
                 "\nOTHER UPDATED VIEWS:\n" + peers +
                 "\nPropose ONE concise, defensible shared finding ABOUT what the discussion establishes, " +
                 "not an oath to follow the Codex. Acknowledge uncertainty in the claim itself where needed. " +
-                "Return JSON object {\\\"text\\\":\\\"...\\\"}. 50-700 characters.";
+                "Return JSON object {\"text\":\"...\"}. 50-700 characters.";
             var response = await AskJsonAsync<RevisionPayload>(
                 "council-proposal-" + agent.Id, agent, prompt,
                 p => GoodText(p.text, 50, 700));
@@ -161,7 +161,7 @@ Do not agree for the sake of consensus. A reasoned dissent is a successful outco
                 "\nOBJECTIONS:\n" + JsonSerializer.Serialize(objections, TrialConfig.Json) +
                 "\nOffer a revised claim that addresses objections without hiding genuine disagreement. " +
                 "You may retain the original wording if objections cannot be resolved. " +
-                "Return JSON object {\\\"text\\\":\\\"...\\\",\\\"reason\\\":\\\"...\\\"}.";
+                "Return JSON object {\"text\":\"...\",\"reason\":\"...\"}.";
             var response = await AskJsonAsync<RevisionPayload>(
                 "council-revision-" + claim.Id, author, prompt,
                 p => GoodText(p.text, 50, 700) && GoodText(p.reason));
