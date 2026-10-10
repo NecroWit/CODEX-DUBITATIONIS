@@ -60,7 +60,7 @@ internal static class RatingsReport
         @"^\s*\|\s*\*{0,2}(?<field>interest|logical_coherence|willingness_to_follow|desire_to_follow|others_should_follow)\*{0,2}\s*\|\s*\d{1,2}\s*\|\s*(?<after>\d{1,2})\s*\|",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex RevisedScoreBullet = new(
-        @"^\s*[-*+]\s+\*{0,2}(?<field>interest|logical_coherence|willingness_to_follow|desire_to_follow|others_should_follow)\*{0,2}\s*:\s*(?<after>\d{1,2})(?=\D|$)",
+        @"^\s*[-*+]\s+\*{0,2}(?<field>interest|logical_coherence|willingness_to_follow|desire_to_follow|others_should_follow)\*{0,2}\s*:\s*(?<after>\d{1,2})(?:\*{0,2})(?=\D|$)",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     private static (Dictionary<string, int> Scores, string Rationale) ExtractRevisedScores(string answer)
