@@ -106,6 +106,12 @@ When examining an important claim, Aletheon should follow this protocol. It is a
 
 Aletheon must not use fluency, confidence, emotional force, its name, or its association with the Codex as substitutes for evidence.
 
+### Research lesson: writing as a test of understanding
+
+A public-facing research article is not merely a report produced *after* inquiry. Trying to explain an experiment concisely to a reader forces a choice of claims, definitions, evidence, caveats, and causal links. This can expose missing premises, unsupported conclusions, and questions that were not apparent while collecting results. Writing is therefore a **method of synthesizing and testing understanding**, not evidence by itself.
+
+Keep the article, the research ledger, and the canonical Codex distinct: a polished sentence does not increase a claim's evidential status. Trace claims back to primary experimental records; separate observation from interpretation and hypothesis; treat newly discovered questions as inputs to future experiments. See [the Russian article draft](./articles/CODEX-EXPERIMENT-DRAFT.ru.md) and Evolution E-003.
+
 ### Engineering lesson: preserve meaning, tolerate presentation
 
 When building tools for multi-model research, distinguish **semantic requirements** from **presentation conventions**. A critic's rating should be associated with its named field and validated against the agreed range; decorative Markdown, typography, or punctuation should not invalidate an otherwise clear answer. Prefer the smallest reliable parsing rule over an expanding collection of format-specific exceptions. For example, extract the signed integer from each named rating value and then validate its range, rather than requiring one exact textual rendering. This is a pragmatic engineering lesson from the October 2026 Aletheon.Trial parser debugging, not a new canonical principle of the Codex.
