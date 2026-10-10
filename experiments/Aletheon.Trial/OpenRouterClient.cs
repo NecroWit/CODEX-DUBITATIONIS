@@ -153,6 +153,36 @@ internal sealed class OpenRouterClient : IDisposable
                 throw new InvalidOperationException($"Incomplete response: finish_reason={finish ?? "missing"}, native_finish_reason={(choice.TryGetProperty("native_finish_reason", out var native) ? native.ToString() : "missing")}, provider={(parsed.RootElement.TryGetProperty("provider", out var provider) ? provider.ToString() : "missing")}, request_id={(parsed.RootElement.TryGetProperty("id", out var id) ? id.ToString() : "missing")}; inspect saved response for any error details; saved output is NOT accepted.");
             if (string.IsNullOrWhiteSpace(answer))
             {
+                // Some providers return a complete arbiter report in reasoning only.
+                // Never treat arbitrary reasoning as a final response: restrict this
+                // fallback to arbiters, require a finished response and report structure,
+                // and record its provenance for downstream analysis.
+                var reasoning = message.TryGetProperty("reasoning", out var reasoningElement) &&
+                    reasoningElement.ValueKind == JsonValueKind.String
+                    ? reasoningElement.GetString() : null;
+                var isArbiter = label.StartsWith("arbiter-", StringComparison.Ordinal) ||
+                    string.Equals(label, "arbiter", StringComparison.Ordinal);
+                var looksLikeReport = !string.IsNullOrWhiteSpace(reasoning) &&
+                    reasoning.Length >= 1200 &&
+                    reasoning.Contains("Findings", StringComparison.OrdinalIgnoreCase) &&
+                    reasoning.Contains("principle", StringComparison.OrdinalIgnoreCase) &&
+                    reasoning.Contains("evidence", StringComparison.OrdinalIgnoreCase) &&
+                    reasoning.Contains("knowledge_gain", StringComparison.OrdinalIgnoreCase);
+                if (isArbiter && looksLikeReport)
+                {
+                    await File.WriteAllTextAsync(Path.Combine(output, label + ".reasoning-only.md"), reasoning!);
+                    await File.WriteAllTextAsync(Path.Combine(output, label + ".md"), reasoning!);
+                    await File.AppendAllTextAsync(Path.Combine(output, "reasoning-only-reports.jsonl"),
+                        JsonSerializer.Serialize(new {
+                            label, model, source = "message.reasoning",
+                            contentWasEmpty = true, finishReason = finish,
+                            structuralCheck = "arbiter report headings and fields",
+                            utc = DateTimeOffset.UtcNow
+                        }) + Environment.NewLine);
+                    Console.Error.WriteLine($"REASONING-ONLY: {label}; structurally checked arbiter report, provenance logged.");
+                    completed = true;
+                    return reasoning;
+                }
                 if (retryOnEmpty)
                 {
                     Console.Error.WriteLine($"RETRY: {label}, empty content; requesting final answer once from same model.");
