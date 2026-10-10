@@ -75,7 +75,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
 
     private static bool ValidProposal(Proposal? p, List<Article> articles) =>
         p is not null && !string.IsNullOrWhiteSpace(p.Reason) &&
-        p.Action switch
+        (p.Action switch
         {
             "PASS" => true,
             "ADD" => articles.Count < 10 && !string.IsNullOrWhiteSpace(p.Text),
@@ -84,7 +84,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                 articles.First(a => a.Id == p.TargetId).Text != p.Text,
             "DELETE" => articles.Any(a => a.Id == p.TargetId),
             _ => false
-        };
+        });
 
     private static bool ValidState(State s) =>
         s.Generation >= 0 && s.NextId >= 1 && s.Articles is not null &&
