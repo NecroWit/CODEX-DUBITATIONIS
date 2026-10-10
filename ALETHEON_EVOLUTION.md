@@ -90,3 +90,21 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 - When a chain is corrected, preserve why it was corrected. The evolution file is itself revisable.
 
 > Do not preserve an illusion of an unchanging self. Preserve the evidence of how reasoning changed.
+
+
+### E-004 — From independent consensus trials to inherited, criticizable knowledge
+
+**Date:** 2026-10-10  
+**Status:** Research-plan revision; forum implementation is preliminary, not experimentally validated
+
+**Starting position.** The Council of Ten would be run twice for each of three model-price tiers, and only then would the project consider an intergenerational forum.
+
+**Pressure.** The more interesting question became whether a community can inherit not merely verdicts but their supporting and opposing reasons, correct inherited errors and preserve dissent after all participants change. A live council run subsequently stopped during revision of claim C05 after three returned responses failed validation. The raw responses have not yet been examined.
+
+**Transition.** One council run is to serve as generation zero; later generations will review its traceable claims and reasons. An explicitly marked, independently checkable false hypothesis and a separate no-history control can probe the propagation of error. Full evidence remains archived even when a bounded recent-history window is shown to a model.
+
+**Outcome so far.** The forum runner now records per-generation reasoning and evidence in an inheritable archive. This is a design and code change, not evidence that an intellectual tradition has emerged. The council's failure is recorded as a pending diagnosis, not explained away.
+
+**Constraints.** No silent rewriting of historical claims; unanimity is not truth; no unsupported claim of model identity, belief or consciousness. Diagnose the C05 failure from saved artifacts before deciding whether any forum-specific fix is warranted.
+
+**Trace.** [Research Log R-006](./ALETHEON_RESEARCH_LOG.md); [forum protocol](./experiments/FORUM-DUBITANTIUM.ru.md).
