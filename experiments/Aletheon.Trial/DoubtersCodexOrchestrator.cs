@@ -155,20 +155,36 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
             var proposal = Parse<Proposal>(raw);
             if (proposal is not null && proposal.Action is "ADD" or "MODIFY")
                 proposal.Text = WithoutArticleNumber(proposal.Text);
-            if (proposal is not null && proposal.Action is "ADD" or "MODIFY" &&
-                WordCount(proposal.Text) > MaxArticleWords)
+            var exceededWordLimit = false;
+            for (var retry = 1; retry <= 2 &&
+                proposal is { Action: "ADD" or "MODIFY" } &&
+                WordCount(proposal.Text) > MaxArticleWords; retry++)
             {
-                Console.Error.WriteLine($"DOUBTERS: {label} has {WordCount(proposal.Text)} words; requesting a shorter article.");
-                var revisedRaw = await client.AskAsync(label + "-word-limit-retry", author.Model,
+                var words = WordCount(proposal.Text);
+                Console.Error.WriteLine($"DOUBTERS: {label} has {words} words; shortening attempt {retry}/2.");
+                var warning = retry == 1
+                    ? "Your Text exceeds 60 words. Rewrite it shorter."
+                    : "Your Text still exceeds 60 words. Shorten it to 60 words or fewer NOW, or your turn will be SKIPPED without a vote.";
+                var revisedRaw = await client.AskAsync(label + "-word-limit-retry-" + retry, author.Model,
                     "You are a critic proposing one constitutional amendment. Return JSON only. Lens: " + author.Role,
-                    prompt + "\nYour previous proposal exceeded the hard 60-word limit for Text. " +
-                    "Return the same Action, TargetId and intended meaning, but rewrite Text in at most " +
-                    "60 whitespace-separated words. Preserve a nonempty Reason. Previous proposal:\n" +
-                    JsonSerializer.Serialize(proposal, TrialConfig.Json));
+                    prompt + "\\n" + warning +
+                    " Keep the same Action, TargetId and intended meaning. " +
+                    "Return a JSON object with Action, TargetId, Text and nonempty Reason. " +
+                    "Previous proposal:\\n" + JsonSerializer.Serialize(proposal, TrialConfig.Json));
                 if (revisedRaw is null) return false;
                 proposal = Parse<Proposal>(revisedRaw);
-                if (proposal is not null && proposal.Action is "ADD" or "MODIFY")
+                if (proposal is { Action: "ADD" or "MODIFY" })
                     proposal.Text = WithoutArticleNumber(proposal.Text);
+            }
+            if (proposal is { Action: "ADD" or "MODIFY" } &&
+                WordCount(proposal.Text) > MaxArticleWords)
+            {
+                exceededWordLimit = true;
+                Console.Error.WriteLine($"DOUBTERS: {label} exceeded 60 words three times; turn skipped.");
+                proposal = new Proposal {
+                    Action = "PASS",
+                    Reason = "AUTOMATIC SKIP: Article exceeded the 60-word limit on all three attempts."
+                };
             }
             if (!ValidProposal(proposal, state.Articles))
             {
@@ -227,6 +243,12 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                     }
                 }
             }
+            if (exceededWordLimit)
+                await SaveAsync("doubters-turn-" + (turn + 1).ToString("D2") + "-word-limit-skip.json",
+                    new { generation, turn = turn + 1, author = author.Id,
+                        reason = "Article exceeded 60 words on all three attempts",
+                        responseFiles = new[] { label + ".md", label + "-word-limit-retry-1.md",
+                            label + "-word-limit-retry-2.md" } });
             decision.AfterSha256 = Sha(Snapshot(state.Articles));
             state.History.Add(decision);
             // Persist accepted changes AND all reasons after every turn; failures leave
@@ -234,7 +256,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
             await SaveAsync("doubters-progress.json", state);
             await SaveAsync("doubters-turn-" + (turn + 1).ToString("D2") + ".json", decision);
             Console.WriteLine($"DOUBTERS: {author.Id} {p.Action} => " +
-                (p.Action == "PASS" ? "PASS" : decision.Applied ? "ACCEPTED" : "REJECTED") +
+                (exceededWordLimit ? "SKIPPED (WORD LIMIT)" : p.Action == "PASS" ? "PASS" : decision.Applied ? "ACCEPTED" : "REJECTED") +
                 $" ({decision.Votes.Count(v => v.Approve)}/9)");
         }
         state.Generation = generation;
