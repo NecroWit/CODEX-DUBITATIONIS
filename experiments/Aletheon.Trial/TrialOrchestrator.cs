@@ -31,7 +31,7 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
         var answer = await client.AskAsync(label, agent.Model, system, prompt);
         if (answer is null) return null;
         var round = label.StartsWith("round1-", StringComparison.Ordinal) ? "round1" : "round2";
-        if (await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, agent.Model, answer))
+        if (await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, client.ResolveModel(label, agent.Model), answer))
         {
             Console.WriteLine($"VALIDATED: {label}");
             return answer;
@@ -63,7 +63,7 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
             // Validate the replacement block independently; then attach the untouched critique.
             // This prevents a previous invalid EVALUATION from shadowing the new one.
             var combined = critique + "\n\n" + repair;
-            if (await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, agent.Model, combined, originalScores))
+            if (await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, client.ResolveModel(label, agent.Model), combined, originalScores))
             {
                 await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, label + ".validated.md"), combined);
                 Console.WriteLine($"VALIDATED after ratings repair {attempt}: {label}");
