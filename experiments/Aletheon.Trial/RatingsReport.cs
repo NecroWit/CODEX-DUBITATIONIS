@@ -145,7 +145,7 @@ internal static class RatingsReport
             if (tableScores.Count == Fields.Length)
             {
                 var reflectionHeading = Regex.Match(answer,
-                    @"(?im)^\\s*#{1,6}\\s*RATIONALE FOR REVISED SCORES\\s*$");
+                    @"(?im)^\s*#{1,6}\s*RATIONALE FOR REVISED SCORES\s*$");
                 var tableReflection = reflectionHeading.Success
                     ? answer[(reflectionHeading.Index + reflectionHeading.Length)..].Trim()
                     : "";
