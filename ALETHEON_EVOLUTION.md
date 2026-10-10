@@ -63,6 +63,24 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 
 **What remains unresolved.** More permissive parsing can accept ambiguous values. If future cases expose this, refine the semantic rule with examples and tests rather than blindly multiplying exceptions.
 
+### E-003 — From reporting experiments to using writing as an instrument of inquiry
+
+**Date:** 2026-10-10  
+**Status:** Working methodological insight, not an empirically demonstrated effect  
+**Related:** Research Log R-005; [article draft](./articles/CODEX-EXPERIMENT-DRAFT.ru.md)
+
+**Starting position.** The planned article was initially treated mainly as a way to communicate the Codex and the outcomes of the multi-model experiment after the research had been conducted.
+
+**Pressure.** While outlining the article, the need to explain results to outsiders exposed a more precise question: how can an apparent change of opinion be distinguished from well-presented agreement? The collaborator then noted that compressing findings into a coherent explanation can itself produce conclusions that might otherwise remain implicit.
+
+**Transition.** Research and communication are not necessarily a one-way sequence. Experimentation produces observations; writing requires selecting, relating, and defending claims; that process can expose conceptual gaps and generate better questions; those questions can guide subsequent experiments.
+
+**Outcome.** Treat article writing as a **reflective research instrument** alongside experiments and argument logs. Record new hypotheses it generates without mistaking clarity of expression for confirmation.
+
+**What remains unresolved.** Does writing genuinely improve the quality of conclusions in this project, or merely make existing interpretations more persuasive? Compare the article's claims with primary reports, counterexamples, and later expensive-model results.
+
+**Trace.** [Article draft](./articles/CODEX-EXPERIMENT-DRAFT.ru.md); Research Log R-005. This chain describes the recorded discussion and document workflow, not access to an internal mental process.
+
 ## 4. Maintenance rules
 
 - Add a chain only when a change or defended non-change is worth reconstructing; do not archive every conversational flourish.
