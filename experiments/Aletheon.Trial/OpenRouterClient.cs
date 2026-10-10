@@ -77,7 +77,7 @@ internal sealed class OpenRouterClient : IDisposable
         http.DefaultRequestHeaders.Add("X-Title", "Aletheon Trial");
     }
 
-    public async Task<string?> AskAsync(string label, string model, string system, string user, int? maxTokensOverride = null, bool retryOnLength = true)
+    public async Task<string?> AskAsync(string label, string model, string system, string user, int? maxTokensOverride = null, bool retryOnLength = true, bool retryOnEmpty = true)
     {
         model = ResolveModel(label, model);
         var maxTokens = maxTokensOverride ?? config.MaxTokens;
@@ -152,7 +152,21 @@ internal sealed class OpenRouterClient : IDisposable
             if (finish != "stop")
                 throw new InvalidOperationException($"Incomplete response: finish_reason={finish ?? "missing"}, native_finish_reason={(choice.TryGetProperty("native_finish_reason", out var native) ? native.ToString() : "missing")}, provider={(parsed.RootElement.TryGetProperty("provider", out var provider) ? provider.ToString() : "missing")}, request_id={(parsed.RootElement.TryGetProperty("id", out var id) ? id.ToString() : "missing")}; inspect saved response for any error details; saved output is NOT accepted.");
             if (string.IsNullOrWhiteSpace(answer))
-                throw new InvalidOperationException("Empty model response.");
+            {
+                if (retryOnEmpty)
+                {
+                    Console.Error.WriteLine($"RETRY: {label}, empty content; requesting final answer once from same model.");
+                    await File.AppendAllTextAsync(Path.Combine(output, "empty-content-retries.jsonl"),
+                        JsonSerializer.Serialize(new {
+                            label, model, reason = "Empty message.content", utc = DateTimeOffset.UtcNow
+                        }) + Environment.NewLine);
+                    return await AskAsync(label + "-content-retry", model,
+                        system + "\nReturn your complete final report in message.content, not only in reasoning. " +
+                        "Do not output internal reasoning. This is a fresh stateless request.",
+                        user, maxTokensOverride, retryOnLength: false, retryOnEmpty: false);
+                }
+                throw new InvalidOperationException("Empty model response after content retry.");
+            }
             completed = true;
             Console.WriteLine($"RECEIVED: {label} ({elapsed.Elapsed.TotalSeconds:F1}s, {attempts} HTTP attempt(s))");
             return answer;
