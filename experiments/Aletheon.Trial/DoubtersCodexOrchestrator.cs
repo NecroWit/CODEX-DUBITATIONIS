@@ -179,7 +179,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                     switch (p.Action)
                     {
                         case "ADD":
-                            state.Articles.Add(new Article { Id = "D" + state.NextId++.ToString("D3"),
+                            state.Articles.Add(new Article { Id = "D" + (state.NextId++).ToString("D3"),
                                 Text = p.Text.Trim() });
                             break;
                         case "MODIFY":
