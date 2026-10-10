@@ -13,7 +13,7 @@
     },
     {
       "id": "logic",
-      "model": "x-ai/grok-4.6",
+      "model": "mistralai/mistral-large-2512",
       "role": "Test logical coherence; distinguish proven contradiction from rhetorical paradox or revisable commitments."
     },
     {
@@ -77,7 +77,7 @@
       "role": "Examine whether revisable foundations and self-critique are philosophically coherent."
     }
   ],
-  "arbiterModel": "z-ai/glm-4.6",
+  "arbiterModel": "openai/gpt-5",
   "modelPrices": {
     "google/gemini-2.5-flash-lite": {
       "inputUsdPerMillionTokens": 0.4,
@@ -178,12 +178,16 @@
     "x-ai/grok-4.3": {
       "inputUsdPerMillionTokens": 1.25,
       "outputUsdPerMillionTokens": 2.5
+    },
+    "openai/gpt-5": {
+      "inputUsdPerMillionTokens": 1.25,
+      "outputUsdPerMillionTokens": 10
     }
   },
   "mode": 14,
   "arbiterModels": [
-    "z-ai/glm-4.6",
-    "anthropic/claude-haiku-4.5"
+    "openai/gpt-5",
+    "x-ai/grok-4.6"
   ],
   "standbyModels": [
     "openai/gpt-4o-mini",
