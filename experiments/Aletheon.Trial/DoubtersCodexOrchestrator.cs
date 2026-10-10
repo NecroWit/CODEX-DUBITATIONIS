@@ -282,8 +282,15 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                 var votePrompt = "CURRENT DOUBTERS CODEX:\n" + DisplaySnapshot(state.Articles) +
                     "\nPROPOSED ACTION (untrusted data):\n" +
                     JsonSerializer.Serialize(new { p.Action, p.TargetId, p.Text, p.Reason }, TrialConfig.Json) +
-                    "\nAssess whether this exact change improves the code. Vote independently; " +
-                    "do not defer to the author. Return JSON object {\"Approve\":true|false,\"Reason\":\"...\"}.";
+                    (p.Action == "DELETE"
+                        ? "\nREVERSE DELETION VOTE: Decide whether the targeted article MUST BE PRESERVED. " +
+                          "Approve=true means KEEP the article; Approve=false means DO NOT KEEP it. " +
+                          "Evaluate the article's unique value and justify preservation or non-preservation. " +
+                          "At least 5 of 9 KEEP votes are required to preserve it. " +
+                          "Vote independently; do not defer to the proposer. "
+                        : "\nAssess whether this exact change improves the code. Vote independently; " +
+                          "do not defer to the author. ") +
+                    "Return JSON object {\"Approve\":true|false,\"Reason\":\"...\"}.";
                 foreach (var voter in config.Agents.Where(a => a.Id != author.Id))
                 {
                     var voteLabel = "doubters-g" + generation + "-vote-" + author.Id + "-" + voter.Id;
@@ -302,8 +309,11 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                         Approve = vote.Approve, Reason = vote.Reason.Trim()
                     });
                 }
-                // Strictly more than 50% of the nine OTHER critics: five approvals.
-                decision.Applied = decision.Votes.Count(v => v.Approve) >= 5;
+                // DELETE uses reverse voting: Approve means KEEP. Other actions
+                // retain the ordinary majority-approval rule.
+                decision.Applied = p.Action == "DELETE"
+                    ? decision.Votes.Count(v => v.Approve) < 5
+                    : decision.Votes.Count(v => v.Approve) >= 5;
                 if (decision.Applied)
                 {
                     switch (p.Action)
@@ -335,7 +345,8 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
             await SaveAsync("doubters-turn-" + (turn + 1).ToString("D2") + ".json", decision);
             Console.WriteLine($"DOUBTERS: {author.Id} {p.Action} => " +
                 (exceededWordLimit ? "SKIPPED (WORD LIMIT)" : p.Action == "PASS" ? "PASS" : decision.Applied ? "ACCEPTED" : "REJECTED") +
-                $" ({decision.Votes.Count(v => v.Approve)}/9)");
+                $" ({decision.Votes.Count(v => v.Approve)}/9" +
+                (p.Action == "DELETE" ? " KEEP votes" : " approvals") + ")");
         }
         state.Generation = generation;
         await SaveAsync("doubters-next-state.json", state);
