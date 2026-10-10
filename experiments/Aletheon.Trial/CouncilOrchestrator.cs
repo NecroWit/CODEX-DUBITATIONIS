@@ -1,5 +1,4 @@
 using System.Text.Json;
-using System.Text.RegularExpressions;
 
 // A peer council, not an arbiter. All participants vote on the same frozen snapshots.
 internal sealed class CouncilOrchestrator(TrialConfig config, OpenRouterClient client, string codex)
@@ -14,7 +13,7 @@ Do not agree for the sake of consensus. A reasoned dissent is a successful outco
     private sealed record Proposal(string Id, string Author, string Text);
     private sealed record Ballot(string Voter, string Claim, string Decision, string Reason);
     private sealed record VotePayload(string claim_id, string decision, string reason);
-    private sealed record RevisionPayload(string claim_id, string text, string reason);
+    private sealed record RevisionPayload(string? claim_id, string text, string? reason);
 
     private async Task SaveAsync<T>(string name, T value) =>
         await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, name),
