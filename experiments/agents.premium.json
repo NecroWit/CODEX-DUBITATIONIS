@@ -13,7 +13,7 @@
     },
     {
       "id": "logic",
-      "model": "mistralai/mistral-large-2512",
+      "model": "anthropic/claude-haiku-4.5",
       "role": "Test logical coherence; distinguish proven contradiction from rhetorical paradox or revisable commitments."
     },
     {
