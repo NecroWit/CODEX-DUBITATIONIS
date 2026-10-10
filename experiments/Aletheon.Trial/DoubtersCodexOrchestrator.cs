@@ -82,14 +82,19 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         catch (JsonException) { return null; }
     }
 
+    private const int MaxArticleWords = 60;
+
+    private static int WordCount(string text) =>
+        Regex.Matches(text, @"\S+").Count;
+
     private static bool ValidProposal(Proposal? p, List<Article> articles) =>
         p is not null && !string.IsNullOrWhiteSpace(p.Reason) &&
         (p.Action switch
         {
             "PASS" => true,
-            "ADD" => articles.Count < 10 && !string.IsNullOrWhiteSpace(p.Text),
+            "ADD" => articles.Count < 10 && !string.IsNullOrWhiteSpace(p.Text) && WordCount(p.Text) <= MaxArticleWords,
             "MODIFY" => articles.Any(a => a.Id == p.TargetId) &&
-                !string.IsNullOrWhiteSpace(p.Text) &&
+                !string.IsNullOrWhiteSpace(p.Text) && WordCount(p.Text) <= MaxArticleWords &&
                 articles.First(a => a.Id == p.TargetId).Text != p.Text,
             "DELETE" => articles.Any(a => a.Id == p.TargetId),
             _ => false
@@ -137,7 +142,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                 "MODIFY (existing TargetId), DELETE (existing TargetId), or PASS. " +
                 capacityGuidance +
                 "This is a living philosophical code, not a software specification. " +
-                "Respect well-argued disagreement. For ADD/MODIFY give a self-contained, concise article Text. " +
+                "Respect well-argued disagreement. For ADD/MODIFY give a self-contained article Text of at most 60 whitespace-separated words; this is a hard limit. The Reason field may be longer. " +
                 "Never prefix article Text with a number, Roman numeral, article ID or heading; IDs are assigned by software. " +
                 "For DELETE explain why removal is preferable to revision. " +
                 "Return JSON object with Action, TargetId (empty for ADD/PASS), Text (empty for DELETE/PASS), " +
@@ -150,9 +155,24 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
             var proposal = Parse<Proposal>(raw);
             if (proposal is not null && proposal.Action is "ADD" or "MODIFY")
                 proposal.Text = WithoutArticleNumber(proposal.Text);
+            if (proposal is not null && proposal.Action is "ADD" or "MODIFY" &&
+                WordCount(proposal.Text) > MaxArticleWords)
+            {
+                Console.Error.WriteLine($"DOUBTERS: {label} has {WordCount(proposal.Text)} words; requesting a shorter article.");
+                var revisedRaw = await client.AskAsync(label + "-word-limit-retry", author.Model,
+                    "You are a critic proposing one constitutional amendment. Return JSON only. Lens: " + author.Role,
+                    prompt + "\nYour previous proposal exceeded the hard 60-word limit for Text. " +
+                    "Return the same Action, TargetId and intended meaning, but rewrite Text in at most " +
+                    "60 whitespace-separated words. Preserve a nonempty Reason. Previous proposal:\n" +
+                    JsonSerializer.Serialize(proposal, TrialConfig.Json));
+                if (revisedRaw is null) return false;
+                proposal = Parse<Proposal>(revisedRaw);
+                if (proposal is not null && proposal.Action is "ADD" or "MODIFY")
+                    proposal.Text = WithoutArticleNumber(proposal.Text);
+            }
             if (!ValidProposal(proposal, state.Articles))
             {
-                Console.Error.WriteLine("Invalid Doubters Codex proposal: " + label);
+                Console.Error.WriteLine("Invalid Doubters Codex proposal (including 60-word limit): " + label);
                 return false;
             }
             var p = proposal!;
