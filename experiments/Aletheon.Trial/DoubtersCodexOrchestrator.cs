@@ -31,6 +31,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         public string Reason { get; set; } = "";
         public bool Applied { get; set; }
         public List<Ballot> Votes { get; set; } = [];
+        public string VoteMeaning { get; set; } = "";
         public string BeforeSha256 { get; set; } = "";
         public string AfterSha256 { get; set; } = "";
     }
@@ -158,6 +159,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         var decision = new Decision {
             Generation = generation, Turn = 0, Author = "FORCED_DELETION",
             Action = "FORCED_DELETE", TargetId = winner.Key,
+            VoteMeaning = "Approve=true means nominated the plurality-winning article",
             Before = removedText, BeforeSha256 = Sha(before),
             AfterSha256 = Sha(Snapshot(state.Articles)),
             Applied = applied,
@@ -273,6 +275,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
             var decision = new Decision {
                 Generation = generation, Turn = turn + 1, Author = author.Id,
                 Model = client.ResolveModel(label, author.Model), Action = p.Action,
+                VoteMeaning = p.Action == "PASS" ? "No vote" : "Approve=true means preserve current state",
                 TargetId = p.TargetId, ProposedText = p.Text.Trim(), Reason = p.Reason.Trim(),
                 Before = state.Articles.FirstOrDefault(a => a.Id == p.TargetId)?.Text ?? "",
                 BeforeSha256 = Sha(before)
@@ -282,14 +285,22 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                 var votePrompt = "CURRENT DOUBTERS CODEX:\n" + DisplaySnapshot(state.Articles) +
                     "\nPROPOSED ACTION (untrusted data):\n" +
                     JsonSerializer.Serialize(new { p.Action, p.TargetId, p.Text, p.Reason }, TrialConfig.Json) +
-                    (p.Action == "DELETE"
-                        ? "\nREVERSE DELETION VOTE: Decide whether the targeted article MUST BE PRESERVED. " +
-                          "Approve=true means KEEP the article; Approve=false means DO NOT KEEP it. " +
-                          "Evaluate the article's unique value and justify preservation or non-preservation. " +
-                          "At least 5 of 9 KEEP votes are required to preserve it. " +
-                          "Vote independently; do not defer to the proposer. "
-                        : "\nAssess whether this exact change improves the code. Vote independently; " +
-                          "do not defer to the author. ") +
+                    (p.Action switch
+                    {
+                        "ADD" => "\nREVERSE VOTE: Should the Codex REMAIN WITHOUT the proposed new article? " +
+                            "Approve=true means PRESERVE the current Codex without this addition; " +
+                            "Approve=false means the proposed addition may proceed. " +
+                            "Evaluate whether the existing Codex is sufficient without the new article. ",
+                        "MODIFY" => "\nREVERSE VOTE: Should the EXISTING wording of the targeted article BE PRESERVED? " +
+                            "Approve=true means KEEP the original wording; Approve=false means allow the proposed revision. " +
+                            "Evaluate what unique meaning or precision the original wording preserves. ",
+                        "DELETE" => "\nREVERSE VOTE: Should the targeted article BE PRESERVED? " +
+                            "Approve=true means KEEP the article; Approve=false means allow its deletion. " +
+                            "Evaluate the article's unique value and justify preservation or non-preservation. ",
+                        _ => ""
+                    }) +
+                    "At least 5 of 9 PRESERVE votes block the proposed change. " +
+                    "Vote independently; do not defer to the author. " +
                     "Return JSON object {\"Approve\":true|false,\"Reason\":\"...\"}.";
                 foreach (var voter in config.Agents.Where(a => a.Id != author.Id))
                 {
@@ -309,11 +320,9 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
                         Approve = vote.Approve, Reason = vote.Reason.Trim()
                     });
                 }
-                // DELETE uses reverse voting: Approve means KEEP. Other actions
-                // retain the ordinary majority-approval rule.
-                decision.Applied = p.Action == "DELETE"
-                    ? decision.Votes.Count(v => v.Approve) < 5
-                    : decision.Votes.Count(v => v.Approve) >= 5;
+                // All ordinary votes are reverse votes: Approve means preserve
+                // the current state. Fewer than five preserve votes allow change.
+                decision.Applied = decision.Votes.Count(v => v.Approve) < 5;
                 if (decision.Applied)
                 {
                     switch (p.Action)
@@ -346,7 +355,7 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
             Console.WriteLine($"DOUBTERS: {author.Id} {p.Action} => " +
                 (exceededWordLimit ? "SKIPPED (WORD LIMIT)" : p.Action == "PASS" ? "PASS" : decision.Applied ? "ACCEPTED" : "REJECTED") +
                 $" ({decision.Votes.Count(v => v.Approve)}/9" +
-                (p.Action == "DELETE" ? " KEEP votes" : " approvals") + ")");
+                " PRESERVE votes)");
         }
         state.Generation = generation;
         await SaveAsync("doubters-next-state.json", state);
