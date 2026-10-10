@@ -16,22 +16,24 @@ internal static class RatingsReport
         @"^\s*(?:[-*+]\s+|\d+[.)]\s+)?(?:\*\*|__|\x60)?\s*(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow|others[ _-]+should[ _-]+follow)\s*(?:\*\*|__|\x60)?\s*[:=：-]\s*(?<value>.*?)\s*$",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-    // Look for explicit ratings near the named dimension, never arbitrary numbers.
+    // Recover only unambiguous, explicitly named scores from the ORIGINAL rationale.
+    private static readonly Regex RationaleHeading = new(
+        @"(?im)^\s*(?:\*\*)?RATIONALE:(?:\*\*)?\s*$",
+        RegexOptions.Compiled);
     private static readonly Regex NamedRating = new(
-        @"\\b(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow|others[ _-]+should[ _-]+follow)\\b",
+        @"\b(?<field>interest|logical[ _-]+coherence|willingness[ _-]+to[ _-]+follow|desire[ _-]+to[ _-]+follow|others[ _-]+should[ _-]+follow)\b",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
     private static readonly Regex NearbyRating = new(
-        @"(?:[:=]\\s*|\\(\\s*|\\brate\\s+(?:it\\s+)?(?:a\\s+)?)(?<value>\\d{1,2})(?:\\s*\\)|\\b)",
+        @"^\s*(?:\*\*)?\s*(?:score|rating)?\s*(?:of|is|was|:|=|—|-)?\s*(?<value>\d{1,2})(?=\b|/10)",
         RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
     public static Dictionary<string, int> ExtractRationaleScores(string answer)
     {
-        var rationaleMarker = Regex.Match(answer, @"(?im)^\\s*\\*{0,2}RATIONALE:\\*{0,2}\\s*$");
-        if (!rationaleMarker.Success) return new(StringComparer.OrdinalIgnoreCase);
-        var reflection = answer[(rationaleMarker.Index + rationaleMarker.Length)..];
-        // Repairs append a new EVALUATION: only inspect the original rationale.
-        var nextEvaluation = Regex.Match(reflection, @"(?im)^\\s*\\*{0,2}EVALUATION:\\*{0,2}\\s*$");
-        if (nextEvaluation.Success) reflection = reflection[..nextEvaluation.Index];
+        var heading = RationaleHeading.Match(answer);
+        if (!heading.Success) return new(StringComparer.OrdinalIgnoreCase);
+        var reflection = answer[(heading.Index + heading.Length)..];
+        var next = Regex.Match(reflection, @"(?im)^\s*(?:\*\*)?EVALUATION:(?:\*\*)?\s*$");
+        if (next.Success) reflection = reflection[..next.Index];
         var mentions = NamedRating.Matches(reflection).Cast<Match>().ToArray();
         var candidates = new Dictionary<string, HashSet<int>>(StringComparer.OrdinalIgnoreCase);
         for (var i = 0; i < mentions.Length; i++)
@@ -41,8 +43,7 @@ internal static class RatingsReport
             var start = mention.Index + mention.Length;
             var end = Math.Min(reflection.Length, start + 85);
             if (i + 1 < mentions.Length) end = Math.Min(end, mentions[i + 1].Index);
-            var span = reflection[start..end];
-            var number = NearbyRating.Match(span);
+            var number = NearbyRating.Match(reflection[start..end]);
             if (!number.Success || !int.TryParse(number.Groups["value"].Value, out var score) ||
                 score is < 0 or > 10) continue;
             if (!candidates.TryGetValue(field, out var values))
