@@ -212,6 +212,29 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
             "`doubters-next-state.json`. This document records model-generated proposals, " +
             "not verified truths or autonomous beliefs.\n";
         await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, "CODEX-DUBITANTIUM.md"), md);
+        // Promote only a fully completed generation to the persistent archive.
+        // The per-run results remain immutable; latest.json is an atomic pointer-by-copy.
+        var experimentsDir = Directory.GetParent(Directory.GetParent(client.OutputDirectory)!.FullName)!.FullName;
+        var archiveDir = Path.Combine(experimentsDir, "doubters");
+        Directory.CreateDirectory(archiveDir);
+        var generationPath = Path.Combine(archiveDir, $"generation-{generation:D4}.json");
+        if (File.Exists(generationPath))
+            throw new IOException("Generation archive already exists: " + generationPath +
+                ". Refusing to overwrite historical state.");
+        var completedState = Path.Combine(client.OutputDirectory, "doubters-next-state.json");
+        File.Copy(completedState, generationPath);
+        var latestPath = Path.Combine(archiveDir, "latest.json");
+        var stagingPath = Path.Combine(archiveDir, "latest-" + Guid.NewGuid().ToString("N") + ".tmp");
+        try
+        {
+            File.Copy(completedState, stagingPath);
+            File.Move(stagingPath, latestPath, overwrite: true);
+        }
+        finally
+        {
+            if (File.Exists(stagingPath)) File.Delete(stagingPath);
+        }
+        Console.WriteLine("Doubters: archived generation " + generation + " to " + generationPath);
         Console.WriteLine($"Doubters Codex generation {generation} complete: {state.Articles.Count}/10 articles.");
         return true;
     }
