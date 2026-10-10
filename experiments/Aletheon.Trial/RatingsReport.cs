@@ -54,6 +54,31 @@ internal static class RatingsReport
             .ToDictionary(x => x.Key, x => x.Value.First(), StringComparer.OrdinalIgnoreCase);
     }
 
+    // Some critics provide a final Before/After score table instead of EVALUATION.
+    // Accept only a clearly labelled revised-score table with all five rows.
+    // Never let a later formatting repair silently overwrite these original scores.
+    private static readonly Regex RevisedScoreRow = new(
+        @"^\s*\|\s*\*\*?(?<field>interest|logical_coherence|willingness_to_follow|desire_to_follow|others_should_follow)\*\*?\s*\|\s*\d{1,2}\s*\|\s*(?<after>\d{1,2})\s*\|",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase);
+
+    private static Dictionary<string, int> ExtractRevisedTable(string answer)
+    {
+        var heading = Regex.Match(answer, @"(?im)^\s*#{1,6}\s*REVISED SCORES\s*$");
+        if (!heading.Success) return new(StringComparer.OrdinalIgnoreCase);
+        var tail = answer[heading.Index..];
+        var nextHeading = Regex.Match(tail[heading.Length..], @"(?m)^\s*#{1,6}\s+");
+        if (nextHeading.Success) tail = tail[..(heading.Length + nextHeading.Index)];
+        var scores = new Dictionary<string, int>(StringComparer.OrdinalIgnoreCase);
+        foreach (var line in tail.Split('\n'))
+        {
+            var match = RevisedScoreRow.Match(line);
+            if (!match.Success || !int.TryParse(match.Groups["after"].Value, out var score) ||
+                score is < 0 or > 10 || !scores.TryAdd(match.Groups["field"].Value.ToLowerInvariant(), score))
+                return new(StringComparer.OrdinalIgnoreCase);
+        }
+        return scores.Count == Fields.Length ? scores : new(StringComparer.OrdinalIgnoreCase);
+    }
+
     private sealed record Parsed(string Critique, string Rationale,
         Dictionary<string, int> Scores, List<string> InvalidScores, bool Duplicate,
         bool HasEvaluation, bool HasRationale);
@@ -113,6 +138,21 @@ internal static class RatingsReport
             : "";
         // The original rationale can resolve malformed fields, but only where
         // it states a unique in-range value. Preserve raw responses for auditing.
+        // Only use table fallback when the canonical EVALUATION is absent.
+        if (!hasEvaluation)
+        {
+            var tableScores = ExtractRevisedTable(answer);
+            if (tableScores.Count == Fields.Length)
+            {
+                var reflectionHeading = Regex.Match(answer,
+                    @"(?im)^\\s*#{1,6}\\s*RATIONALE FOR REVISED SCORES\\s*$");
+                var tableReflection = reflectionHeading.Success
+                    ? answer[(reflectionHeading.Index + reflectionHeading.Length)..].Trim()
+                    : "";
+                if (tableReflection.Length >= 250)
+                    return new Parsed(critique, tableReflection, tableScores, invalid, false, true, true);
+            }
+        }
         var recovered = ExtractRationaleScores(answer);
         foreach (var (field, value) in recovered)
         {
