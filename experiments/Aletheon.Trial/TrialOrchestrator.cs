@@ -40,6 +40,7 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
         // Keep the critique intact; isolate each correction so prior invalid scores
         // cannot contaminate parsing. No automatic clamping or fabricated ratings.
         var critique = answer;
+        var originalScores = RatingsReport.ExtractRationaleScores(answer);
         for (var attempt = 1; attempt <= 3; attempt++)
         {
             var repair = await client.AskAsync(label + $"-ratings-repair-{attempt}", agent.Model,
@@ -59,7 +60,7 @@ Write a thoughtful 120-200 word reflection on the scores, especially the differe
             // Validate the replacement block independently; then attach the untouched critique.
             // This prevents a previous invalid EVALUATION from shadowing the new one.
             var combined = critique + "\n\n" + repair;
-            if (await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, agent.Model, combined))
+            if (await RatingsReport.RecordAsync(client.OutputDirectory, round, agent.Id, agent.Model, combined, originalScores))
             {
                 await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, label + ".validated.md"), combined);
                 Console.WriteLine($"VALIDATED after ratings repair {attempt}: {label}");
