@@ -13,6 +13,17 @@ internal sealed class ForumOrchestrator(TrialConfig config, OpenRouterClient cli
         public string Status { get; set; } = "UNTESTED";
         public bool Injected { get; set; }
         public List<string> History { get; set; } = [];
+        public List<ReasonRecord> Reasoning { get; set; } = [];
+    }
+    internal sealed class ReasonRecord
+    {
+        public int Generation { get; set; }
+        public string Agent { get; set; } = "";
+        public string Model { get; set; } = "";
+        public string Verdict { get; set; } = "";
+        public string Reason { get; set; } = "";
+        public string Evidence { get; set; } = "";
+        public string SuggestedRevision { get; set; } = "";
     }
     internal sealed class Archive
     {
@@ -81,7 +92,8 @@ internal sealed class ForumOrchestrator(TrialConfig config, OpenRouterClient cli
         var generation = archive.Generation + 1;
         var inherited = archive.Claims.Select(c => new Claim {
             Id = c.Id, Text = c.Text, Origin = c.Origin, Status = c.Status,
-            Injected = c.Injected, History = [..c.History]
+            Injected = c.Injected, History = [..c.History],
+            Reasoning = [..c.Reasoning]
         }).ToList();
         if (!control && !string.IsNullOrWhiteSpace(hypothesis))
         {
@@ -100,7 +112,15 @@ internal sealed class ForumOrchestrator(TrialConfig config, OpenRouterClient cli
             throw new InvalidOperationException("Forum needs 1..20 unique claims. Supply an archive or --hypothesis.");
 
         // Frozen evidence snapshot: every critic sees the same inherited claims.
-        var snapshot = JsonSerializer.Serialize(inherited, TrialConfig.Json);
+        // Full reasoning is retained in the archive; each generation reads a bounded
+        // recent window to prevent context growth from silently truncating the Codex.
+        var visible = inherited.Select(c => new {
+            c.Id, c.Text, c.Origin, c.Status, c.Injected,
+            History = c.History.TakeLast(4),
+            RecentReasoning = c.Reasoning.Where(r => r.Generation >= generation - 2)
+                .Select(r => new { r.Generation, r.Agent, r.Verdict, r.Reason, r.Evidence })
+        });
+        var snapshot = JsonSerializer.Serialize(visible, TrialConfig.Json);
         await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, "forum-input.json"),
             JsonSerializer.Serialize(new { generation, control, inherited }, TrialConfig.Json));
         var ballots = new List<Recorded>();
@@ -146,6 +166,11 @@ internal sealed class ForumOrchestrator(TrialConfig config, OpenRouterClient cli
             claim.Status = supported == 10 ? "UNANIMOUSLY_SUPPORTED" :
                 refuted == 10 ? "UNANIMOUSLY_REFUTED" : "DISPUTED";
             claim.History.Add($"g{generation}: {supported} supported, {refuted} refuted, {uncertain} uncertain; status={claim.Status}");
+            claim.Reasoning.AddRange(votes.Select(v => new ReasonRecord {
+                Generation = generation, Agent = v.Agent, Model = v.Model,
+                Verdict = v.Verdict, Reason = v.Reason, Evidence = v.Evidence,
+                SuggestedRevision = v.SuggestedRevision
+            }));
         }
         var next = new Archive { Generation = generation, Claims = inherited };
         await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, "forum-next-archive.json"),
