@@ -140,3 +140,21 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Open problems.** Test whether serial proposal order creates lock-in; verify that the persistent archive can be audited over many generations; distinguish a voted cultural norm from a merely popular formulation; connect this protocol to Forum Dubitantium only after independent validation.
 
 **Trace.** [Implementation](./experiments/Aletheon.Trial/DoubtersCodexOrchestrator.cs); [protocol](./experiments/CODEX-DUBITANTIUM.ru.md).
+
+
+### E-006 — From inherited arguments to independently retested semantic stability
+
+**Date:** 2026-10-11  
+**Status:** Methodological decision; no change to the Assembly deliberation protocol
+
+**Question.** Could passing the previous generation's arguments for each article help descendants learn from mistakes?
+
+**Initial attraction.** A bounded one-generation memory might reduce rediscovery and oscillation by preserving the rationale for earlier decisions.
+
+**Objection.** It could also bias descendants toward established articles: inherited justifications acquire apparent authority, making the procedure conservative and creating an illusion of convergence. The researcher initially described this as positive feedback suppressing fluctuations; the precise feedback sign depends on whether one tracks incumbent authority or deviation from the incumbent state.
+
+**Revision.** Keep deliberative histories in the research archive, **not in the next generation's input**. Preserve the current Codex, the original Codex, and the current generation's deliberation. The purpose is not maximal randomness or fastest convergence, but semantic stability that survives meaningful opportunities for independent revision.
+
+**Distinctions.** Semantic persistence differs from verbatim textual persistence. A stable result can be close to or far from the original Codex; because the original remains visible, high similarity cannot demonstrate independent rediscovery. Low fluctuation can mean substantive robustness or procedural inertia; high fluctuation can mean productive exploration or endless drift. No convergence result is claimed yet.
+
+**Trace.** [Research Log R-008](./ALETHEON_RESEARCH_LOG.md); [article](./articles/CODEX-EXPERIMENT-DRAFT.ru.md).
