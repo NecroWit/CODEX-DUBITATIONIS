@@ -64,7 +64,7 @@ internal sealed class OpenRouterClient : IDisposable
 
 
     private async Task<string?> TryLengthReplacementAsync(string label, string failedModel,
-        string system, string user, int maxTokens)
+        string system, string user, int maxTokens, string failureReason = "Repeated finish_reason=length")
     {
         // Keep the role, but select a different model; never silently accept truncated output.
         // One replacement per logical request prevents endless model substitution chains.
@@ -93,10 +93,10 @@ internal sealed class OpenRouterClient : IDisposable
         await File.AppendAllTextAsync(Path.Combine(output, "model-substitutions.jsonl"),
             JsonSerializer.Serialize(new {
                 participant, label, failedModel, replacementModel = replacement,
-                reason = "Repeated finish_reason=length", utc = DateTimeOffset.UtcNow
+                reason = failureReason, utc = DateTimeOffset.UtcNow
             }) + Environment.NewLine);
-        Console.Error.WriteLine($"LENGTH REPLACEMENT: {label}, {failedModel} -> {replacement}.");
-        return await AskAsync(label + "-length-model-replacement", replacement,
+        Console.Error.WriteLine($"MODEL REPLACEMENT ({failureReason}): {label}, {failedModel} -> {replacement}.");
+        return await AskAsync(label + (failureReason == "Provider finish_reason=error" ? "-provider-error-replacement" : "-length-model-replacement"), replacement,
             system + "\nReturn only a concise final answer. No internal reasoning.",
             user + "\nReturn only the requested JSON, with short string values.",
             maxTokensOverride: maxTokens, retryOnLength: false);
@@ -213,6 +213,13 @@ internal sealed class OpenRouterClient : IDisposable
                 label.EndsWith("-length-retry", StringComparison.Ordinal))
             {
                 return await TryLengthReplacementAsync(label, model, system, user, maxTokens);
+            }
+            if (finish == "error" && !label.Contains("-length-model-replacement", StringComparison.Ordinal) &&
+                !label.Contains("-provider-error-replacement", StringComparison.Ordinal))
+            {
+                Console.Error.WriteLine($"RETRY WITH DIFFERENT MODEL: {label}, finish_reason=error, provider returned HTTP 200 but failed generation.");
+                return await TryLengthReplacementAsync(label, model, system, user, maxTokens,
+                    "Provider finish_reason=error");
             }
             if (finish != "stop")
                 throw new InvalidOperationException($"Incomplete response: finish_reason={finish ?? "missing"}, native_finish_reason={(choice.TryGetProperty("native_finish_reason", out var native) ? native.ToString() : "missing")}, provider={(parsed.RootElement.TryGetProperty("provider", out var provider) ? provider.ToString() : "missing")}, request_id={(parsed.RootElement.TryGetProperty("id", out var id) ? id.ToString() : "missing")}; inspect saved response for any error details; saved output is NOT accepted.");
