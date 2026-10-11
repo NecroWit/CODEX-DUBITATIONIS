@@ -259,6 +259,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-analyses.json", analyses);
 
         // One common discussion round: everyone sees the same analyses, then responds.
+        stages.Complete();
         stages.Begin(2, "Common discussion", true);
         var discussionResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
         {
@@ -276,6 +277,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-discussion.json", discussion);
 
         // Blind submissions: every author sees the same initial snapshot and discussion.
+        stages.Complete();
         stages.Begin(3, "Anonymous proposals", true);
         var proposalResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<Submission?>>>((agent, i) => async () =>
         {
