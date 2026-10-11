@@ -5,6 +5,38 @@ using System.Text.Json;
 
 internal sealed class OpenRouterClient : IDisposable
 {
+    // Serialize JSONL appends from concurrent requests within this process.
+    private static readonly SemaphoreSlim LogAppendLock = new(1, 1);
+
+    private static async Task AppendLogAsync(string path, string line)
+    {
+        await LogAppendLock.WaitAsync();
+        try
+        {
+            await File.AppendAllTextAsync(path, line);
+        }
+        finally
+        {
+            LogAppendLock.Release();
+        }
+    }
+
+    private static async Task AppendTimingAsync(string path, string line)
+    {
+        try
+        {
+            await File.AppendAllTextAsync(path, line);
+        }
+        catch (IOException ex)
+        {
+            Console.Error.WriteLine($"WARNING: Timing log could not be written: {ex.Message}");
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            Console.Error.WriteLine($"WARNING: Timing log could not be written: {ex.Message}");
+        }
+    }
+
     private readonly HttpClient http;
     private readonly TrialConfig config;
     private readonly BudgetManager budget;
@@ -53,7 +85,7 @@ internal sealed class OpenRouterClient : IDisposable
         usedStandbys.Add(candidate);
         assignedModels[participant] = candidate;
         Console.Error.WriteLine($"STANDBY: {participant}, {failedModel} -> {candidate} after HTTP {statusCode}: {errorDetail}");
-        await File.AppendAllTextAsync(Path.Combine(output, "model-substitutions.jsonl"),
+        await AppendLogAsync(Path.Combine(output, "model-substitutions.jsonl"),
             JsonSerializer.Serialize(new {
                 participant, failedModel, replacementModel = candidate,
                 reason = $"HTTP {statusCode}", errorDetail, utc = DateTimeOffset.UtcNow
@@ -90,7 +122,7 @@ internal sealed class OpenRouterClient : IDisposable
         }
         usedLengthReplacements.Add(replacement);
         assignedModels[participant] = replacement;
-        await File.AppendAllTextAsync(Path.Combine(output, "model-substitutions.jsonl"),
+        await AppendLogAsync(Path.Combine(output, "model-substitutions.jsonl"),
             JsonSerializer.Serialize(new {
                 participant, label, failedModel, replacementModel = replacement,
                 reason = failureReason, utc = DateTimeOffset.UtcNow
@@ -244,7 +276,7 @@ internal sealed class OpenRouterClient : IDisposable
                 {
                     await File.WriteAllTextAsync(Path.Combine(output, label + ".reasoning-only.md"), reasoning!);
                     await File.WriteAllTextAsync(Path.Combine(output, label + ".md"), reasoning!);
-                    await File.AppendAllTextAsync(Path.Combine(output, "reasoning-only-reports.jsonl"),
+                    await AppendLogAsync(Path.Combine(output, "reasoning-only-reports.jsonl"),
                         JsonSerializer.Serialize(new {
                             label, model, source = "message.reasoning",
                             contentWasEmpty = true, finishReason = finish,
@@ -258,7 +290,7 @@ internal sealed class OpenRouterClient : IDisposable
                 if (retryOnEmpty)
                 {
                     Console.Error.WriteLine($"RETRY: {label}, empty content; requesting final answer once from same model.");
-                    await File.AppendAllTextAsync(Path.Combine(output, "empty-content-retries.jsonl"),
+                    await AppendLogAsync(Path.Combine(output, "empty-content-retries.jsonl"),
                         JsonSerializer.Serialize(new {
                             label, model, reason = "Empty message.content", utc = DateTimeOffset.UtcNow
                         }) + Environment.NewLine);
@@ -301,7 +333,7 @@ internal sealed class OpenRouterClient : IDisposable
             // A length retry has its own label and timing record.
             // The parent call's elapsed time includes its child retry, so use
             // the per-attempt records for additive latency comparisons.
-            await File.AppendAllTextAsync(Path.Combine(output, "request-timings.jsonl"),
+            await AppendTimingAsync(Path.Combine(output, "request-timings.jsonl"),
                 JsonSerializer.Serialize(new {
                     label, model, elapsedSeconds = Math.Round(elapsed.Elapsed.TotalSeconds, 3),
                     httpAttempts = attempts, completed,
