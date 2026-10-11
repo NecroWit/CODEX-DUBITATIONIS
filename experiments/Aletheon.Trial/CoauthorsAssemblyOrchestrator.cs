@@ -510,10 +510,10 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                         "assembly-g" + generation + "-conflict-" + group.Key + "-bonus-" + option.Key + "-" + agent.Id,
                         "Several independently confirmed amendments compete for the SAME frozen article. " +
                         "Evaluate EACH alternative independently; multiple ACCEPT votes are allowed. " +
-                        "No alternative has yet been applied. FROZEN ARTICLE:\\n" +
-                        snapshot + "\\nCONFIRMED ALTERNATIVES:\\n" + optionDetails +
-                        "\\nVOTE ON THIS ALTERNATIVE ONLY:\\n" + Serialize(PublicProposal(option)) +
-                        "\\nReturn JSON {\\\"Choice\\\":\\\"ACCEPT|REJECT\\\",\\\"Reason\\\":\\\"...\\\"}.",
+                        "No alternative has yet been applied. FROZEN ARTICLE:\n" +
+                        snapshot + "\nCONFIRMED ALTERNATIVES:\n" + optionDetails +
+                        "\nVOTE ON THIS ALTERNATIVE ONLY:\n" + Serialize(PublicProposal(option)) +
+                        "\nReturn JSON {\\"Choice\\":\\"ACCEPT|REJECT\\",\\"Reason\\":\\"...\\"}.",
                         x => x.Choice is "ACCEPT" or "REJECT" && !string.IsNullOrWhiteSpace(x.Reason));
                     if (vote is null) return null;
                     ballot.Add(new { Voter = agent.Id, Proposal = option.Key, vote.Choice, vote.Reason });
@@ -541,10 +541,10 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                     var choice = await Ask<RankedChoice>(agent,
                         "assembly-g" + generation + "-conflict-" + group.Key + "-runoff-" + agent.Id,
                         "Choose EXACTLY ONE of these tied amendments to the same frozen article. " +
-                        "No abstention, multiple selections, or new proposal.\\nFROZEN ARTICLE:\\n" +
-                        snapshot + "\\nTIED ALTERNATIVES:\\n" +
+                        "No abstention, multiple selections, or new proposal.\nFROZEN ARTICLE:\n" +
+                        snapshot + "\nTIED ALTERNATIVES:\n" +
                         Serialize(leaders.Select(PublicProposal)) +
-                        "\\nReturn JSON {\\\"Choice\\\":\\\"Pxx\\\",\\\"Reason\\\":\\\"...\\\"}, " +
+                        "\nReturn JSON {\\"Choice\\":\\"Pxx\\",\\"Reason\\":\\"...\\"}, " +
                         "where Choice is exactly one of: " + string.Join(", ", tiedKeys) + ".",
                         x => tiedKeys.Contains(x.Choice) && !string.IsNullOrWhiteSpace(x.Reason));
                     return choice is null ? null : (object)new { Voter = agent.Id, choice.Choice, choice.Reason };
