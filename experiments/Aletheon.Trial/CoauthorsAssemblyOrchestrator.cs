@@ -137,8 +137,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "\nExplain strengths, tensions and missing principles in both texts. " +
                 "Do not propose a binding edit yet. Return JSON {\"Strengths\":\"...\",\"Tensions\":\"...\",\"Gaps\":\"...\"}.";
             var response = await Ask<JsonElementBox>(agent, "assembly-g" + generation + "-analysis-" + agent.Id,
-                prompt, x => !string.IsNullOrWhiteSpace(x.Strengths) &&
-                             !string.IsNullOrWhiteSpace(x.Tensions) && !string.IsNullOrWhiteSpace(x.Gaps));
+                prompt, x => HasContent(x.Strengths) && HasContent(x.Tensions) && HasContent(x.Gaps));
             if (response is null) return false;
             analyses.Add(new { agent.Id, response.Strengths, response.Tensions, response.Gaps });
         }
@@ -333,10 +332,14 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         return true;
     }
 
+    private static bool HasContent(JsonElement value) =>
+        value.ValueKind is not (JsonValueKind.Undefined or JsonValueKind.Null) &&
+        !string.IsNullOrWhiteSpace(value.ToString()) && value.ToString() != "{}" && value.ToString() != "[]";
+
     private sealed class JsonElementBox
     {
-        public string Strengths { get; set; } = "";
-        public string Tensions { get; set; } = "";
-        public string Gaps { get; set; } = "";
+        public JsonElement Strengths { get; set; }
+        public JsonElement Tensions { get; set; }
+        public JsonElement Gaps { get; set; }
     }
 }
