@@ -349,7 +349,13 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "Keep the SAME Action and TargetId. Text for ADD/MODIFY/REPLACE <=60 words. " +
                 "Return JSON {\"Action\":\"...\",\"TargetId\":\"...\",\"Text\":\"...\",\"Reason\":\"...\"}.",
                 state.Articles, submission.Initial);
-            if (revision is null) return false;
+            if (revision is null)
+            {
+                // A failed optional revision must not invalidate a previously valid
+                // proposal or abort the entire generation.
+                Console.Error.WriteLine($"ASSEMBLY: revision {submission.Key} failed validation; preserving the original valid proposal.");
+                revision = submission.Initial;
+            }
             submission.Revised = revision;
         }
         await Save("assembly-revisions.json",
