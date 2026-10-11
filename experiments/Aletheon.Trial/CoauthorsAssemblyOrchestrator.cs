@@ -257,7 +257,8 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                     "Preliminary independent assessment. No other ballots are visible.\nAMENDMENT:\n" +
                     Serialize(new { submission.Key, submission.Initial }) +
                     "\nBALANCED REVIEWS:\n" + Serialize(submission.Reviews) +
-                    "\nChoose ACCEPT to adopt this version now, otherwise REJECT. " +
+                    "\nBINARY DECISION REQUIRED: ACCEPT means adopt the current text; REJECT means do not adopt it in this wording. " +
+                    "REVISE is not a vote. You may recommend revisions in Reason even when voting REJECT. " +
                     "Explain suggested revisions in Reason. " +
                     "Return JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
                     x => x.Choice is "ACCEPT" or "REJECT" &&
@@ -297,7 +298,8 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                     "Final SECRET vote on an anonymous revised amendment.\nFROZEN CODEX:\n" +
                     snapshot + "\nAMENDMENT:\n" + Serialize(PublicProposal(submission)) +
                     "\nREVIEWS:\n" + Serialize(submission.Reviews) +
-                    "\nVote ACCEPT to adopt this revised version now, otherwise REJECT. " +
+                    "\nBINARY FINAL DECISION REQUIRED: ACCEPT means adopt the revised text; REJECT means do not adopt it now. " +
+                    "REVISE is not a vote. State any remaining concerns and suggested revisions in Reason. " +
                     "Explain any remaining needed revisions in Reason. Evaluate independently. " +
                     "Return JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
                     x => x.Choice is "ACCEPT" or "REJECT" &&
