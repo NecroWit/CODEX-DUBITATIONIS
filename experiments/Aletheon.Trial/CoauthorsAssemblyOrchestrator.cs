@@ -296,12 +296,19 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 var vote = await Ask<Vote>(agent,
                     "assembly-g" + generation + "-final-vote-" + submission.Key + "-" + agent.Id,
                     "Final SECRET vote on an anonymous revised amendment.\nFROZEN CODEX:\n" +
-                    snapshot + "\nAMENDMENT:\n" + Serialize(PublicProposal(submission)) +
-                    "\nREVIEWS:\n" + Serialize(submission.Reviews) +
-                    "\nBINARY FINAL DECISION REQUIRED: ACCEPT means adopt the revised text; REJECT means do not adopt it now. " +
-                    "REVISE is not a vote. State any remaining concerns and suggested revisions in Reason. " +
-                    "Explain any remaining needed revisions in Reason. Evaluate independently. " +
-                    "Return JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
+                    snapshot + "\nORIGINAL AMENDMENT (historical; not the text being voted on):\n" +
+                    Serialize(submission.Initial) +
+                    "\nCURRENT REVISED AMENDMENT (the ONLY text being voted on):\n" +
+                    Serialize(PublicProposal(submission)) +
+                    "\nHISTORICAL REVIEWS (written about the ORIGINAL amendment):\n" +
+                    Serialize(submission.Reviews) +
+                    "\nCompare original and revised wording. For each relevant objection, decide whether it was resolved, " +
+                    "partly resolved, or remains unresolved. Do not reject the CURRENT text for a flaw only in the ORIGINAL text. " +
+                    "Do not assume a flaw was fixed without checking the CURRENT wording. " +
+                    "In Reason, identify substantive changes and remaining or new objections with concrete references to the current text. " +
+                    "\nBINARY FINAL DECISION REQUIRED: ACCEPT means adopt the CURRENT revised text; REJECT means do not adopt it now. " +
+                    "REVISE is not a vote. Suggest further improvements in Reason if useful. Evaluate independently. " +
+                                        "Return JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
                     x => x.Choice is "ACCEPT" or "REJECT" &&
                          !string.IsNullOrWhiteSpace(x.Reason));
                 if (vote is null) return false;
