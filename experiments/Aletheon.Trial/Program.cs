@@ -60,7 +60,7 @@ if (forumControl && hypothesisFile is not null)
 var key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(key)) throw new InvalidOperationException("Set OPENROUTER_API_KEY.");
 // Probe candidate models before committing the roster. A probe is a real, billable
-// OpenRouter request; only HTTP 429 disqualifies a candidate for this run.
+// OpenRouter request; HTTP 429 and 404 disqualify a candidate for this run.
 var rotationChecks = new List<object>();
 if (config.RotationModels.Count > 0)
 {
@@ -101,13 +101,13 @@ if (config.RotationModels.Count > 0)
                 Console.WriteLine($"MODEL READY: {agent.Id}: {candidate}");
                 break;
             }
-            if ((int)response.StatusCode != 429)
+            if ((int)response.StatusCode != 429 && (int)response.StatusCode != 404)
                 throw new InvalidOperationException(
                     $"Model preflight failed for {candidate}: HTTP {(int)response.StatusCode}. {body[..Math.Min(body.Length, 500)]}");
-            Console.WriteLine($"MODEL THROTTLED: {candidate} (HTTP 429); selecting replacement.");
+            Console.WriteLine($"MODEL UNAVAILABLE: {candidate} (HTTP {(int)response.StatusCode}); selecting replacement.");
             if (candidates.Count == 0)
                 throw new InvalidOperationException(
-                    $"Rotation pool exhausted: cannot find {config.Mode} available models after HTTP 429.");
+                    $"Rotation pool exhausted: cannot find {config.Mode} available models after HTTP 429/404.");
             // Prefer an unused family after throttling; fall back to another
             // version/provider only when distinct families are exhausted.
             var replacementIndex = candidates.FindIndex(m =>
