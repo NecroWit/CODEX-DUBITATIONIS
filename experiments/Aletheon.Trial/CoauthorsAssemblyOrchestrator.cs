@@ -103,17 +103,19 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         for (var attempt = 0; attempt < 5; attempt++)
         {
             var name = attempt == 0 ? label : label + "-retry-" + attempt;
+            var capacityBlocked = previous?.Action == "ADD" && articles.Count >= 10;
             var correction = attempt == 0 ? "" :
                 "\nYOUR PREVIOUS PROPOSAL:\n" + Serialize(previous ?? original) +
-                "\nERROR: " + (previous is null ? "Response was not a valid JSON proposal." :
-                    previous.Action is "ADD" or "MODIFY" && Words(previous.Text) > 60
-                        ? "Text contains " + Words(previous.Text) + " words, exceeding the hard limit of 60."
+                "\nERROR: " + (capacityBlocked
+                    ? "The Codex already has 10 articles. ADD is forbidden regardless of text length."
+                    : previous is null ? "Response was not a valid JSON proposal."
+                    : previous.Action is "ADD" or "MODIFY" && Words(previous.Text) > 60
+                        ? "Text exceeds the 60-word hard limit."
                         : "Proposal failed structural or state validation.") +
-                "\nPreserve the SAME idea, Action and TargetId. For ADD/MODIFY, rewrite ONLY Text as a concise, " +
-                "self-contained article of AT MOST 45 whitespace-separated words (aim for 35-45), " +
-                "leaving a safety margin under the validator's 60-word limit. " +
-                "Put supporting explanation in Reason, not Text. Do not switch topics. " +
-                "Include Action, TargetId, Text and nonempty Reason. Return JSON only.";
+                (capacityBlocked
+                    ? "\nPreserve the underlying philosophical idea, but choose MODIFY of an existing TargetId, DELETE of an existing TargetId, or PASS. Do NOT use ADD. You may change Action and TargetId for this capacity correction."
+                    : "\nPreserve the SAME idea, Action and TargetId. For ADD/MODIFY use at most 45 whitespace-separated words.") +
+                "\nPut supporting explanation in Reason, not Text. Include Action, TargetId, Text and nonempty Reason. Return JSON only.";
             var answer = await client.AskAsync(name, agent.Model,
                 "Independent philosophical coauthor. Return exactly one JSON object. Lens: " + agent.Role,
                 prompt + correction);
@@ -126,13 +128,16 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 p.Reason ??= "";
                 if (ValidProposal(p, articles) &&
                     (original is null || p.Action == original.Action && p.TargetId == original.TargetId) &&
-                    (previous is null || previous.Action == p.Action && previous.TargetId == p.TargetId))
+                    (previous is null || previous.Action == "ADD" && articles.Count >= 10 ||
+                     previous.Action == p.Action && previous.TargetId == p.TargetId))
                     return p;
                 Console.Error.WriteLine("ASSEMBLY: invalid proposal " + name +
-                    " (action=" + p.Action + ", target=" + p.TargetId +
+                    " (error=" + (p.Action == "ADD" && articles.Count >= 10 ? "CODEX_CAPACITY_10" : "STRUCTURE_OR_STATE") +
+                    ", action=" + p.Action + ", target=" + p.TargetId +
                     ", words=" + Words(p.Text) + ", reason=" + !string.IsNullOrWhiteSpace(p.Reason) + ")");
                 if (previous is null) previous = p;
-                else if (previous.Action != p.Action || previous.TargetId != p.TargetId)
+                else if (previous.Action != "ADD" &&
+                         (previous.Action != p.Action || previous.TargetId != p.TargetId))
                     Console.Error.WriteLine("ASSEMBLY: model changed action or target during correction.");
                 else previous = p;
             }
