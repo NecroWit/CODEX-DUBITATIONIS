@@ -12,6 +12,7 @@ internal sealed class TrialConfig
     public List<string> ArbiterModels { get; set; } = new();
     public List<string> StandbyModels { get; set; } = new();
     public List<string> RotationModels { get; set; } = new();
+    public Dictionary<string, List<string>> MixedTiers { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public int Mode { get; set; } = 10;
     public Dictionary<string, ModelPrice> ModelPrices { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public int MaxReviewCharacters { get; set; } = 4500;
@@ -37,7 +38,49 @@ internal sealed class TrialConfig
             config.ArbiterModels.Distinct(StringComparer.OrdinalIgnoreCase).Count() != 2 ||
             config.Agents.Any(a => config.ArbiterModels.Contains(a.Model, StringComparer.OrdinalIgnoreCase)))
             throw new InvalidOperationException("Configure two distinct arbiters, neither used as a critic.");
-        if (config.RotationModels.Count > 0)
+        if (config.MixedTiers.Count > 0)
+        {
+            var tiers = new[] { "cheap", "medium", "premium" };
+            if (config.MixedTiers.Count != 3 || tiers.Any(t => !config.MixedTiers.ContainsKey(t) ||
+                config.MixedTiers[t].Count == 0))
+                throw new InvalidOperationException("Mixed tiers must contain nonempty cheap, medium and premium pools.");
+            var all = tiers.SelectMany(t => config.MixedTiers[t]).ToList();
+            if (all.Distinct(StringComparer.OrdinalIgnoreCase).Count() != all.Count ||
+                all.Any(m => string.IsNullOrWhiteSpace(m) || config.ArbiterModels.Contains(m, StringComparer.OrdinalIgnoreCase) ||
+                    !config.ModelPrices.TryGetValue(m, out var price) ||
+                    price.InputUsdPerMillionTokens <= 0 || price.OutputUsdPerMillionTokens <= 0))
+                throw new InvalidOperationException("Mixed tier models must be distinct, priced and exclude arbiters.");
+            var counts = tiers.ToDictionary(t => t, _ => config.Mode / 3);
+            var extras = config.Mode % 3;
+            var shuffledTiers = tiers.ToList();
+            for (var i = shuffledTiers.Count - 1; i > 0; i--)
+            {
+                var j = System.Security.Cryptography.RandomNumberGenerator.GetInt32(i + 1);
+                (shuffledTiers[i], shuffledTiers[j]) = (shuffledTiers[j], shuffledTiers[i]);
+            }
+            foreach (var tier in shuffledTiers.Take(extras)) counts[tier]++;
+            var selected = new List<string>();
+            foreach (var tier in tiers)
+            {
+                var pool = config.MixedTiers[tier].ToList();
+                if (pool.Count < counts[tier])
+                    throw new InvalidOperationException($"Mixed tier {tier} lacks {counts[tier]} candidates.");
+                for (var i = pool.Count - 1; i > 0; i--)
+                {
+                    var j = System.Security.Cryptography.RandomNumberGenerator.GetInt32(i + 1);
+                    (pool[i], pool[j]) = (pool[j], pool[i]);
+                }
+                selected.AddRange(pool.Take(counts[tier]));
+            }
+            for (var i = selected.Count - 1; i > 0; i--)
+            {
+                var j = System.Security.Cryptography.RandomNumberGenerator.GetInt32(i + 1);
+                (selected[i], selected[j]) = (selected[j], selected[i]);
+            }
+            for (var i = 0; i < config.Mode; i++) config.Agents[i].Model = selected[i];
+            config.RotationModels = all;
+        }
+        else if (config.RotationModels.Count > 0)
         {
             if (config.RotationModels.Any(string.IsNullOrWhiteSpace) ||
                 config.RotationModels.Distinct(StringComparer.OrdinalIgnoreCase).Count() != config.RotationModels.Count ||
