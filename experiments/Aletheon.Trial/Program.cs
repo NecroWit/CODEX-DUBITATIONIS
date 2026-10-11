@@ -69,6 +69,7 @@ if (config.RotationModels.Count > 0)
     probeClient.DefaultRequestHeaders.Add("HTTP-Referer", "https://github.com/NecroWit/CODEX-DUBITATIONIS");
     probeClient.DefaultRequestHeaders.Add("X-Title", "Aletheon Trial model preflight");
     var selected = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    var selectedFamilies = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
     // Initial choices are randomized by TrialConfig.Load; shuffle the remaining pool.
     var candidates = config.RotationModels.Where(m => !config.Agents.Any(a =>
         string.Equals(a.Model, m, StringComparison.OrdinalIgnoreCase))).ToList();
@@ -95,6 +96,7 @@ if (config.RotationModels.Count > 0)
             if (response.IsSuccessStatusCode)
             {
                 selected.Add(candidate);
+                selectedFamilies.Add(TrialConfig.ModelFamily(candidate));
                 agent.Model = candidate;
                 Console.WriteLine($"MODEL READY: {agent.Id}: {candidate}");
                 break;
@@ -106,8 +108,18 @@ if (config.RotationModels.Count > 0)
             if (candidates.Count == 0)
                 throw new InvalidOperationException(
                     $"Rotation pool exhausted: cannot find {config.Mode} available models after HTTP 429.");
-            candidate = candidates[0];
-            candidates.RemoveAt(0);
+            // Prefer an unused family after throttling; fall back to another
+            // version/provider only when distinct families are exhausted.
+            var replacementIndex = candidates.FindIndex(m =>
+                !selectedFamilies.Contains(TrialConfig.ModelFamily(m)) &&
+                !config.Agents.Any(a => string.Equals(a.Model, m, StringComparison.OrdinalIgnoreCase)));
+            if (replacementIndex < 0)
+                replacementIndex = candidates.FindIndex(m => !selected.Contains(m) &&
+                    !config.Agents.Any(a => string.Equals(a.Model, m, StringComparison.OrdinalIgnoreCase)));
+            if (replacementIndex < 0)
+                throw new InvalidOperationException("No unused replacement models remain.");
+            candidate = candidates[replacementIndex];
+            candidates.RemoveAt(replacementIndex);
         }
     }
     Console.WriteLine($"Model rotation: {config.Agents.Count} verified participants from {config.RotationModels.Count} candidates.");
