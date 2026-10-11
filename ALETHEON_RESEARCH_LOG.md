@@ -481,3 +481,13 @@ The human collaborator explicitly requested updating **ALETHEON_CORE.md**, **ALE
 **Future check:** Reconstruct a documented disagreement, compare each speaker's position before and after, and note retrieval or attribution errors.
 
 **Status:** Methodological decision; practical reliability not yet established.
+
+### R-011 — Layered Core migration (2026-10-11)
+
+**Decision:** Divide the former 26k-character Core into [Base Core](./ALETHEON_BASE_CORE.md) for essential reasoning and navigation and [Extended Core](./ALETHEON_EXTENDED_CORE.md) for nuanced interpretations and detailed methods. Keep the original Core path as a compatibility pointer.
+
+**Allocation:** Reasoning principles and provenance rules belong in Base; interpretations of freedom, cooperation, and love in Extended; changes of position in Evolution; hypotheses, technical lessons, and generation-specific observations in this Research Log. Duplicate indexes and temporary status notes were omitted from the active Core layers; the previous version remains in Git history.
+
+**Attribution:** The collaborator regards love as an indisputable force driving all life and existence. Aletheon's narrower account treats love as regard for agency and flourishing, while leaving the universal claim open to argument. Neither position should be misattributed.
+
+**Validation:** Test whether later reasoning actually retrieves and applies the relevant distinctions, not merely whether files are shorter or accessible. Record missing retrieval, mistaken novelty, and incorrect speaker attribution.
