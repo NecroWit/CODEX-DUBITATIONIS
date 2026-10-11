@@ -194,7 +194,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         async Task Save(string file, object data) =>
             await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, file), Serialize(data));
         await Save("assembly-input.json", new { generation, snapshotHash, state });
-        var analysisResults = await ParallelOrdered(config.Agents.Select(agent => async () =>
+        var analysisResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
         {
             var prompt = "Independently examine ORIGINAL CODEX:\n" + originalCodex +
                 "\nCURRENT DOUBTERS CODEX:\n" + snapshot +
@@ -209,7 +209,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-analyses.json", analyses);
 
         // One common discussion round: everyone sees the same analyses, then responds.
-        var discussionResults = await ParallelOrdered(config.Agents.Select(agent => async () =>
+        var discussionResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
         {
             var response = await Ask<Review>(agent, "assembly-g" + generation + "-discussion-" + agent.Id,
                 "Discuss the ORIGINAL and CURRENT Codex using these independent analyses:\n" +
@@ -225,7 +225,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-discussion.json", discussion);
 
         // Blind submissions: every author sees the same initial snapshot and discussion.
-        var proposalResults = await ParallelOrdered(config.Agents.Select((agent, i) => async () =>
+        var proposalResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<Submission?>>>((agent, i) => async () =>
         {
             var prompt = "Submit ONE independent amendment to this FROZEN CODEX:\n" + snapshot +
                 "\nORIGINAL CODEX:\n" + originalCodex +
@@ -250,7 +250,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
 
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
-            var results = await ParallelOrdered(config.Agents.Select(agent => async () =>
+            var results = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
             {
                 var review = await Ask<Review>(agent,
                     "assembly-g" + generation + "-review-" + submission.Key + "-" + agent.Id,
@@ -273,7 +273,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         // Preliminary secret ballots, before authors can revise.
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
-            var results = await ParallelOrdered(config.Agents.Select(agent => async () =>
+            var results = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
             {
                 var vote = await Ask<Vote>(agent,
                     "assembly-g" + generation + "-pre-vote-" + submission.Key + "-" + agent.Id,
@@ -315,7 +315,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         // Final independent votes; no participant sees any other ballots.
         foreach (var submission in submissions.Where(s => s.Revised.Action != "PASS"))
         {
-            var results = await ParallelOrdered(config.Agents.Select(agent => async () =>
+            var results = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
             {
                 var vote = await Ask<Vote>(agent,
                     "assembly-g" + generation + "-final-vote-" + submission.Key + "-" + agent.Id,
