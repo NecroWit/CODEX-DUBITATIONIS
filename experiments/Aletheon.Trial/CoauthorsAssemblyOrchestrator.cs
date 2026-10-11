@@ -109,12 +109,12 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "\nERROR: " + (capacityBlocked
                     ? "The Codex already has 10 articles. ADD is forbidden regardless of text length."
                     : previous is null ? "Response was not a valid JSON proposal."
-                    : previous.Action is "ADD" or "MODIFY" && Words(previous.Text) > 60
+                    : previous.Action is "ADD" or "MODIFY" or "REPLACE" && Words(previous.Text) > 60
                         ? "Text exceeds the 60-word hard limit."
                         : "Proposal failed structural or state validation.") +
                 (capacityBlocked
-                    ? "\nPreserve the underlying philosophical idea, but choose MODIFY of an existing TargetId, DELETE of an existing TargetId, or PASS. Do NOT use ADD. You may change Action and TargetId for this capacity correction."
-                    : "\nPreserve the SAME idea, Action and TargetId. For ADD/MODIFY use at most 45 whitespace-separated words.") +
+                    ? "\nPreserve the underlying philosophical idea, but choose MODIFY of an existing TargetId, REPLACE an existing TargetId with a new better principle, or PASS. Do NOT use ADD. You may change Action and TargetId for this capacity correction."
+                    : "\nPreserve the SAME idea, Action and TargetId. For ADD/MODIFY/REPLACE use at most 45 whitespace-separated words.") +
                 "\nPut supporting explanation in Reason, not Text. Include Action, TargetId, Text and nonempty Reason. Return JSON only.";
             var answer = await client.AskAsync(name, agent.Model,
                 "Independent philosophical coauthor. Return exactly one JSON object. Lens: " + agent.Role,
@@ -154,7 +154,9 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
             "MODIFY" => articles.Any(a => a.Id == p.TargetId) &&
                         !string.IsNullOrWhiteSpace(p.Text) && Words(p.Text) <= 60 &&
                         articles.First(a => a.Id == p.TargetId).Text != p.Text,
-            "DELETE" => articles.Any(a => a.Id == p.TargetId),
+            "REPLACE" => articles.Any(a => a.Id == p.TargetId) &&
+                         !string.IsNullOrWhiteSpace(p.Text) && Words(p.Text) <= 60 &&
+                         articles.First(a => a.Id == p.TargetId).Text != p.Text,
             _ => false
         });
 
@@ -192,7 +194,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         async Task Save(string file, object data) =>
             await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, file), Serialize(data));
         await Save("assembly-input.json", new { generation, snapshotHash, state });
-        var analysisResults = await ParallelOrdered(config.Agents.Select(async agent =>
+        var analysisResults = await ParallelOrdered(config.Agents.Select(agent => async () =>
         {
             var prompt = "Independently examine ORIGINAL CODEX:\n" + originalCodex +
                 "\nCURRENT DOUBTERS CODEX:\n" + snapshot +
@@ -207,7 +209,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-analyses.json", analyses);
 
         // One common discussion round: everyone sees the same analyses, then responds.
-        var discussionResults = await ParallelOrdered(config.Agents.Select(async agent =>
+        var discussionResults = await ParallelOrdered(config.Agents.Select(agent => async () =>
         {
             var response = await Ask<Review>(agent, "assembly-g" + generation + "-discussion-" + agent.Id,
                 "Discuss the ORIGINAL and CURRENT Codex using these independent analyses:\n" +
@@ -223,15 +225,15 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-discussion.json", discussion);
 
         // Blind submissions: every author sees the same initial snapshot and discussion.
-        var proposalResults = await ParallelOrdered(config.Agents.Select(async (agent, i) =>
+        var proposalResults = await ParallelOrdered(config.Agents.Select((agent, i) => async () =>
         {
             var prompt = "Submit ONE independent amendment to this FROZEN CODEX:\n" + snapshot +
                 "\nORIGINAL CODEX:\n" + originalCodex +
                 "\nCOMMON DISCUSSION:\n" + Serialize(discussion) +
-                "\nActions: ADD (only if fewer than 10 articles), MODIFY existing TargetId, DELETE existing TargetId, PASS. " +
-                "For ADD/MODIFY write a self-contained article Text of AT MOST 60 whitespace words. " +
+                "\nActions: ADD (only if fewer than 10 articles), MODIFY existing TargetId, REPLACE existing TargetId with an entirely new, better principle (atomic delete-and-add), PASS. " +
+                "For ADD/MODIFY/REPLACE write a self-contained article Text of AT MOST 60 whitespace words. " +
                 "No article number. No author identity in the proposal. Return JSON " +
-                "{\"Action\":\"ADD|MODIFY|DELETE|PASS\",\"TargetId\":\"\",\"Text\":\"\",\"Reason\":\"...\"}.";
+                "{\"Action\":\"ADD|MODIFY|REPLACE|PASS\",\"TargetId\":\"\",\"Text\":\"\",\"Reason\":\"...\"}.";
             var p = await AskProposal(agent, "assembly-g" + generation + "-proposal-" + agent.Id,
                 prompt, state.Articles);
             return p is null ? null : new Submission { Key = "P" + (i + 1).ToString("D2"), Author = agent.Id,
@@ -248,7 +250,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
 
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
-            var results = await ParallelOrdered(config.Agents.Select(async agent =>
+            var results = await ParallelOrdered(config.Agents.Select(agent => async () =>
             {
                 var review = await Ask<Review>(agent,
                     "assembly-g" + generation + "-review-" + submission.Key + "-" + agent.Id,
@@ -271,7 +273,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         // Preliminary secret ballots, before authors can revise.
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
-            var results = await ParallelOrdered(config.Agents.Select(async agent =>
+            var results = await ParallelOrdered(config.Agents.Select(agent => async () =>
             {
                 var vote = await Ask<Vote>(agent,
                     "assembly-g" + generation + "-pre-vote-" + submission.Key + "-" + agent.Id,
@@ -301,7 +303,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "You authored the following ANONYMOUS proposal:\n" + Serialize(submission.Initial) +
                 "\nReviews:\n" + Serialize(submission.Reviews) +
                 "\nRevise the article in response to strong arguments, or preserve it unchanged. " +
-                "Keep the SAME Action and TargetId. Text for ADD/MODIFY <=60 words. " +
+                "Keep the SAME Action and TargetId. Text for ADD/MODIFY/REPLACE <=60 words. " +
                 "Return JSON {\"Action\":\"...\",\"TargetId\":\"...\",\"Text\":\"...\",\"Reason\":\"...\"}.",
                 state.Articles, submission.Initial);
             if (revision is null) return false;
@@ -313,7 +315,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         // Final independent votes; no participant sees any other ballots.
         foreach (var submission in submissions.Where(s => s.Revised.Action != "PASS"))
         {
-            var results = await ParallelOrdered(config.Agents.Select(async agent =>
+            var results = await ParallelOrdered(config.Agents.Select(agent => async () =>
             {
                 var vote = await Ask<Vote>(agent,
                     "assembly-g" + generation + "-final-vote-" + submission.Key + "-" + agent.Id,
@@ -352,7 +354,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
             var accepted = submission.FinalVotes.Count(v =>
                 JsonSerializer.Deserialize<Vote>(Serialize(v), Json)?.Choice == "ACCEPT");
             if (accepted < threshold) { submission.Outcome = "REJECTED"; continue; }
-            if (p.Action is "MODIFY" or "DELETE" && !changedTargets.Add(p.TargetId))
+            if (p.Action is "MODIFY" or "REPLACE" && !changedTargets.Add(p.TargetId))
             { submission.Outcome = "CONFLICT_DEFERRED"; continue; }
             if (p.Action == "ADD" && state.Articles.Count >= 10)
             { submission.Outcome = "CAPACITY_DEFERRED"; continue; }
@@ -365,8 +367,11 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 case "MODIFY":
                     state.Articles.Single(a => a.Id == p.TargetId).Text = p.Text;
                     break;
-                case "DELETE":
+                case "REPLACE":
+                    // A new idea gets a new identity; the retired article remains in audit history.
                     state.Articles.RemoveAll(a => a.Id == p.TargetId);
+                    state.Articles.Add(new DoubtersCodexOrchestrator.Article {
+                        Id = "D" + (state.NextId++).ToString("D3"), Text = p.Text });
                     break;
             }
             submission.Outcome = "APPLIED";
