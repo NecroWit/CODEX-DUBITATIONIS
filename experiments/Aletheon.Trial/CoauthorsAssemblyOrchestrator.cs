@@ -100,17 +100,20 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         List<DoubtersCodexOrchestrator.Article> articles, Proposal? original = null)
     {
         Proposal? previous = null;
-        for (var attempt = 0; attempt < 3; attempt++)
+        for (var attempt = 0; attempt < 5; attempt++)
         {
             var name = attempt == 0 ? label : label + "-retry-" + attempt;
             var correction = attempt == 0 ? "" :
-                "\\nYOUR PREVIOUS PROPOSAL:\\n" + Serialize(previous ?? original) +
-                "\\nERROR: " + (previous is null ? "Response was not a valid JSON proposal." :
+                "\nYOUR PREVIOUS PROPOSAL:\n" + Serialize(previous ?? original) +
+                "\nERROR: " + (previous is null ? "Response was not a valid JSON proposal." :
                     previous.Action is "ADD" or "MODIFY" && Words(previous.Text) > 60
                         ? "Text contains " + Words(previous.Text) + " words, exceeding the hard limit of 60."
                         : "Proposal failed structural or state validation.") +
-                "\\nKeep the SAME intended idea, Action and TargetId. Shorten Text to 60 words or fewer. " +
-                "Do not switch topics. Include Action, TargetId, Text and nonempty Reason. Return JSON only.";
+                "\nPreserve the SAME idea, Action and TargetId. For ADD/MODIFY, rewrite ONLY Text as a concise, " +
+                "self-contained article of AT MOST 45 whitespace-separated words (aim for 35-45), " +
+                "leaving a safety margin under the validator's 60-word limit. " +
+                "Put supporting explanation in Reason, not Text. Do not switch topics. " +
+                "Include Action, TargetId, Text and nonempty Reason. Return JSON only.";
             var answer = await client.AskAsync(name, agent.Model,
                 "Independent philosophical coauthor. Return exactly one JSON object. Lens: " + agent.Role,
                 prompt + correction);
