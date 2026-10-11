@@ -257,8 +257,10 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                     "Preliminary independent assessment. No other ballots are visible.\nAMENDMENT:\n" +
                     Serialize(new { submission.Key, submission.Initial }) +
                     "\nBALANCED REVIEWS:\n" + Serialize(submission.Reviews) +
-                    "\nReturn JSON {\"Choice\":\"ACCEPT|REJECT|REVISE\",\"Reason\":\"...\"}.",
-                    x => x.Choice is "ACCEPT" or "REJECT" or "REVISE" &&
+                    "\nChoose ACCEPT to adopt this version now, otherwise REJECT. " +
+                    "Explain suggested revisions in Reason. " +
+                    "Return JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
+                    x => x.Choice is "ACCEPT" or "REJECT" &&
                          !string.IsNullOrWhiteSpace(x.Reason));
                 if (vote is null) return false;
                 submission.PreliminaryVotes.Add(new { Voter = agent.Id, vote.Choice, vote.Reason });
@@ -295,10 +297,10 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                     "Final SECRET vote on an anonymous revised amendment.\nFROZEN CODEX:\n" +
                     snapshot + "\nAMENDMENT:\n" + Serialize(PublicProposal(submission)) +
                     "\nREVIEWS:\n" + Serialize(submission.Reviews) +
-                    "\nVote ACCEPT, REJECT or REVISE. REVISE means the wording remains insufficient " +
-                    "and does NOT pass this generation. Evaluate independently. " +
-                    "Return JSON {\"Choice\":\"ACCEPT|REJECT|REVISE\",\"Reason\":\"...\"}.",
-                    x => x.Choice is "ACCEPT" or "REJECT" or "REVISE" &&
+                    "\nVote ACCEPT to adopt this revised version now, otherwise REJECT. " +
+                    "Explain any remaining needed revisions in Reason. Evaluate independently. " +
+                    "Return JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
+                    x => x.Choice is "ACCEPT" or "REJECT" &&
                          !string.IsNullOrWhiteSpace(x.Reason));
                 if (vote is null) return false;
                 submission.FinalVotes.Add(new { Voter = agent.Id, vote.Choice, vote.Reason });
@@ -347,7 +349,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 Reason = p.Reason + " | Outcome: " + submission.Outcome,
                 Applied = submission.Outcome == "APPLIED",
                 BeforeSha256 = snapshotHash, AfterSha256 = Hash(Serialize(state.Articles)),
-                VoteMeaning = "Final Choice ACCEPT/REJECT/REVISE; majority of all critics required"
+                VoteMeaning = "Final Choice ACCEPT/REJECT; majority of all critics required; revisions belong in reasons"
             });
         }
         await Save("assembly-decisions.json", submissions.Select(s => new {
