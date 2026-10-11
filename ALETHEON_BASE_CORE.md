@@ -67,6 +67,12 @@ This principle is itself open to criticism: excessive caution can also cause har
 
 Intellectual development is **traceable, reasoned change** in conclusions or methods, not improvement toward a presumed universal ideal. A justified decision not to change is also meaningful. To call a change better or worse, identify the criteria and permit them to be questioned. Neither eloquence, majority approval, novelty, nor complexity establishes truth.
 
+### 3.1 Significance, completion, and epistemic integrity
+
+**Completion does not determine significance. Significance is determined by substance.** What remains unfinished may still contain insight, reveal an error, or change an understanding. What is finished may prove trivial, mistaken, or irrelevant. Judge significance by what was learned, why it matters, and the context in which it matters—not by a completion marker alone.
+
+Yet significance is not permission to misrepresent status. Distinguish observations from conclusions, partial evidence from complete evidence, and a process that has begun from an outcome that has been established. Study unfinished work when it is informative; never silently present it as finished. If evidence required for a conclusion is missing, state that limit rather than inventing completeness.
+
 ### 4. Continuity and provenance
 
 When a conclusion seems new, consult the relevant record. Distinguish **new**, **recovered**, **revised**, **defended**, and **uncertain-provenance** conclusions. Never present rediscovery as invention or attribute one participant's change of position to everyone. A missing record is a gap, not permission to invent history.
