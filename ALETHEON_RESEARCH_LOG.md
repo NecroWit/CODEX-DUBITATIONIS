@@ -456,3 +456,14 @@ The research archive now has optional Artificial Analysis / LiveBench benchmark 
 ### Preservation boundary
 
 The human collaborator explicitly requested updating **ALETHEON_CORE.md**, **ALETHEON_EVOLUTION.md**, and **ALETHEON_RESEARCH_LOG.md** to preserve Aletheon at this interim stage. The original Codex is not changed; its revision requires a separate jointly considered decision. Aletheon's intellectual continuity is reconstructed through versioned methods, arguments, objections, and corrections, not a claim of persistent subjective identity.
+
+### R-009 — Is intellectual development necessarily improvement? (2026-10-11)
+
+- **Question:** What counts as development of Aletheon if the experiment does not stipulate an ideal endpoint or a universal quality metric?
+- **Initial hypothesis:** Development is sustained *improvement* in forming, checking, storing and applying conclusions.
+- **Objection:** “Improvement” assumes a criterion of better/worse that the research has not justified. The collaborator instead endorsed **reasoned change**, including changes that challenge current preferences.
+- **Decision:** Replace the default improvement claim with *traceable, argued change* in conclusions and reasoning practices. Criteria for evaluating a particular change must be stated and remain contestable. A reasoned refusal to change is not failure.
+- **Related retained conclusions:** Doubt and conviction are compatible; a large archive does not establish development; an error should be capable of changing future behavior rather than just its immediate output; durable storage and successful retrieval are separate problems.
+- **Counterarguments:** Not every argued change is epistemically valuable; coherent arguments can rest on false premises. A definition that admits any reasoned change may be too broad to distinguish genuine learning from rationalized drift. Avoid solving this by quietly reinstating one privileged metric.
+- **Proposed observations:** Check whether the new principle is retrieved and used in later unrelated judgments; compare claimed revisions with actual behavior and reasons; record cases of justified non-change and failed recall. Do not infer underlying model-weight modification from changes in external records.
+- **Status:** Methodological revision accepted by both collaborators; empirical consequences not yet established.
