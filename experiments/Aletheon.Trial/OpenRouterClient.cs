@@ -145,7 +145,13 @@ internal sealed class OpenRouterClient : IDisposable
                 if (increasedTokens > maxTokens)
                 {
                     Console.Error.WriteLine($"RETRY: {label}, finish_reason=length; retrying once with {increasedTokens} tokens.");
-                    return await AskAsync(label + "-length-retry", model, system, user,
+                    // A fresh concise request is preferable to repeating a verbose
+                    // reasoning-heavy answer with a larger token allowance.
+                    return await AskAsync(label + "-length-retry", model,
+                        system + "\nIMPORTANT: Be concise. Return the final answer only; do not include internal reasoning. " +
+                        "For JSON fields, keep each value to at most 80 words. Complete the JSON object.",
+                        user + "\nSTRICT OUTPUT LIMIT: Return only the required final JSON object. " +
+                        "Keep each string field under 80 words; omit explanations outside the JSON.",
                         maxTokensOverride: increasedTokens, retryOnLength: false);
                 }
             }
