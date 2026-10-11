@@ -81,6 +81,22 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 
 **Trace.** [Article draft](./articles/CODEX-EXPERIMENT-DRAFT.ru.md); Research Log R-005. This chain describes the recorded discussion and document workflow, not access to an internal mental process.
 
+### E-006 — From sequential voting to auditable coauthorship
+
+**Date:** 2026-10-11  
+**Status:** Experimental design and partial observations; assembly outcome pending  
+**Related:** Research Log R-008 and the Russian article draft
+
+**Starting position.** Sequential Codex Dubitantium proposals are voted on after authors observe recent history. This preserves a decision trail but confounds wording, order, history and voting composition.
+
+**Pressure.** In an incomplete Premium G5 run, Safety's consequences/accountability ADD was rejected with 7/9 preservation votes. Logic's subsequent, shorter, related ADD was accepted with 4/9 preservation votes and became D011 in partial progress. These are different proposals and voter lineups, not a controlled demonstration of persuasion. The assembly initially inherited completed G4, not partial G5.
+
+**Transition.** The separate Coauthors Assembly adds independent analysis, shared discussion, anonymous proposals, peer reviews, preliminary votes, author revisions and final votes. The goal is to observe changes in argumentation and recorded decisions without inferring stable internal beliefs.
+
+**Engineering evidence.** Initial cheap assembly attempts exposed a mismatch between nested JSON analysis and a string-only schema, followed by overlong proposals (70, 64, 87 words against a 60-word limit). Parser tolerance and targeted retry diagnostics were revised. A later run was reported to reach preliminary voting, but no final archive has been verified.
+
+**Unresolved.** Distinguish the effects of discussion, revision, changed wording, order and response variability using controls and replication.
+
 ## 4. Maintenance rules
 
 - Add a chain only when a change or defended non-change is worth reconstructing; do not archive every conversational flourish.
