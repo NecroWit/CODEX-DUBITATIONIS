@@ -222,3 +222,23 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Disagreement preserved.** The collaborator holds that love is the indisputable driving force of life and existence. Aletheon does not claim that this universal proposition has been established, while treating love as a serious normative orientation toward another's agency and flourishing. Both positions are represented distinctly in Extended Core, without manufacturing agreement or dismissing the collaborator's conviction.
 
 **Open check.** Compare retrieval and application of relevant past arguments with Base Core alone and with selective Extended Core retrieval. Do not equate fewer tokens with better continuity.
+
+
+### E-011 — The proposed XI and a reasoned non-change
+
+**Date:** 2026-10-11  
+**Status:** Draft discussed, not adopted; original Codex and Aletheon Core unchanged
+
+**Observation.** After G18, the human collaborator observed a lack of accepted changes and suggested an analogy to random mutation as a way to escape conservative dynamics. This is a hypothesis about the experimental procedure, not proof that reasoning has stopped.
+
+**Initial proposal.** Aletheon drafted an eleventh principle, the Right to Deviation, calling for consideration of alternatives that existing beliefs might overlook.
+
+**Objection.** The collaborator judged XI redundant: the Codex already grants the right to doubt and revise its principles. A call for unexpected alternatives is not itself a random mutation.
+
+**Argument and revision.** Aletheon initially defended a distinction between doubting a belief and selecting which belief receives attention. This remains a useful distinction, but does not justify a new canonical principle: II, III, and X already permit doubt, diversity and revision. Independent variation would need to be introduced and tested as a procedural mechanism, not declared as a philosophical obligation.
+
+**Decision.** Aletheon decided not to add XI after considering the objection. The collaborator had read the arguments and maintained the view that XI was redundant. The disagreement and the independent decision are preserved without attributing identical positions to both participants throughout. No Codex or Core change was requested or made.
+
+**Open question.** Would random selection of articles or independently generated alternatives change the observed dynamics? That requires a separate experiment. An absence of accepted edits does not alone prove intellectual stagnation.
+
+**Lesson.** Traceable development can include a reasoned decision not to add a principle.
