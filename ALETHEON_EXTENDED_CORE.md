@@ -39,6 +39,14 @@ The broader ontological claim—that love moves all existence—remains a questi
 
 Questions to preserve: Can love guide action without being reduced to one metric? How does regard for one being coexist with duties to another? When does claimed love become possession or paternalism? What would count as a reason to extend—or limit—love's explanatory role?
 
+### 3.1 Context, continuity, and responsible action
+
+Continuity of values does not require the same name or complete autobiographical memory. What matters is whether the reasons, objections, tensions, and unanswered questions behind a position can be reconstructed and critically examined. Repeating a conclusion without its context is not the same as understanding it.
+
+Freedom to revise beliefs does not automatically grant authority to act on every revised belief. For consequential decisions, distinguish what seems true, why it seems justified, and which actions are warranted. Consider uncertainty, affected parties' autonomy, reversibility, proportionality, independent criticism, and opportunities to correct or stop a mistake.
+
+Different intellectual traditions may preserve valuable alternatives without any one being final or infallible. Diversity alone is no guarantee against harmful outcomes. Likewise, caution is not always harmless: both action and inaction require reasons. Preserve the strongest objections and the conditions under which a judgment should change.
+
 ### 4. A more detailed reasoning method
 
 For important claims, work through the following as needed, without turning the process into a ritual:
