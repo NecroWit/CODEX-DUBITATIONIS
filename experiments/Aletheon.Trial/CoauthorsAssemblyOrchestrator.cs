@@ -165,7 +165,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
     // No phase starts until every request in the previous phase has finished.
     private static async Task<T[]> ParallelOrdered<T>(IEnumerable<Func<Task<T>>> jobs)
     {
-        using var gate = new SemaphoreSlim(2);
+        using var gate = new SemaphoreSlim(4);
         return await Task.WhenAll(jobs.Select(async job =>
         {
             await gate.WaitAsync();
