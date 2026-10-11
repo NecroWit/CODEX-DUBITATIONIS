@@ -15,6 +15,7 @@ internal sealed class OpenRouterClient : IDisposable
     private readonly HashSet<string> round2RateLimited = new(StringComparer.OrdinalIgnoreCase);
     public bool WasRound2RateLimited(string id) => round2RateLimited.Contains(id);
     private readonly HashSet<string> usedStandbys = new(StringComparer.OrdinalIgnoreCase);
+    private readonly HashSet<string> usedLengthReplacements = new(StringComparer.OrdinalIgnoreCase);
 
     private static string Participant(string label)
     {
@@ -47,6 +48,45 @@ internal sealed class OpenRouterClient : IDisposable
             maxTokensOverride, retryOnLength);
     }
 
+
+    private async Task<string?> TryLengthReplacementAsync(string label, string failedModel,
+        string system, string user, int maxTokens)
+    {
+        // Keep the role, but select a different model; never silently accept truncated output.
+        // One replacement per logical request prevents endless model substitution chains.
+        var participant = Participant(label);
+        var currentFamily = TrialConfig.ModelFamily(failedModel);
+        var occupied = new HashSet<string>(config.Agents.Select(a => ResolveModel("assembly-" + a.Id, a.Model)),
+            StringComparer.OrdinalIgnoreCase);
+        var pool = config.RotationModels.Concat(config.StandbyModels)
+            .Where(m => !string.Equals(m, failedModel, StringComparison.OrdinalIgnoreCase) &&
+                        !usedLengthReplacements.Contains(m) &&
+                        !config.ArbiterModels.Contains(m, StringComparer.OrdinalIgnoreCase) &&
+                        config.ModelPrices.ContainsKey(m))
+            .Distinct(StringComparer.OrdinalIgnoreCase).ToList();
+        var replacement = pool.FirstOrDefault(m => !occupied.Contains(m) &&
+            TrialConfig.ModelFamily(m) != currentFamily)
+            ?? pool.FirstOrDefault(m => !occupied.Contains(m))
+            ?? pool.FirstOrDefault(m => TrialConfig.ModelFamily(m) != currentFamily)
+            ?? pool.FirstOrDefault();
+        if (replacement is null)
+        {
+            Console.Error.WriteLine($"LENGTH REPLACEMENT UNAVAILABLE: {label}, {failedModel}.");
+            return null;
+        }
+        usedLengthReplacements.Add(replacement);
+        assignedModels[participant] = replacement;
+        await File.AppendAllTextAsync(Path.Combine(output, "model-substitutions.jsonl"),
+            JsonSerializer.Serialize(new {
+                participant, label, failedModel, replacementModel = replacement,
+                reason = "Repeated finish_reason=length", utc = DateTimeOffset.UtcNow
+            }) + Environment.NewLine);
+        Console.Error.WriteLine($"LENGTH REPLACEMENT: {label}, {failedModel} -> {replacement}.");
+        return await AskAsync(label + "-length-model-replacement", replacement,
+            system + "\nReturn only a concise final answer. No internal reasoning.",
+            user + "\nReturn only the requested JSON, with short string values.",
+            maxTokensOverride: maxTokens, retryOnLength: false);
+    }
 
     private static string ErrorDetail(string body)
     {
@@ -154,6 +194,11 @@ internal sealed class OpenRouterClient : IDisposable
                         "Keep each string field under 80 words; omit explanations outside the JSON.",
                         maxTokensOverride: increasedTokens, retryOnLength: false);
                 }
+            }
+            if (finish == "length" && !retryOnLength &&
+                label.EndsWith("-length-retry", StringComparison.Ordinal))
+            {
+                return await TryLengthReplacementAsync(label, model, system, user, maxTokens);
             }
             if (finish != "stop")
                 throw new InvalidOperationException($"Incomplete response: finish_reason={finish ?? "missing"}, native_finish_reason={(choice.TryGetProperty("native_finish_reason", out var native) ? native.ToString() : "missing")}, provider={(parsed.RootElement.TryGetProperty("provider", out var provider) ? provider.ToString() : "missing")}, request_id={(parsed.RootElement.TryGetProperty("id", out var id) ? id.ToString() : "missing")}; inspect saved response for any error details; saved output is NOT accepted.");
