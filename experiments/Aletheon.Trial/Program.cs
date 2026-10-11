@@ -113,12 +113,21 @@ if (config.RotationModels.Count > 0)
             {
                 var tier = config.MixedTiers.Single(kv =>
                     kv.Value.Contains(candidate, StringComparer.OrdinalIgnoreCase)).Key;
+                // Preserve provider diversity across both verified and pending slots.
+                var reservedFamilies = config.Agents
+                    .Where(a => !string.Equals(a.Id, agent.Id, StringComparison.OrdinalIgnoreCase))
+                    .Select(a => TrialConfig.ModelFamily(a.Model))
+                    .Concat(selectedFamilies)
+                    .ToHashSet(StringComparer.OrdinalIgnoreCase);
                 var sameTier = candidates.FindIndex(m =>
                     config.MixedTiers[tier].Contains(m, StringComparer.OrdinalIgnoreCase) &&
-                    !selectedFamilies.Contains(TrialConfig.ModelFamily(m)));
+                    !reservedFamilies.Contains(TrialConfig.ModelFamily(m)));
                 if (sameTier < 0)
+                {
+                    Console.WriteLine($"MIXED FAMILY DIVERSITY: no unused provider available in tier {tier}; allowing a repeated provider.");
                     sameTier = candidates.FindIndex(m =>
                         config.MixedTiers[tier].Contains(m, StringComparer.OrdinalIgnoreCase));
+                }
                 if (sameTier < 0)
                     throw new InvalidOperationException(
                         $"Mixed tier {tier} exhausted during preflight; refusing cross-tier replacement.");
@@ -139,6 +148,12 @@ if (config.RotationModels.Count > 0)
             candidate = candidates[replacementIndex];
             candidates.RemoveAt(replacementIndex);
         }
+    }
+    if (config.MixedTiers.Count > 0)
+    {
+        var distinct = config.Agents.Select(a => TrialConfig.ModelFamily(a.Model))
+            .Distinct(StringComparer.OrdinalIgnoreCase).Count();
+        Console.WriteLine($"MIXED FAMILY DIVERSITY: final roster has {distinct}/{config.Agents.Count} distinct providers.");
     }
     Console.WriteLine($"Model rotation: {config.Agents.Count} verified participants from {config.RotationModels.Count} candidates.");
 }
