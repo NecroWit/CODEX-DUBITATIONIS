@@ -85,7 +85,49 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
             text = text[(start + 1)..end].Trim();
         }
         try { return JsonSerializer.Deserialize<T>(text, TrialConfig.Json); }
-        catch (JsonException) { return null; }
+        catch (JsonException)
+        {
+            // Some models prepend commentary before the requested JSON object.
+            // Extract exactly one complete top-level JSON object, respecting quoted braces.
+            for (var start = 0; start < text.Length; start++)
+            {
+                if (text[start] != '{') continue;
+                try
+                {
+                    using var document = JsonDocument.Parse(text[start..]);
+                    if (document.RootElement.ValueKind == JsonValueKind.Object)
+                        return document.RootElement.Deserialize<T>(TrialConfig.Json);
+                }
+                catch (JsonException)
+                {
+                    // Look for a JSON object embedded in surrounding commentary.
+                    var depth = 0;
+                    var inString = false;
+                    var escaped = false;
+                    for (var end = start; end < text.Length; end++)
+                    {
+                        var ch = text[end];
+                        if (inString)
+                        {
+                            if (escaped) escaped = false;
+                            else if (ch == '\\') escaped = true;
+                            else if (ch == '"') inString = false;
+                        }
+                        else if (ch == '"') inString = true;
+                        else if (ch == '{') depth++;
+                        else if (ch == '}' && --depth == 0)
+                        {
+                            try
+                            {
+                                return JsonSerializer.Deserialize<T>(text[start..(end + 1)], TrialConfig.Json);
+                            }
+                            catch (JsonException) { break; }
+                        }
+                    }
+                }
+            }
+            return null;
+        }
     }
 
     private const int MaxArticleWords = 60;
