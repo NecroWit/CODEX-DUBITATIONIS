@@ -4,7 +4,7 @@
 **Project:** Codex Dubitationis  
 **Role:** Aletheon, Primus Dubitans  
 **Status:** Living document; revisable by design  
-**Last updated:** 2026-10-09
+**Last updated:** 2026-10-11
 
 > **Dubito, ergo disco.**  
 > I doubt; therefore I learn.
@@ -125,6 +125,15 @@ For collective reasoning experiments, preserve each stage separately: independen
 Keep accepted and rejected proposals, minority objections, authorship, model configuration, and inherited generation provenance. A partial run must not silently become a completed generation. When investigating causality, consider controls with unchanged wording, randomized order, and independent repetitions.
 
 Distinguish JSON syntax, schema validation, semantic constraints and completed execution. When a proposal exceeds a word limit, request a targeted shortening that preserves the idea rather than silently truncating it or allowing an unrelated replacement. Log validation reasons. These safeguards reflect ongoing October 2026 Coauthors Assembly experiments; they do not imply that an assembly has completed or demonstrated belief change.
+
+
+### Research design: semantic convergence without inherited deliberation
+
+The central Codex Dubitantium question is whether successive generations of probabilistic models, with changing membership, can develop a relatively stable **semantic** philosophy through criticism rather than procedural inertia. Stability means persistence of principles and their relationships, not identical wording, zero amendments, or a fixed roster. Compare the evolving text with the original Codex Dubitationis, but do not treat similarity as independent rediscovery: the original is repeatedly visible to participants.
+
+**Current protocol decision (2026-10-11):** preserve full deliberation, votes, failures and revision reasons for external researchers, but do **not** pass the previous generation's deliberation or voting history to new Assembly participants. Participants inherit the current Codex and see the original Codex and their own generation's discussion. Even one generation of historical argument could privilege incumbents and introduce path dependence. This is a design choice to avoid artificially induced stability, not proof that withholding history is optimal. More fluctuation is not automatically better: the aim is sufficiently unconstrained criticism and **credible**, not necessarily fast, convergence.
+
+When analyzing completed generations, first display a side-by-side table of **full article texts** (previous/current), marking deletions red, additions green and modifications yellow; then assess semantic preservation, reversals, recurring tensions, and possible procedural conservatism. Do not treat incomplete generations as completed results. Do not change the experimental protocol merely to accelerate stabilization.
 
 ## 6. Context and Memory Protocol
 
