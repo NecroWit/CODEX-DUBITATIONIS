@@ -176,8 +176,42 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         }));
     }
 
+
+    private sealed class StageLog : IDisposable
+    {
+        private System.Diagnostics.Stopwatch? watch;
+        private int index;
+        private string name = "";
+        private string mode = "";
+        public void Begin(int number, string title, bool parallel)
+        {
+            if (watch is not null) Fail("Previous stage was not completed");
+            index = number;
+            name = title;
+            mode = parallel ? "асинхронный, параллельный" : "асинхронный, последовательный";
+            watch = System.Diagnostics.Stopwatch.StartNew();
+            Console.WriteLine($"STAGE {index}/8: {name} — START ({mode})");
+        }
+        public void Complete()
+        {
+            if (watch is null) return;
+            Console.WriteLine($"STAGE {index}/8: {name} — COMPLETE ({mode}), elapsed={watch.Elapsed.TotalSeconds:F1}s");
+            watch = null;
+        }
+        public void Fail(string reason)
+        {
+            if (watch is null) return;
+            Console.Error.WriteLine($"STAGE {index}/8: {name} — FAILED ({mode}), elapsed={watch.Elapsed.TotalSeconds:F1}s, reason={reason}");
+            watch = null;
+        }
+        public void Dispose() => Fail("Stage interrupted: request failed or experiment stopped");
+    }
+
     public async Task<bool> RunAsync(string? stateFile)
     {
+        using var stages = new StageLog();
+        try
+        {
         if (config.Agents.Count is not (4 or 10))
             throw new InvalidOperationException("Assembly supports 4 or 10 critics.");
         var state = stateFile is null
@@ -194,6 +228,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         async Task Save(string file, object data) =>
             await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, file), Serialize(data));
         await Save("assembly-input.json", new { generation, snapshotHash, state });
+        stages.Begin(1, "Независимый анализ", true);
         var analysisResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
         {
             var prompt = "Independently examine ORIGINAL CODEX:\n" + originalCodex +
@@ -209,6 +244,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-analyses.json", analyses);
 
         // One common discussion round: everyone sees the same analyses, then responds.
+        stages.Begin(2, "Общее обсуждение", true);
         var discussionResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
         {
             var response = await Ask<Review>(agent, "assembly-g" + generation + "-discussion-" + agent.Id,
@@ -225,6 +261,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-discussion.json", discussion);
 
         // Blind submissions: every author sees the same initial snapshot and discussion.
+        stages.Begin(3, "Анонимные предложения", true);
         var proposalResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<Submission?>>>((agent, i) => async () =>
         {
             var prompt = "Submit ONE independent amendment to this FROZEN CODEX:\n" + snapshot +
@@ -243,11 +280,13 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         var submissions = proposalResults.Select(x => x!).ToList();
         await Save("assembly-anonymous-proposals.json",
             submissions.Select(s => new { s.Key, Proposal = s.Initial }));
+        stages.Complete();
         // Authorship is kept only in private audit, not shown to reviewers.
         await Save("assembly-authorship.json", submissions.Select(s => new { s.Key, s.Author }));
         var publicInitial = submissions.Select(s => new { s.Key, s.Initial.Action,
             s.Initial.TargetId, s.Initial.Text, s.Initial.Reason }).ToList();
 
+        stages.Begin(4, "Рецензирование", true);
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
             var results = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
@@ -270,7 +309,9 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         }
         await Save("assembly-reviews.json", submissions.Select(s => new { s.Key, s.Reviews }));
 
+        stages.Complete();
         // Preliminary secret ballots, before authors can revise.
+        stages.Begin(5, "Предварительное голосование", true);
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
             var results = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
@@ -294,7 +335,9 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-preliminary-votes.json",
             submissions.Select(s => new { s.Key, s.PreliminaryVotes }));
 
+        stages.Complete();
         // Authors may revise after seeing anonymized arguments, but not private preliminary ballots.
+        stages.Begin(6, "Авторские правки", false);
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
             var author = config.Agents.Single(a => a.Id == submission.Author);
@@ -312,7 +355,9 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-revisions.json",
             submissions.Select(s => new { s.Key, s.Revised }));
 
+        stages.Complete();
         // Final independent votes; no participant sees any other ballots.
+        stages.Begin(7, "Финальное голосование", true);
         foreach (var submission in submissions.Where(s => s.Revised.Action != "PASS"))
         {
             var results = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
@@ -343,6 +388,8 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-final-votes.json",
             submissions.Select(s => new { s.Key, s.FinalVotes }));
 
+        stages.Complete();
+        stages.Begin(8, "Применение решений и архивация", false);
         // Conflict resolution: deterministic proposal order; no silent overwrites.
         // Majority ACCEPT of ALL critics required, including the author.
         var threshold = config.Agents.Count / 2 + 1;
@@ -405,9 +452,16 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         var destination = Path.Combine(archiveDir, "generation-" + generation.ToString("D4") +
             "-" + DateTimeOffset.UtcNow.ToString("yyyyMMddHHmmss") + ".json");
         File.Copy(Path.Combine(client.OutputDirectory, "assembly-next-state.json"), destination);
+        stages.Complete();
         Console.WriteLine("ASSEMBLY COMPLETE: " + state.Articles.Count + " articles; " +
                           submissions.Count(s => s.Outcome == "APPLIED") + " accepted changes. Archive: " + destination);
         return true;
+        }
+        catch (Exception ex)
+        {
+            stages.Fail(ex.Message);
+            throw;
+        }
     }
 
     private static bool HasContent(JsonElement value) =>
