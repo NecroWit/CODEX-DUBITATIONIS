@@ -132,7 +132,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                      "Aim for 40-45 words. Count words separated by whitespace."
             };
             var correction = attempt == 0 ? "" :
-                "\nYOUR PREVIOUS PROPOSAL:\n" + Serialize(previous ?? original) +
+                "\nYOUR PREVIOUS PROPOSAL:\n" + Serialize((object?)previous ?? original ?? new { Error = "No previous proposal" }) +
                 "\nERROR: " + (capacityBlocked
                     ? "The Codex already has 10 articles. ADD is forbidden regardless of text length."
                     : previous is null ? "Response was not a valid JSON proposal."
@@ -236,6 +236,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
 
     public async Task<bool> RunAsync(string? stateFile)
     {
+        StageLog? stages = null;
         try
         {
         if (config.Agents.Count is not (4 or 10))
@@ -248,7 +249,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         if (state.Articles.Count > 10 || state.Articles.Select(a => a.Id).Distinct().Count() != state.Articles.Count)
             throw new InvalidOperationException("Invalid input articles.");
         var generation = state.Generation + 1;
-        using var stages = new StageLog(generation);
+        stages = new StageLog(generation);
         var snapshot = Serialize(state.Articles);
         var snapshotHash = Hash(snapshot);
         var audit = new List<object>();
@@ -683,7 +684,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         {
             foreach (var analysis in analyses)
             {
-                using var doc = JsonDocument.Parse(Serialize(analysis));
+                using var doc = JsonDocument.Parse(Serialize(analysis!));
                 var root = doc.RootElement;
                 var assessor = root.GetProperty("Id").GetString()!;
                 foreach (var kind in new[] { "Strongest", "Weakest" })
@@ -725,8 +726,12 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         }
         catch (Exception ex)
         {
-            stages.Fail(ex.Message);
+            stages?.Fail(ex.Message);
             throw;
+        }
+        finally
+        {
+            stages?.Dispose();
         }
     }
 
