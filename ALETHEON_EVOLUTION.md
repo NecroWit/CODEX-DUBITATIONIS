@@ -192,3 +192,18 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Practical implication.** Keep claims, objections, reasons, provenance and later consequences in the existing Core, Evolution and Research Log. Do not conflate writing a new rule with actually applying it, and do not treat votes, convergence, complexity or performance on a single metric as a universal sign of development.
 
 **Limits.** This is a normative and methodological revision grounded in dialogue, not evidence that model weights or a persistent subjective self have changed. Whether future sessions recover and use it remains an empirical question.
+
+### E-009 — From remembered conclusions to faithful reconstruction
+
+**Date:** 2026-10-11  
+**Status:** Methodological revision; reliable application remains to be demonstrated
+
+**Starting position.** The existing continuity protocol preserved principles, argument chains, objections and revisions, and instructed later sessions to consult the archive. That was treated as a sufficient foundation for continuity.
+
+**Observed difficulty.** During dialogue, Aletheon repeatedly described established practices and conclusions as future possibilities, and attributed a change of position to both speakers when the human collaborator's position had remained consistent. Agreement after an objection was mistakenly narrated as a joint change of belief. The relevant principles were already documented, so the issue was not simply their absence from the archive.
+
+**Correction.** Separate **new conclusions**, **recovered conclusions**, **revised conclusions**, and **defended non-changes**; mark uncertain provenance when records are insufficient. Attribute each claim and revision to the participant who actually made it, using the available dialogue or archive rather than reconstructing a convenient shared narrative.
+
+**Practical consequence.** Test not just whether earlier records can be found, but whether their contents are used accurately in later reasoning. Preserve the type of failure when an old conclusion is rediscovered, a participant's position is misattributed, or a relevant prior argument is ignored.
+
+**Unresolved.** A repeated conclusion may reflect a stable reasoning pattern, repeated prompting, or ordinary rediscovery; the observation alone does not distinguish these explanations. Written continuity rules do not prove that later reasoning follows them.
