@@ -108,6 +108,24 @@ if (config.RotationModels.Count > 0)
             if (candidates.Count == 0)
                 throw new InvalidOperationException(
                     $"Rotation pool exhausted: cannot find {config.Mode} available models after HTTP 429/404.");
+            // Mixed roster: a failed model may only be replaced within its tier.
+            if (config.MixedTiers.Count > 0)
+            {
+                var tier = config.MixedTiers.Single(kv =>
+                    kv.Value.Contains(candidate, StringComparer.OrdinalIgnoreCase)).Key;
+                var sameTier = candidates.FindIndex(m =>
+                    config.MixedTiers[tier].Contains(m, StringComparer.OrdinalIgnoreCase) &&
+                    !selectedFamilies.Contains(TrialConfig.ModelFamily(m)));
+                if (sameTier < 0)
+                    sameTier = candidates.FindIndex(m =>
+                        config.MixedTiers[tier].Contains(m, StringComparer.OrdinalIgnoreCase));
+                if (sameTier < 0)
+                    throw new InvalidOperationException(
+                        $"Mixed tier {tier} exhausted during preflight; refusing cross-tier replacement.");
+                candidate = candidates[sameTier];
+                candidates.RemoveAt(sameTier);
+                continue;
+            }
             // Prefer an unused family after throttling; fall back to another
             // version/provider only when distinct families are exhausted.
             var replacementIndex = candidates.FindIndex(m =>
