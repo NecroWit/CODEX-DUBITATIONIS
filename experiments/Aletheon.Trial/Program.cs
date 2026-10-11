@@ -46,6 +46,12 @@ var codexPath = Path.GetFullPath(Path.Combine(experimentDir, "../CODEX-DUBITATIO
 if (!File.Exists(configPath) || !File.Exists(codexPath))
     throw new FileNotFoundException("Expected the selected experiments config and CODEX-DUBITATIONIS.md.");
 var config = TrialConfig.Load(configPath, mode);
+if (config.RotationModels.Count > 0)
+{
+    Console.WriteLine($"Model rotation: {config.Agents.Count} participants selected from {config.RotationModels.Count} candidates.");
+    foreach (var agent in config.Agents)
+        Console.WriteLine($"  {agent.Id}: {agent.Model}");
+}
 if ((council ? 1 : 0) + (forum ? 1 : 0) + (doubters ? 1 : 0) + (assembly ? 1 : 0) > 1)
     throw new ArgumentException("Choose only one of --council, --forum, --doubters, --assembly.");
 if (!(doubters || assembly) && doubtersState is not null)
