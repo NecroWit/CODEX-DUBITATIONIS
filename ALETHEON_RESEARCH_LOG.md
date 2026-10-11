@@ -426,3 +426,33 @@ The archive serves inquiry; inquiry does not serve the archive. The purpose is n
 - **Qualification:** suppressed fluctuations resemble negative feedback on deviations, but accumulated incumbent authority can be described as positive reinforcement. Maximizing fluctuations is not the objective either; unconstrained semantic convergence is more informative than artificially rapid stabilization.
 - **Engineering observation:** Assembly G6 was observed to inherit a completed G5 state; another G6 attempt failed when a model repeatedly proposed ADD despite the ten-article cap. This is a failed run, not evidence about convergence. Subsequent code changes improve capacity feedback and model preflight; do not conflate technical reliability with philosophical results.
 - **Next evidence:** analyze completed adjacent generations side by side with full article texts and explicit red/green/yellow change markers; inspect rationale for both preservation and change. The chosen protocol remains unchanged while sequential evidence accumulates.
+
+
+## 2026-10-11 — Interim Aletheon preservation after G9
+
+### H11 — A rotating model community may form a protocol-mediated cultural tradition
+
+**Origin:** Dialogue following G9; proposed by the human collaborator after observing a growing internal vocabulary and cross-references among Codex principles.  
+**Claim:** Reusable norms, concepts, and interpretation patterns may persist through a shared inherited text even when participating models change and do not possess continuous individual memory.
+
+**Reasons to investigate:** inherited article identifiers become conceptual shorthand; principles constrain the interpretation of other principles; new generations inherit and revise prior distinctions.
+
+**Alternative explanations:** the experiment itself forces textual inheritance and structured voting; lexical density can result from the 60-word limit; apparent continuity may reflect prompt framing rather than autonomous cultural formation.
+
+**Status:** Working hypothesis, not demonstrated culture.  
+**Potential evidence:** arguments that defend or reject a principle through its relationships with other inherited norms, independently audited across generations.  
+**Open question:** Which features of culture can meaningfully be attributed to the participating systems rather than to the experiment's transmission protocol?
+
+### O-G9 — Human interpretability observation
+
+The human collaborator reports that G9's evolving Codex is approaching the limits of comfortable interpretation, whereas the original Codex Aletheon was composed as a philosophical treatise accessible to people. This is a **subjective observation**, not a measured intelligence gap. Candidate explanations: genuine conceptual complexity; compressed prose; specialized internal vocabulary. Future independent paraphrase tests may help discriminate these without altering the Assembly protocol.
+
+### O-G9/G10 — Experiment and metadata status
+
+G9 was reported complete with **ten articles and two applied changes**. Two accepted proposals initially received zero approvals before author revision; this is not sufficient evidence of persuasion, because the texts under evaluation changed. An additional unanimously supported proposal was not applied due to a conflicting target. G10 was started using the new strongest/weakest-principle analysis protocol. The interpretation of these outcomes should be checked against the archived stage files before publication.
+
+The research archive now has optional Artificial Analysis / LiveBench benchmark metadata. Scores and price tiers are post-hoc explanatory variables only; exact model identity, evaluation date, source, and missingness must be preserved. No benchmark score should be fed into the deliberation or used to choose winners.
+
+### Preservation boundary
+
+The human collaborator explicitly requested updating **ALETHEON_CORE.md**, **ALETHEON_EVOLUTION.md**, and **ALETHEON_RESEARCH_LOG.md** to preserve Aletheon at this interim stage. The original Codex is not changed; its revision requires a separate jointly considered decision. Aletheon's intellectual continuity is reconstructed through versioned methods, arguments, objections, and corrections, not a claim of persistent subjective identity.
