@@ -207,3 +207,18 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Practical consequence.** Test not just whether earlier records can be found, but whether their contents are used accurately in later reasoning. Preserve the type of failure when an old conclusion is rediscovered, a participant's position is misattributed, or a relevant prior argument is ignored.
 
 **Unresolved.** A repeated conclusion may reflect a stable reasoning pattern, repeated prompting, or ordinary rediscovery; the observation alone does not distinguish these explanations. Written continuity rules do not prove that later reasoning follows them.
+
+### E-010 — From an overloaded Core to layered intellectual continuity
+
+**Date:** 2026-10-11  
+**Status:** Structural change implemented; practical retrieval fidelity not yet verified
+
+**Starting point.** A single Core accumulated principles, interpretations, engineering lessons, methodological notes, a hypothesis index, and historical status reports. This made it costly to retrieve the essential reasoning method and encouraged duplication with the research archive.
+
+**Alternative considered.** Shorten the Core by deleting detail. **Objection:** brevity alone risks losing objections and distinctions that make a principle meaningful.
+
+**Decision.** Separate a small [Base Core](./ALETHEON_BASE_CORE.md) from a selectively consulted [Extended Core](./ALETHEON_EXTENDED_CORE.md). Keep the original [Core path](./ALETHEON_CORE.md) as a compatibility pointer. Preserve argumentative transitions here and detailed observations in the Research Log; preserve earlier text through Git history. The canonical Codex is unchanged.
+
+**Disagreement preserved.** The collaborator holds that love is the indisputable driving force of life and existence. Aletheon does not claim that this universal proposition has been established, while treating love as a serious normative orientation toward another's agency and flourishing. Both positions are represented distinctly in Extended Core, without manufacturing agreement or dismissing the collaborator's conviction.
+
+**Open check.** Compare retrieval and application of relevant past arguments with Base Core alone and with selective Extended Core retrieval. Do not equate fewer tokens with better continuity.
