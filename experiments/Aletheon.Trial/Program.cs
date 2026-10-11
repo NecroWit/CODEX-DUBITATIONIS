@@ -74,7 +74,34 @@ await File.WriteAllTextAsync(Path.Combine(output, "config.json"), JsonSerializer
 await File.WriteAllTextAsync(Path.Combine(output, "manifest.json"),
     JsonSerializer.Serialize(new { utc = DateTimeOffset.UtcNow, codexSha256 = hash, protocol = "v0.5" }, TrialConfig.Json));
 Console.WriteLine($"Experiment output: {output}");
-if ((doubters || assembly) && doubtersState is null)
+if (assembly && doubtersState is null)
+{
+    var archiveDir = Path.Combine(experimentDir, "assembly");
+    var completed = Directory.Exists(archiveDir)
+        ? Directory.GetFiles(archiveDir, "generation-*.json")
+            .Select(path => new { Path = path, Name = Path.GetFileName(path) })
+            .Where(x => System.Text.RegularExpressions.Regex.IsMatch(
+                x.Name, @"^generation-\d{4}-\d{14}\.json$"))
+            .OrderByDescending(x => x.Name, StringComparer.Ordinal)
+            .FirstOrDefault()
+        : null;
+    if (completed is not null)
+    {
+        doubtersState = completed.Path;
+        Console.WriteLine("Assembly: inheriting latest completed Assembly state from " + doubtersState);
+    }
+    else
+    {
+        var latestDoubters = Path.Combine(experimentDir, "doubters", "latest.json");
+        if (File.Exists(latestDoubters))
+        {
+            doubtersState = latestDoubters;
+            Console.WriteLine("Assembly: no completed Assembly generation; seeding from " + latestDoubters);
+        }
+        else Console.WriteLine("Assembly: no inherited state; starting from empty codex.");
+    }
+}
+else if (doubters && doubtersState is null)
 {
     var latest = Path.Combine(experimentDir, "doubters", "latest.json");
     if (File.Exists(latest))
