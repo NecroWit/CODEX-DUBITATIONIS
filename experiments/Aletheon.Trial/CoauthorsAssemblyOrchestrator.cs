@@ -96,6 +96,48 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         return null;
     }
 
+    private async Task<Proposal?> AskProposal(AgentConfig agent, string label, string prompt,
+        List<DoubtersCodexOrchestrator.Article> articles, Proposal? original = null)
+    {
+        Proposal? previous = null;
+        for (var attempt = 0; attempt < 3; attempt++)
+        {
+            var name = attempt == 0 ? label : label + "-retry-" + attempt;
+            var correction = attempt == 0 ? "" :
+                "\\nYOUR PREVIOUS PROPOSAL:\\n" + Serialize(previous ?? original) +
+                "\\nERROR: " + (previous is null ? "Response was not a valid JSON proposal." :
+                    previous.Action is "ADD" or "MODIFY" && Words(previous.Text) > 60
+                        ? "Text contains " + Words(previous.Text) + " words, exceeding the hard limit of 60."
+                        : "Proposal failed structural or state validation.") +
+                "\\nKeep the SAME intended idea, Action and TargetId. Shorten Text to 60 words or fewer. " +
+                "Do not switch topics. Include Action, TargetId, Text and nonempty Reason. Return JSON only.";
+            var answer = await client.AskAsync(name, agent.Model,
+                "Independent philosophical coauthor. Return exactly one JSON object. Lens: " + agent.Role,
+                prompt + correction);
+            if (answer is null) return null;
+            var p = Parse<Proposal>(answer);
+            if (p is not null)
+            {
+                p.Text = Normalize(p.Text ?? "");
+                p.TargetId ??= "";
+                p.Reason ??= "";
+                if (ValidProposal(p, articles) &&
+                    (original is null || p.Action == original.Action && p.TargetId == original.TargetId) &&
+                    (previous is null || previous.Action == p.Action && previous.TargetId == p.TargetId))
+                    return p;
+                Console.Error.WriteLine("ASSEMBLY: invalid proposal " + name +
+                    " (action=" + p.Action + ", target=" + p.TargetId +
+                    ", words=" + Words(p.Text) + ", reason=" + !string.IsNullOrWhiteSpace(p.Reason) + ")");
+                if (previous is null) previous = p;
+                else if (previous.Action != p.Action || previous.TargetId != p.TargetId)
+                    Console.Error.WriteLine("ASSEMBLY: model changed action or target during correction.");
+                else previous = p;
+            }
+            else Console.Error.WriteLine("ASSEMBLY: proposal JSON could not be parsed: " + name);
+        }
+        return null;
+    }
+
     private static bool ValidProposal(Proposal p, List<DoubtersCodexOrchestrator.Article> articles) =>
         !string.IsNullOrWhiteSpace(p.Reason) && (p.Action switch
         {
@@ -171,8 +213,8 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "For ADD/MODIFY write a self-contained article Text of AT MOST 60 whitespace words. " +
                 "No article number. No author identity in the proposal. Return JSON " +
                 "{\"Action\":\"ADD|MODIFY|DELETE|PASS\",\"TargetId\":\"\",\"Text\":\"\",\"Reason\":\"...\"}.";
-            var p = await Ask<Proposal>(agent, "assembly-g" + generation + "-proposal-" + agent.Id,
-                prompt, x => { x.Text = Normalize(x.Text); return ValidProposal(x, state.Articles); });
+            var p = await AskProposal(agent, "assembly-g" + generation + "-proposal-" + agent.Id,
+                prompt, state.Articles);
             if (p is null) return false;
             submissions.Add(new Submission { Key = "P" + (i + 1).ToString("D2"), Author = agent.Id,
                 Initial = p, Revised = p });
@@ -229,17 +271,14 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
             var author = config.Agents.Single(a => a.Id == submission.Author);
-            var revision = await Ask<Proposal>(author,
+            var revision = await AskProposal(author,
                 "assembly-g" + generation + "-revision-" + submission.Key,
                 "You authored the following ANONYMOUS proposal:\n" + Serialize(submission.Initial) +
                 "\nReviews:\n" + Serialize(submission.Reviews) +
                 "\nRevise the article in response to strong arguments, or preserve it unchanged. " +
                 "Keep the SAME Action and TargetId. Text for ADD/MODIFY <=60 words. " +
                 "Return JSON {\"Action\":\"...\",\"TargetId\":\"...\",\"Text\":\"...\",\"Reason\":\"...\"}.",
-                x => { x.Text = Normalize(x.Text);
-                    return x.Action == submission.Initial.Action &&
-                           x.TargetId == submission.Initial.TargetId &&
-                           ValidProposal(x, state.Articles); });
+                state.Articles, submission.Initial);
             if (revision is null) return false;
             submission.Revised = revision;
         }
