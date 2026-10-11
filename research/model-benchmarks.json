@@ -1,0 +1,5 @@
+{
+  "schema_version": 1,
+  "description": "Independent benchmark snapshots. Add only exact model/version matches, with published source and observation date. Missing values remain null.",
+  "snapshots": []
+}
