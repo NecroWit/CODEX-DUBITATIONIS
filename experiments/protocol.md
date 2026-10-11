@@ -29,3 +29,13 @@ In Round 1, before reading peers, every critic provides a substantive KEEP / CHA
 ## Coauthors Assembly — article independence (from G11)
 
 Each article of the evolving Codex Dubitantium must be intelligible and applicable on its own. Explicit cross-references to other articles by ID, number, or title are prohibited. Semantic compatibility is desirable, but no article may rely on another article to define its own meaning. New and revised proposals must follow this rule; the assembly validates article-ID and numbered references, while references by title require review. Historical generation archives remain unchanged. Before launching G11, prepare a separately documented, cleaned successor state from G10; do not silently rewrite archived results or treat the cleaned state as the original G10 outcome.
+
+### G11 → G12 migration procedure
+
+G11 was already running when the no-cross-reference rule was adopted. **Do not change G11 or its immutable archive.** Once G11 completes, use `experiments/prepare_g12_state.py` to create a distinct G12 input. The tool does not invent semantic edits: supply a reviewed JSON object mapping each affected article ID to its complete, standalone replacement text, for example `{"D013": "An intelligent system must ..."}`. It requires replacements for *every* article containing an explicit article-ID or numbered reference, checks the 60-word limit, preserves Generation=11, NextId and History, and writes a new state and an audit with SHA-256 and exact before/after text. It fails rather than silently removing a dependency. References by article **title** require manual inspection; the automated regex does not catch those.
+
+```sh
+python experiments/prepare_g12_state.py <G11-run>/assembly-next-state.json <reviewed-replacements.json> <new-output-directory>
+```
+
+Review `g11-to-g12-migration-audit.json`, then start G12 with the generated `assembly-g12-input-cleaned.json` as the assembly state input. Do not use the cleaned file as a replacement for the archived G11 result. This is an explicit editorial migration, not a vote or an experiment outcome.
