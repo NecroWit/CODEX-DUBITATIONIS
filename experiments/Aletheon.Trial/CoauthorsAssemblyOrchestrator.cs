@@ -104,17 +104,32 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         {
             var name = attempt == 0 ? label : label + "-retry-" + attempt;
             var capacityBlocked = previous?.Action == "ADD" && articles.Count >= 10;
+            var tooLong = previous is not null &&
+                previous.Action is "ADD" or "MODIFY" or "REPLACE" &&
+                Words(previous.Text) > 60;
+            var count = previous is null ? 0 : Words(previous.Text);
+            var urgency = attempt switch
+            {
+                0 => "",
+                1 => "\nSTRICT LIMIT: Text must contain NO MORE THAN 60 whitespace-separated words. " +
+                     "Your previous Text contained " + count + " words. Aim for 45-50 words.",
+                2 => "\nHARD LIMIT: Text is STILL too long (" + count + " words). " +
+                     "Rewrite it to 45 words or fewer while preserving its core meaning.",
+                _ => "\nFINAL WARNING: The 60-word limit is still exceeded (" + count + " words). " +
+                     "If your next Text exceeds 60 words again, this revision will be rejected. " +
+                     "Aim for 40-45 words. Count words separated by whitespace."
+            };
             var correction = attempt == 0 ? "" :
                 "\nYOUR PREVIOUS PROPOSAL:\n" + Serialize(previous ?? original) +
                 "\nERROR: " + (capacityBlocked
                     ? "The Codex already has 10 articles. ADD is forbidden regardless of text length."
                     : previous is null ? "Response was not a valid JSON proposal."
-                    : previous.Action is "ADD" or "MODIFY" or "REPLACE" && Words(previous.Text) > 60
-                        ? "Text exceeds the 60-word hard limit."
-                        : "Proposal failed structural or state validation.") +
+                    : tooLong ? "Text exceeds the 60-word hard limit."
+                    : "Proposal failed structural or state validation.") +
                 (capacityBlocked
                     ? "\nPreserve the underlying philosophical idea, but choose MODIFY of an existing TargetId, REPLACE an existing TargetId with a new better principle, or PASS. Do NOT use ADD. You may change Action and TargetId for this capacity correction."
-                    : "\nPreserve the SAME idea, Action and TargetId. For ADD/MODIFY/REPLACE use at most 45 whitespace-separated words.") +
+                    : "\nPreserve the SAME idea, Action and TargetId. Keep Text concise.") +
+                (tooLong ? urgency : "\nFor ADD/MODIFY/REPLACE use at most 45 whitespace-separated words.") +
                 "\nPut supporting explanation in Reason, not Text. Include Action, TargetId, Text and nonempty Reason. Return JSON only.";
             var answer = await client.AskAsync(name, agent.Model,
                 "Independent philosophical coauthor. Return exactly one JSON object. Lens: " + agent.Role,
