@@ -39,3 +39,8 @@ python experiments/prepare_g12_state.py <G11-run>/assembly-next-state.json <revi
 ```
 
 Review `g11-to-g12-migration-audit.json`, then start G12 with the generated `assembly-g12-input-cleaned.json` as the assembly state input. Do not use the cleaned file as a replacement for the archived G11 result. This is an explicit editorial migration, not a vote or an experiment outcome.
+
+
+### Coauthors Assembly — competing confirmed amendments (from G13)
+
+When two or more MODIFY/REPLACE proposals for the same frozen article receive the normal final-vote majority (at least 3 of 4, or a strict majority of the configured panel), none is applied by proposal order. Instead, every participant casts an independent ACCEPT/REJECT bonus vote on **each** confirmed alternative. The alternative with the unique highest number of bonus ACCEPT votes wins. If tied, each participant casts exactly one exclusive runoff vote among the tied leaders. If the runoff remains tied, compare the original final-vote ACCEPT counts among the runoff leaders. If this also ties, defer all competing amendments; never use proposal order or randomness to decide. The winning proposal alone is applied; all other confirmed alternatives are recorded as CONFLICT_DEFERRED. Preserve bonus and runoff ballots, vote reasons, tallies and resolution in `assembly-conflict-votes.json`. This applies to future launches only; do not modify an already running G12 or its outputs.
