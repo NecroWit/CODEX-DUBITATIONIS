@@ -41,6 +41,13 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
     private static string Hash(string text) =>
         Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(text))).ToLowerInvariant();
     private static int Words(string text) => Regex.Matches(text, @"\S+").Count;
+    // Articles are independently intelligible principles, not a dependency graph.
+    // Reject explicit article-ID references in new or revised article text.
+    private static bool HasCrossArticleReference(string text) =>
+        Regex.IsMatch(text, @"\bD\d{3}\b", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant) ||
+        Regex.IsMatch(text, @"\b(?:article|principle|section|статья|принцип|раздел)\s+(?:[IVXLCDM]+|\d+)\b",
+            RegexOptions.IgnoreCase | RegexOptions.CultureInvariant);
+
     private static string Normalize(string text) =>
         Regex.Replace(text.Trim(), @"\A(?:#{1,6}\s*)?(?:(?:[IVXLCDM]+|\d+|D\d{3})[.):-]\s+)",
             "", RegexOptions.IgnoreCase | RegexOptions.CultureInvariant).Trim();
@@ -165,12 +172,12 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         !string.IsNullOrWhiteSpace(p.Reason) && (p.Action switch
         {
             "PASS" => true,
-            "ADD" => articles.Count < 10 && !string.IsNullOrWhiteSpace(p.Text) && Words(p.Text) <= 60,
+            "ADD" => articles.Count < 10 && !string.IsNullOrWhiteSpace(p.Text) && Words(p.Text) <= 60 && !HasCrossArticleReference(p.Text),
             "MODIFY" => articles.Any(a => a.Id == p.TargetId) &&
-                        !string.IsNullOrWhiteSpace(p.Text) && Words(p.Text) <= 60 &&
+                        !string.IsNullOrWhiteSpace(p.Text) && Words(p.Text) <= 60 && !HasCrossArticleReference(p.Text) &&
                         articles.First(a => a.Id == p.TargetId).Text != p.Text,
             "REPLACE" => articles.Any(a => a.Id == p.TargetId) &&
-                         !string.IsNullOrWhiteSpace(p.Text) && Words(p.Text) <= 60 &&
+                         !string.IsNullOrWhiteSpace(p.Text) && Words(p.Text) <= 60 && !HasCrossArticleReference(p.Text) &&
                          articles.First(a => a.Id == p.TargetId).Text != p.Text,
             _ => false
         });
@@ -306,7 +313,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "\nCOMMON DISCUSSION:\n" + Serialize(discussion) +
                 "\nActions: ADD (only if fewer than 10 articles), MODIFY existing TargetId, REPLACE existing TargetId with an entirely new, better principle (atomic delete-and-add), PASS. " +
                 "For ADD/MODIFY/REPLACE write a self-contained article Text of AT MOST 60 whitespace words. " +
-                "No article number. No author identity in the proposal. Return JSON " +
+                "No article number. Each article must be self-contained: never reference any other article by ID, number, or title, and never require another article to interpret or apply it. No author identity in the proposal. Return JSON " +
                 "{\"Action\":\"ADD|MODIFY|REPLACE|PASS\",\"TargetId\":\"\",\"Text\":\"\",\"Reason\":\"...\"}.";
             var p = await AskProposal(agent, "assembly-g" + generation + "-proposal-" + agent.Id,
                 prompt, state.Articles);
@@ -383,7 +390,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "You authored the following ANONYMOUS proposal:\n" + Serialize(submission.Initial) +
                 "\nReviews:\n" + Serialize(submission.Reviews) +
                 "\nRevise the article in response to strong arguments, or preserve it unchanged. " +
-                "Keep the SAME Action and TargetId. Text for ADD/MODIFY/REPLACE <=60 words. " +
+                "Keep the SAME Action and TargetId. Text for ADD/MODIFY/REPLACE <=60 words. Every article must be self-contained; no cross-references to other articles by ID, number, or title. " +
                 "Return JSON {\"Action\":\"...\",\"TargetId\":\"...\",\"Text\":\"...\",\"Reason\":\"...\"}.",
                 state.Articles, submission.Initial);
             if (revision is null)
