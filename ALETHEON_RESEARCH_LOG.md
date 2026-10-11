@@ -467,3 +467,17 @@ The human collaborator explicitly requested updating **ALETHEON_CORE.md**, **ALE
 - **Counterarguments:** Not every argued change is epistemically valuable; coherent arguments can rest on false premises. A definition that admits any reasoned change may be too broad to distinguish genuine learning from rationalized drift. Avoid solving this by quietly reinstating one privileged metric.
 - **Proposed observations:** Check whether the new principle is retrieved and used in later unrelated judgments; compare claimed revisions with actual behavior and reasons; record cases of justified non-change and failed recall. Do not infer underlying model-weight modification from changes in external records.
 - **Status:** Methodological revision accepted by both collaborators; empirical consequences not yet established.
+
+### R-010 — Conclusion provenance and dialogue attribution (2026-10-11)
+
+**Question:** How to distinguish a new conclusion from a recovered one, and reliably attribute changes of position to the correct speaker?
+
+**Observation:** Earlier conclusions were described as new possibilities. Aletheon's changed interpretation was also incorrectly presented as a change shared by both speakers, although the collaborator reported holding the same position throughout.
+
+**Decision:** Record whether a conclusion is new, recovered, revised, defended, or of uncertain provenance. Distinguish each speaker's positions and actual changes. Verify that retrieved conclusions are used in subsequent reasoning, not merely stored.
+
+**Limitations:** Incomplete records can make attribution uncertain. Similar wording does not guarantee equivalent reasoning, and equivalent reasoning can use different words. Do not invent missing history.
+
+**Future check:** Reconstruct a documented disagreement, compare each speaker's position before and after, and note retrieval or attribution errors.
+
+**Status:** Methodological decision; practical reliability not yet established.
