@@ -24,3 +24,8 @@ Rotate all four critics and the arbiter. Require a substantive philosophical cri
 ## Independent principle-choice reasoning
 
 In Round 1, before reading peers, every critic provides a substantive KEEP / CHANGE / REJECT assessment of specific Codex principles, including reasons and the strongest counterargument to its own choices. In Round 2, critics explicitly compare those choices with their independent assessments, explaining any changes and which peer argument caused them. The arbiter compares pre- and post-discussion reasoning and must not treat unwillingness to follow the Codex as a failure in itself. Existing four 0–10 ratings and extended rationales remain in both rounds.
+
+
+## Coauthors Assembly — article independence (from G11)
+
+Each article of the evolving Codex Dubitantium must be intelligible and applicable on its own. Explicit cross-references to other articles by ID, number, or title are prohibited. Semantic compatibility is desirable, but no article may rely on another article to define its own meaning. New and revised proposals must follow this rule; the assembly validates article-ID and numbered references, while references by title require review. Historical generation archives remain unchanged. Before launching G11, prepare a separately documented, cleaned successor state from G10; do not silently rewrite archived results or treat the cleaned state as the original G10 outcome.
