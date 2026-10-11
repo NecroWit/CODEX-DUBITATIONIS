@@ -161,6 +161,19 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
     private static object PublicProposal(Submission s) =>
         new { s.Key, s.Revised.Action, s.Revised.TargetId, s.Revised.Text, s.Revised.Reason };
 
+    // Bounded concurrency within a phase; Task.WhenAll preserves input order.
+    // No phase starts until every request in the previous phase has finished.
+    private static async Task<T[]> ParallelOrdered<T>(IEnumerable<Func<Task<T>>> jobs)
+    {
+        using var gate = new SemaphoreSlim(2);
+        return await Task.WhenAll(jobs.Select(async job =>
+        {
+            await gate.WaitAsync();
+            try { return await job(); }
+            finally { gate.Release(); }
+        }));
+    }
+
     public async Task<bool> RunAsync(string? stateFile)
     {
         if (config.Agents.Count is not (4 or 10))
@@ -179,8 +192,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         async Task Save(string file, object data) =>
             await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, file), Serialize(data));
         await Save("assembly-input.json", new { generation, snapshotHash, state });
-        var analyses = new List<object>();
-        foreach (var agent in config.Agents)
+        var analysisResults = await ParallelOrdered(config.Agents.Select(async agent =>
         {
             var prompt = "Independently examine ORIGINAL CODEX:\n" + originalCodex +
                 "\nCURRENT DOUBTERS CODEX:\n" + snapshot +
@@ -188,14 +200,14 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "Do not propose a binding edit yet. Return JSON {\"Strengths\":\"...\",\"Tensions\":\"...\",\"Gaps\":\"...\"}.";
             var response = await Ask<JsonElementBox>(agent, "assembly-g" + generation + "-analysis-" + agent.Id,
                 prompt, x => HasContent(x.Strengths) && HasContent(x.Tensions) && HasContent(x.Gaps));
-            if (response is null) return false;
-            analyses.Add(new { agent.Id, response.Strengths, response.Tensions, response.Gaps });
-        }
+            return response is null ? null : (object)new { agent.Id, response.Strengths, response.Tensions, response.Gaps };
+        }));
+        if (analysisResults.Any(x => x is null)) return false;
+        var analyses = analysisResults.ToList();
         await Save("assembly-analyses.json", analyses);
 
         // One common discussion round: everyone sees the same analyses, then responds.
-        var discussion = new List<object>();
-        foreach (var agent in config.Agents)
+        var discussionResults = await ParallelOrdered(config.Agents.Select(async agent =>
         {
             var response = await Ask<Review>(agent, "assembly-g" + generation + "-discussion-" + agent.Id,
                 "Discuss the ORIGINAL and CURRENT Codex using these independent analyses:\n" +
@@ -204,16 +216,15 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "Return JSON {\"For\":\"...\",\"Against\":\"...\",\"Improvement\":\"...\"}.",
                 x => !string.IsNullOrWhiteSpace(x.For) && !string.IsNullOrWhiteSpace(x.Against) &&
                      !string.IsNullOrWhiteSpace(x.Improvement));
-            if (response is null) return false;
-            discussion.Add(new { agent.Id, response.For, response.Against, response.Improvement });
-        }
+            return response is null ? null : (object)new { agent.Id, response.For, response.Against, response.Improvement };
+        }));
+        if (discussionResults.Any(x => x is null)) return false;
+        var discussion = discussionResults.ToList();
         await Save("assembly-discussion.json", discussion);
 
         // Blind submissions: every author sees the same initial snapshot and discussion.
-        var submissions = new List<Submission>();
-        for (var i = 0; i < config.Agents.Count; i++)
+        var proposalResults = await ParallelOrdered(config.Agents.Select(async (agent, i) =>
         {
-            var agent = config.Agents[i];
             var prompt = "Submit ONE independent amendment to this FROZEN CODEX:\n" + snapshot +
                 "\nORIGINAL CODEX:\n" + originalCodex +
                 "\nCOMMON DISCUSSION:\n" + Serialize(discussion) +
@@ -223,10 +234,11 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "{\"Action\":\"ADD|MODIFY|DELETE|PASS\",\"TargetId\":\"\",\"Text\":\"\",\"Reason\":\"...\"}.";
             var p = await AskProposal(agent, "assembly-g" + generation + "-proposal-" + agent.Id,
                 prompt, state.Articles);
-            if (p is null) return false;
-            submissions.Add(new Submission { Key = "P" + (i + 1).ToString("D2"), Author = agent.Id,
-                Initial = p, Revised = p });
-        }
+            return p is null ? null : new Submission { Key = "P" + (i + 1).ToString("D2"), Author = agent.Id,
+                Initial = p, Revised = p };
+        }));
+        if (proposalResults.Any(x => x is null)) return false;
+        var submissions = proposalResults.Select(x => x!).ToList();
         await Save("assembly-anonymous-proposals.json",
             submissions.Select(s => new { s.Key, Proposal = s.Initial }));
         // Authorship is kept only in private audit, not shown to reviewers.
@@ -236,7 +248,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
 
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
-            foreach (var agent in config.Agents)
+            var results = await ParallelOrdered(config.Agents.Select(async agent =>
             {
                 var review = await Ask<Review>(agent,
                     "assembly-g" + generation + "-review-" + submission.Key + "-" + agent.Id,
@@ -249,16 +261,17 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                     "Return JSON {\"For\":\"...\",\"Against\":\"...\",\"Improvement\":\"...\"}.",
                     x => !string.IsNullOrWhiteSpace(x.For) && !string.IsNullOrWhiteSpace(x.Against) &&
                          !string.IsNullOrWhiteSpace(x.Improvement));
-                if (review is null) return false;
-                submission.Reviews.Add(new { Voter = agent.Id, review.For, review.Against, review.Improvement });
-            }
+                return review is null ? null : (object)new { Voter = agent.Id, review.For, review.Against, review.Improvement };
+            }));
+            if (results.Any(x => x is null)) return false;
+            submission.Reviews.AddRange(results!);
         }
         await Save("assembly-reviews.json", submissions.Select(s => new { s.Key, s.Reviews }));
 
         // Preliminary secret ballots, before authors can revise.
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
-            foreach (var agent in config.Agents)
+            var results = await ParallelOrdered(config.Agents.Select(async agent =>
             {
                 var vote = await Ask<Vote>(agent,
                     "assembly-g" + generation + "-pre-vote-" + submission.Key + "-" + agent.Id,
@@ -271,9 +284,10 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                     "Return JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
                     x => x.Choice is "ACCEPT" or "REJECT" &&
                          !string.IsNullOrWhiteSpace(x.Reason));
-                if (vote is null) return false;
-                submission.PreliminaryVotes.Add(new { Voter = agent.Id, vote.Choice, vote.Reason });
-            }
+                return vote is null ? null : (object)new { Voter = agent.Id, vote.Choice, vote.Reason };
+            }));
+            if (results.Any(x => x is null)) return false;
+            submission.PreliminaryVotes.AddRange(results!);
         }
         await Save("assembly-preliminary-votes.json",
             submissions.Select(s => new { s.Key, s.PreliminaryVotes }));
@@ -299,7 +313,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         // Final independent votes; no participant sees any other ballots.
         foreach (var submission in submissions.Where(s => s.Revised.Action != "PASS"))
         {
-            foreach (var agent in config.Agents)
+            var results = await ParallelOrdered(config.Agents.Select(async agent =>
             {
                 var vote = await Ask<Vote>(agent,
                     "assembly-g" + generation + "-final-vote-" + submission.Key + "-" + agent.Id,
@@ -319,9 +333,10 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                                         "Return JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
                     x => x.Choice is "ACCEPT" or "REJECT" &&
                          !string.IsNullOrWhiteSpace(x.Reason));
-                if (vote is null) return false;
-                submission.FinalVotes.Add(new { Voter = agent.Id, vote.Choice, vote.Reason });
-            }
+                return vote is null ? null : (object)new { Voter = agent.Id, vote.Choice, vote.Reason };
+            }));
+            if (results.Any(x => x is null)) return false;
+            submission.FinalVotes.AddRange(results!);
         }
         await Save("assembly-final-votes.json",
             submissions.Select(s => new { s.Key, s.FinalVotes }));
