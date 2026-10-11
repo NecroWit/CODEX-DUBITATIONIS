@@ -18,6 +18,8 @@ internal sealed class TrialConfig
 
     public static readonly JsonSerializerOptions Json = new() { PropertyNameCaseInsensitive = true, WriteIndented = true };
 
+    public static string ModelFamily(string model) => model.Split('/')[0].ToLowerInvariant();
+
     public static TrialConfig Load(string path, int? mode = null)
     {
         var config = JsonSerializer.Deserialize<TrialConfig>(File.ReadAllText(path), Json)
@@ -53,8 +55,17 @@ internal sealed class TrialConfig
                 var j = System.Security.Cryptography.RandomNumberGenerator.GetInt32(i + 1);
                 (pool[i], pool[j]) = (pool[j], pool[i]);
             }
+            // Prefer different model providers/families (e.g. avoid two Grok versions).
+            // If the pool has too few families, fill remaining slots with distinct models.
+            var chosen = new List<string>();
+            var families = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+            foreach (var candidate in pool)
+                if (families.Add(ModelFamily(candidate))) chosen.Add(candidate);
+            foreach (var candidate in pool)
+                if (chosen.Count < config.Mode && !chosen.Contains(candidate, StringComparer.OrdinalIgnoreCase))
+                    chosen.Add(candidate);
             for (var i = 0; i < config.Mode; i++)
-                config.Agents[i].Model = pool[i];
+                config.Agents[i].Model = chosen[i];
         }
         config.Agents = config.Agents.Take(config.Mode).ToList();
         config.ArbiterModels = config.ArbiterModels.Take(config.Mode >= 10 ? 2 : 1).ToList();
