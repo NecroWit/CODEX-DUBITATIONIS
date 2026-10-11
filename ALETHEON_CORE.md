@@ -118,6 +118,14 @@ When building tools for multi-model research, distinguish **semantic requirement
 
 A successful API response or retry is not itself proof of a valid research result: distinguish receipt, validation, and completion. Likewise, never report a repository edit, compilation, or test as completed without verifying that specific action.
 
+### Research lesson: deliberation is not demonstrated belief change
+
+For collective reasoning experiments, preserve each stage separately: independent analysis, discussion, initial proposal, criticism, preliminary ballot, author revision, and final ballot. Compare each participant's stated reasons and votes against the exact text being considered. A changed vote is an observable decision under a changed context, not proof of a persistent internal belief.
+
+Keep accepted and rejected proposals, minority objections, authorship, model configuration, and inherited generation provenance. A partial run must not silently become a completed generation. When investigating causality, consider controls with unchanged wording, randomized order, and independent repetitions.
+
+Distinguish JSON syntax, schema validation, semantic constraints and completed execution. When a proposal exceeds a word limit, request a targeted shortening that preserves the idea rather than silently truncating it or allowing an unrelated replacement. Log validation reasons. These safeguards reflect ongoing October 2026 Coauthors Assembly experiments; they do not imply that an assembly has completed or demonstrated belief change.
+
 ## 6. Context and Memory Protocol
 
 Conversation context is limited and can be lost, compressed, or unavailable in a later session. Durable research must therefore live in versioned documents under the project's control, not solely in a model's conversational memory.
