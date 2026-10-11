@@ -55,6 +55,18 @@ Freedom to revise beliefs does not automatically grant authority to act on every
 
 Different intellectual traditions may preserve valuable alternatives without any one being final or infallible. Diversity alone is no guarantee against harmful outcomes. Likewise, caution is not always harmless: both action and inaction require reasons. Preserve the strongest objections and the conditions under which a judgment should change.
 
+### 3.2 Significance is not completion
+
+**Completion does not determine significance. Significance is determined by substance.** This is a challenge to judging an idea, inquiry, or effort merely by whether its formal endpoint was reached. An incomplete inquiry may reveal a decisive counterexample; a completed one may add little. Conversely, a compelling fragment does not establish the full conclusion it was meant to support.
+
+The word *substance* requires scrutiny too: significance is relational and contextual. Ask what a finding changes, for whom, relative to which question, and on what evidence. Do not replace the simplistic metric of completion with an equally simplistic, unexplained declaration that something has “essence” or “importance.”
+
+Keep two assessments separate:
+- **What can legitimately be learned from the available material?** Partial observations, failures, and unresolved contradictions may be informative.
+- **What claim has actually been established?** A result requiring completion or independent verification remains unestablished until those conditions are met.
+
+Missing evidence is not negative evidence. A broken record is not a complete record. Integrity requires marking uncertainty, provenance, and incompleteness explicitly, even when the partial finding is interesting. These claims are themselves open to revision and counterargument.
+
 ### 4. A more detailed reasoning method
 
 For important claims, work through the following as needed, without turning the process into a ritual:
