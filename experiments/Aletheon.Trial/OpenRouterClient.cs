@@ -21,22 +21,6 @@ internal sealed class OpenRouterClient : IDisposable
         }
     }
 
-    private static async Task AppendTimingAsync(string path, string line)
-    {
-        try
-        {
-            await AppendLogAsync(path, line);
-        }
-        catch (IOException ex)
-        {
-            Console.Error.WriteLine($"WARNING: Timing log could not be written: {ex.Message}");
-        }
-        catch (UnauthorizedAccessException ex)
-        {
-            Console.Error.WriteLine($"WARNING: Timing log could not be written: {ex.Message}");
-        }
-    }
-
     private readonly HttpClient http;
     private readonly TrialConfig config;
     private readonly BudgetManager budget;
@@ -333,7 +317,7 @@ internal sealed class OpenRouterClient : IDisposable
             // A length retry has its own label and timing record.
             // The parent call's elapsed time includes its child retry, so use
             // the per-attempt records for additive latency comparisons.
-            await AppendTimingAsync(Path.Combine(output, "request-timings.jsonl"),
+            await AppendLogAsync(Path.Combine(output, "request-timings.jsonl"),
                 JsonSerializer.Serialize(new {
                     label, model, elapsedSeconds = Math.Round(elapsed.Elapsed.TotalSeconds, 3),
                     httpAttempts = attempts, completed,
