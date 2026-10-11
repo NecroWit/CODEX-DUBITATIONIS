@@ -132,7 +132,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                      "Aim for 40-45 words. Count words separated by whitespace."
             };
             var correction = attempt == 0 ? "" :
-                "\nYOUR PREVIOUS PROPOSAL:\n" + Serialize((object?)previous ?? original ?? new { Error = "No previous proposal" }) +
+                "\nYOUR PREVIOUS PROPOSAL:\n" + Serialize((object?)(previous ?? original) ?? new { Error = "No previous proposal" }) +
                 "\nERROR: " + (capacityBlocked
                     ? "The Codex already has 10 articles. ADD is forbidden regardless of text length."
                     : previous is null ? "Response was not a valid JSON proposal."
