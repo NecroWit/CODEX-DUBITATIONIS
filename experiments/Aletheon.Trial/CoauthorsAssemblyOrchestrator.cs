@@ -564,7 +564,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                         "No alternative has yet been applied. FROZEN ARTICLE:\n" +
                         snapshot + "\nCONFIRMED ALTERNATIVES:\n" + optionDetails +
                         "\nVOTE ON THIS ALTERNATIVE ONLY:\n" + Serialize(PublicProposal(option)) +
-                        "\nReturn JSON {\\"Choice\\":\\"ACCEPT|REJECT\\",\\"Reason\\":\\"...\\"}.",
+                        "\nReturn JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
                         x => x.Choice is "ACCEPT" or "REJECT" && !string.IsNullOrWhiteSpace(x.Reason));
                     if (vote is null) return null;
                     ballot.Add(new { Voter = agent.Id, Proposal = option.Key, vote.Choice, vote.Reason });
@@ -595,7 +595,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                         "No abstention, multiple selections, or new proposal.\nFROZEN ARTICLE:\n" +
                         snapshot + "\nTIED ALTERNATIVES:\n" +
                         Serialize(leaders.Select(PublicProposal)) +
-                        "\nReturn JSON {\\"Choice\\":\\"Pxx\\",\\"Reason\\":\\"...\\"}, " +
+                        "\nReturn JSON {\"Choice\":\"Pxx\",\"Reason\":\"...\"}, " +
                         "where Choice is exactly one of: " + string.Join(", ", tiedKeys) + ".",
                         x => tiedKeys.Contains(x.Choice) && !string.IsNullOrWhiteSpace(x.Reason));
                     return choice is null ? null : (object)new { Voter = agent.Id, choice.Choice, choice.Reason };
