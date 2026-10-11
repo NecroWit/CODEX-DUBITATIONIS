@@ -151,6 +151,10 @@
       "inputUsdPerMillionTokens": 2,
       "outputUsdPerMillionTokens": 8
     },
+    "x-ai/grok-4.6": {
+      "inputUsdPerMillionTokens": 2,
+      "outputUsdPerMillionTokens": 6
+    },
     "openai/gpt-4.1-mini": {
       "inputUsdPerMillionTokens": 1,
       "outputUsdPerMillionTokens": 4
