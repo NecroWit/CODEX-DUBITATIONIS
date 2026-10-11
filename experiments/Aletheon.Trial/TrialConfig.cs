@@ -59,19 +59,48 @@ internal sealed class TrialConfig
                 (shuffledTiers[i], shuffledTiers[j]) = (shuffledTiers[j], shuffledTiers[i]);
             }
             foreach (var tier in shuffledTiers.Take(extras)) counts[tier]++;
+            // Choose the most provider-diverse roster across all tiers, not separately
+            // within each tier. Enumerate distinct combinations; break ties randomly.
             var selected = new List<string>();
-            foreach (var tier in tiers)
+            List<string>? best = null;
+            var bestFamilies = -1;
+            var ties = 0;
+            void Search(int tierIndex)
             {
-                var pool = config.MixedTiers[tier].ToList();
-                if (pool.Count < counts[tier])
-                    throw new InvalidOperationException($"Mixed tier {tier} lacks {counts[tier]} candidates.");
-                for (var i = pool.Count - 1; i > 0; i--)
+                if (tierIndex == tiers.Length)
                 {
-                    var j = System.Security.Cryptography.RandomNumberGenerator.GetInt32(i + 1);
-                    (pool[i], pool[j]) = (pool[j], pool[i]);
+                    var diversity = selected.Select(ModelFamily).Distinct(StringComparer.OrdinalIgnoreCase).Count();
+                    if (diversity > bestFamilies)
+                    {
+                        bestFamilies = diversity;
+                        best = selected.ToList();
+                        ties = 1;
+                    }
+                    else if (diversity == bestFamilies &&
+                             System.Security.Cryptography.RandomNumberGenerator.GetInt32(++ties) == 0)
+                        best = selected.ToList();
+                    return;
                 }
-                selected.AddRange(pool.Take(counts[tier]));
+                var pool = config.MixedTiers[tiers[tierIndex]];
+                void Choose(int next, int remaining)
+                {
+                    if (remaining == 0) { Search(tierIndex + 1); return; }
+                    for (var i = next; i <= pool.Count - remaining; i++)
+                    {
+                        selected.Add(pool[i]);
+                        Choose(i + 1, remaining - 1);
+                        selected.RemoveAt(selected.Count - 1);
+                    }
+                }
+                Choose(0, counts[tiers[tierIndex]]);
             }
+            foreach (var tier in tiers)
+                if (config.MixedTiers[tier].Count < counts[tier])
+                    throw new InvalidOperationException($"Mixed tier {tier} lacks {counts[tier]} candidates.");
+            Search(0);
+            selected = best ?? throw new InvalidOperationException("No valid mixed roster.");
+            if (bestFamilies < config.Mode)
+                Console.WriteLine($"MIXED FAMILY DIVERSITY: {bestFamilies}/{config.Mode} distinct providers; unique providers unavailable for this tier split.");
             for (var i = selected.Count - 1; i > 0; i--)
             {
                 var j = System.Security.Cryptography.RandomNumberGenerator.GetInt32(i + 1);
