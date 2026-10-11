@@ -203,7 +203,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
             if (watch is not null) Fail("Previous stage was not completed");
             index = number;
             name = title;
-            mode = parallel ? "асинхронный, параллельный" : "асинхронный, последовательный";
+            mode = parallel ? "asynchronous, parallel" : "asynchronous, sequential";
             watch = System.Diagnostics.Stopwatch.StartNew();
             Console.WriteLine($"STAGE {index}/8: {name} — START ({mode})");
         }
@@ -243,7 +243,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         async Task Save(string file, object data) =>
             await File.WriteAllTextAsync(Path.Combine(client.OutputDirectory, file), Serialize(data));
         await Save("assembly-input.json", new { generation, snapshotHash, state });
-        stages.Begin(1, "Независимый анализ", true);
+        stages.Begin(1, "Independent analysis", true);
         var analysisResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
         {
             var prompt = "Independently examine ORIGINAL CODEX:\n" + originalCodex +
@@ -259,7 +259,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-analyses.json", analyses);
 
         // One common discussion round: everyone sees the same analyses, then responds.
-        stages.Begin(2, "Общее обсуждение", true);
+        stages.Begin(2, "Common discussion", true);
         var discussionResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
         {
             var response = await Ask<Review>(agent, "assembly-g" + generation + "-discussion-" + agent.Id,
@@ -276,7 +276,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-discussion.json", discussion);
 
         // Blind submissions: every author sees the same initial snapshot and discussion.
-        stages.Begin(3, "Анонимные предложения", true);
+        stages.Begin(3, "Anonymous proposals", true);
         var proposalResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<Submission?>>>((agent, i) => async () =>
         {
             var prompt = "Submit ONE independent amendment to this FROZEN CODEX:\n" + snapshot +
@@ -301,7 +301,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         var publicInitial = submissions.Select(s => new { s.Key, s.Initial.Action,
             s.Initial.TargetId, s.Initial.Text, s.Initial.Reason }).ToList();
 
-        stages.Begin(4, "Рецензирование", true);
+        stages.Begin(4, "Peer reviews", true);
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
             var results = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
@@ -326,7 +326,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
 
         stages.Complete();
         // Preliminary secret ballots, before authors can revise.
-        stages.Begin(5, "Предварительное голосование", true);
+        stages.Begin(5, "Preliminary voting", true);
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
             var results = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
@@ -352,7 +352,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
 
         stages.Complete();
         // Authors may revise after seeing anonymized arguments, but not private preliminary ballots.
-        stages.Begin(6, "Авторские правки", false);
+        stages.Begin(6, "Author revisions", false);
         foreach (var submission in submissions.Where(s => s.Initial.Action != "PASS"))
         {
             var author = config.Agents.Single(a => a.Id == submission.Author);
@@ -378,7 +378,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
 
         stages.Complete();
         // Final independent votes; no participant sees any other ballots.
-        stages.Begin(7, "Финальное голосование", true);
+        stages.Begin(7, "Final voting", true);
         foreach (var submission in submissions.Where(s => s.Revised.Action != "PASS"))
         {
             var results = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
@@ -443,7 +443,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
 
 
         stages.Complete();
-        stages.Begin(8, "Применение решений и архивация", false);
+        stages.Begin(8, "Decision application and archiving", false);
         // Conflict resolution: deterministic proposal order; no silent overwrites.
         // Majority ACCEPT of ALL critics required, including the author.
         var threshold = config.Agents.Count / 2 + 1;
