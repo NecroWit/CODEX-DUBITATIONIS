@@ -475,6 +475,57 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
             })).ToList();
         await Save("assembly-vote-transitions.json", transitions);
 
+        // Descriptive cross-tier support analytics. A self-ACCEPT weighs 0.3,
+        // another participant's ACCEPT weighs 1.0; REJECT weighs zero.
+        // This weighting does NOT affect the binding amendment threshold.
+        string Tier(string role)
+        {
+            var model = config.Agents.Single(a => a.Id == role).Model;
+            return config.MixedTiers.Count == 0 ? "unspecified" :
+                config.MixedTiers.Single(kv => kv.Value.Contains(model, StringComparer.OrdinalIgnoreCase)).Key;
+        }
+        var supportRows = submissions.Where(s => s.Initial.Action != "PASS")
+            .SelectMany(s => s.PreliminaryVotes.Select(before =>
+            {
+                using var doc = JsonDocument.Parse(Serialize(before));
+                var voter = doc.RootElement.GetProperty("Voter").GetString()!;
+                var initial = doc.RootElement.GetProperty("Choice").GetString()!;
+                var finalVote = s.FinalVotes.Single(v =>
+                {
+                    using var d = JsonDocument.Parse(Serialize(v));
+                    return d.RootElement.GetProperty("Voter").GetString() == voter;
+                });
+                using var finalDoc = JsonDocument.Parse(Serialize(finalVote));
+                var last = finalDoc.RootElement.GetProperty("Choice").GetString()!;
+                return new {
+                    Proposal = s.Key, AuthorRole = s.Author, AuthorTier = Tier(s.Author),
+                    VoterRole = voter, VoterTier = Tier(voter), SelfVote = voter == s.Author,
+                    PreliminaryChoice = initial, FinalChoice = last,
+                    PreliminaryPoints = initial == "ACCEPT" ? (voter == s.Author ? 0.3m : 1m) : 0m,
+                    FinalPoints = last == "ACCEPT" ? (voter == s.Author ? 0.3m : 1m) : 0m
+                };
+            })).ToList();
+        var supportMatrix = supportRows.GroupBy(r => new { r.AuthorTier, r.VoterTier })
+            .Select(g => new {
+                g.Key.AuthorTier, g.Key.VoterTier,
+                Ballots = g.Count(),
+                SelfBallots = g.Count(r => r.SelfVote),
+                PreliminaryAccepts = g.Count(r => r.PreliminaryChoice == "ACCEPT"),
+                FinalAccepts = g.Count(r => r.FinalChoice == "ACCEPT"),
+                PreliminaryWeightedPoints = g.Sum(r => r.PreliminaryPoints),
+                FinalWeightedPoints = g.Sum(r => r.FinalPoints),
+                PreliminaryAcceptRate = (decimal)g.Count(r => r.PreliminaryChoice == "ACCEPT") / g.Count(),
+                FinalAcceptRate = (decimal)g.Count(r => r.FinalChoice == "ACCEPT") / g.Count(),
+                PreliminaryWeightedRate = g.Sum(r => r.PreliminaryPoints) / g.Count(),
+                FinalWeightedRate = g.Sum(r => r.FinalPoints) / g.Count()
+            }).ToList();
+        await Save("assembly-tier-support.json", new {
+            Generation = generation, SelfAcceptWeight = 0.3m, OtherAcceptWeight = 1m,
+            DecisionVotesRemainUnweighted = true,
+            Matrix = supportMatrix, Ballots = supportRows
+        });
+
+
 
         stages.Complete();
         stages.Begin(8, "Decision application and archiving", false);
