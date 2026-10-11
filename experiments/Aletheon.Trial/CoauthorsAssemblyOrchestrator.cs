@@ -204,7 +204,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
     }
 
 
-    private sealed class StageLog : IDisposable
+    private sealed class StageLog(int generation) : IDisposable
     {
         private System.Diagnostics.Stopwatch? watch;
         private int index;
@@ -217,18 +217,18 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
             name = title;
             mode = parallel ? "asynchronous, parallel" : "asynchronous, sequential";
             watch = System.Diagnostics.Stopwatch.StartNew();
-            Console.WriteLine($"STAGE {index}/8: {name} — START ({mode})");
+            Console.WriteLine($"Gen{generation} STAGE {index}/8: {name} — START ({mode})");
         }
         public void Complete()
         {
             if (watch is null) return;
-            Console.WriteLine($"STAGE {index}/8: {name} — COMPLETE ({mode}), elapsed={watch.Elapsed.TotalSeconds:F1}s");
+            Console.WriteLine($"Gen{generation} STAGE {index}/8: {name} — COMPLETE ({mode}), elapsed={watch.Elapsed.TotalSeconds:F1}s");
             watch = null;
         }
         public void Fail(string reason)
         {
             if (watch is null) return;
-            Console.Error.WriteLine($"STAGE {index}/8: {name} — FAILED ({mode}), elapsed={watch.Elapsed.TotalSeconds:F1}s, reason={reason}");
+            Console.Error.WriteLine($"Gen{generation} STAGE {index}/8: {name} — FAILED ({mode}), elapsed={watch.Elapsed.TotalSeconds:F1}s, reason={reason}");
             watch = null;
         }
         public void Dispose() => Fail("Stage interrupted: request failed or experiment stopped");
@@ -236,7 +236,6 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
 
     public async Task<bool> RunAsync(string? stateFile)
     {
-        using var stages = new StageLog();
         try
         {
         if (config.Agents.Count is not (4 or 10))
@@ -249,6 +248,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         if (state.Articles.Count > 10 || state.Articles.Select(a => a.Id).Distinct().Count() != state.Articles.Count)
             throw new InvalidOperationException("Invalid input articles.");
         var generation = state.Generation + 1;
+        using var stages = new StageLog(generation);
         var snapshot = Serialize(state.Articles);
         var snapshotHash = Hash(snapshot);
         var audit = new List<object>();
