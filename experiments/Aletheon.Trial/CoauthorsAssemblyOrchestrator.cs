@@ -741,6 +741,89 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         }
         if (appliedAssessments.Count > 0)
             await Save("assembly-applied-assessment-links.json", appliedAssessments);
+
+        // Slot XI is a temporary proposal space, never an eleventh active article.
+        if (generation >= 20 && state.Articles.Count == 10)
+        {
+            var beforeMutation = Serialize(state.Articles);
+            var ideas = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<Submission?>>>((agent, i) => async () =>
+            {
+                var p = await AskProposal(agent, "assembly-g" + generation + "-xi-" + agent.Id,
+                    "Imagine proposing a NEW eleventh Codex principle. Any surprising, simple, unusual or radical idea is welcome, but novelty and extremity are not requirements. " +
+                    "Do not merely improve an existing article. Other participants will see your idea anonymously. " +
+                    "Choose one current article to REPLACE if the idea is adopted, and explain why. " +
+                    "Return JSON with Action=REPLACE, TargetId (existing ID), Text (self-contained, <=60 words) and Reason. " +
+                    "CURRENT CODEX:\n" + beforeMutation + "\nORIGINAL CODEX:\n" + originalCodex,
+                    state.Articles);
+                return p is null || p.Action != "REPLACE" ? null : new Submission {
+                    Key = "M" + (i + 1).ToString("D2"), Author = agent.Id, Initial = p, Revised = p
+                };
+            }));
+            if (ideas.Any(x => x is null)) return false;
+            var candidates = ideas.Select(x => x!).ToList();
+            await Save("assembly-xi-authors.json", candidates.Select(x => new { x.Key, x.Author }));
+            var anonymous = candidates.Select(PublicProposal).ToList();
+            await Save("assembly-xi-ideas.json", anonymous);
+            var keys = candidates.Select(x => x.Key).ToHashSet();
+            var interest = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
+            {
+                var v = await Ask<RankedChoice>(agent, "assembly-g" + generation + "-xi-interest-" + agent.Id,
+                    "Choose the ONE most interesting anonymous idea to explore, regardless of whether you agree or would adopt it. " +
+                    "Do not guess authors. IDEAS:\n" + Serialize(anonymous) +
+                    "\nReturn JSON {\"Choice\":\"M01\",\"Reason\":\"...\"}.",
+                    x => keys.Contains(x.Choice) && !string.IsNullOrWhiteSpace(x.Reason));
+                return v is null ? null : (object)new { Voter = agent.Id, v.Choice, v.Reason };
+            }));
+            if (interest.Any(x => x is null)) return false;
+            int CountChoice(string key) => interest.Count(v => {
+                using var d = JsonDocument.Parse(Serialize(v));
+                return d.RootElement.GetProperty("Choice").GetString() == key;
+            });
+            var maxInterest = candidates.Max(x => CountChoice(x.Key));
+            var tied = candidates.Where(x => CountChoice(x.Key) == maxInterest).ToList();
+            var winner = tied[RandomNumberGenerator.GetInt32(tied.Count)];
+            await Save("assembly-xi-interest.json", new {
+                Votes = interest, Winner = winner.Key, Tied = tied.Select(x => x.Key),
+                TieBreak = tied.Count > 1 ? "CRYPTO_RANDOM" : "NONE"
+            });
+            var adoption = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
+            {
+                var v = await Ask<Vote>(agent, "assembly-g" + generation + "-xi-adopt-" + agent.Id,
+                    "Binding independent vote: should the winning idea REPLACE its author's selected existing article? " +
+                    "The target and text cannot change. Interest is not agreement. CURRENT CODEX:\n" + beforeMutation +
+                    "\nPROPOSAL:\n" + Serialize(PublicProposal(winner)) +
+                    "\nReturn JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
+                    x => x.Choice is "ACCEPT" or "REJECT" && !string.IsNullOrWhiteSpace(x.Reason));
+                return v is null ? null : (object)new { Voter = agent.Id, v.Choice, v.Reason };
+            }));
+            if (adoption.Any(x => x is null)) return false;
+            var approvals = adoption.Count(v => {
+                using var d = JsonDocument.Parse(Serialize(v));
+                return d.RootElement.GetProperty("Choice").GetString() == "ACCEPT";
+            });
+            var accepted = approvals >= config.Agents.Count / 2 + 1;
+            if (accepted)
+            {
+                state.Articles.RemoveAll(x => x.Id == winner.Revised.TargetId);
+                state.Articles.Add(new DoubtersCodexOrchestrator.Article {
+                    Id = "D" + (state.NextId++).ToString("D3"), Text = winner.Revised.Text
+                });
+            }
+            state.History.Add(new DoubtersCodexOrchestrator.Decision {
+                Generation = generation, Author = "ASSEMBLY:XI:" + winner.Key,
+                Action = "REPLACE", TargetId = winner.Revised.TargetId,
+                ProposedText = winner.Revised.Text,
+                Reason = winner.Revised.Reason + " | Experimental anonymous XI: " + (accepted ? "APPLIED" : "REJECTED"),
+                Applied = accepted, BeforeSha256 = Hash(beforeMutation),
+                AfterSha256 = Hash(Serialize(state.Articles)),
+                VoteMeaning = "Interest plurality (random tie break), then binding strict majority"
+            });
+            await Save("assembly-xi-adoption.json", new {
+                Winner = winner.Key, Votes = adoption, Approvals = approvals,
+                Threshold = config.Agents.Count / 2 + 1, Accepted = accepted,
+                BeforeSha256 = Hash(beforeMutation), AfterSha256 = Hash(Serialize(state.Articles))
+            });
+        }
         state.Generation = generation;
         await Save("assembly-next-state.json", state);
         var md = "# Codex Dubitantium — Coauthors Assembly\n\nGeneration: " + generation +
