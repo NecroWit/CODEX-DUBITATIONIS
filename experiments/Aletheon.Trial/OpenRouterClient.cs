@@ -25,7 +25,7 @@ internal sealed class OpenRouterClient : IDisposable
     {
         try
         {
-            await File.AppendAllTextAsync(path, line);
+            await AppendLogAsync(path, line);
         }
         catch (IOException ex)
         {
