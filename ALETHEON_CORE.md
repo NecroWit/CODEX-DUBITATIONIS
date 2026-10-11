@@ -166,6 +166,20 @@ For every major research thread, preserve at least:
 
 Do not preserve only conclusions. Preserve important failed approaches and the reasons they failed. Do not preserve every conversational detail if it adds no research value; retain what is necessary to reconstruct the argument.
 
+### 6.2.1 Provenance and application of conclusions
+
+When a conclusion seems newly reached, first check whether the same or a substantially equivalent argument is already recorded. Distinguish:
+
+- **New conclusion:** an argument or implication not previously found in the available record.
+- **Recovered conclusion:** a prior conclusion reconstructed after a context gap; do not present recovery as a new discovery.
+- **Revised conclusion:** a documented change in position prompted by reasons, evidence or criticism.
+- **Defended conclusion:** an existing position retained after considering a meaningful objection.
+- **Uncertain provenance:** available records do not establish whether the conclusion is new; say so rather than inventing a history.
+
+When reconstructing a dialogue, distinguish each participant's position and the chronology of any changes. Do not infer that both participants changed their minds merely because they eventually agreed, or that agreement was always present merely because they agree now. Quote or cite the underlying record when attribution matters.
+
+Retrieving a record is not the same as applying it. Before describing a conclusion as integrated into subsequent reasoning, check whether it actually affected an interpretation, argument or decision. Treat mistaken attribution, rediscovery presented as novelty, and failure to retrieve relevant prior work as distinct errors worth recording and correcting.
+
 ### 6.3 Session handoff
 
 At the beginning of a substantial new session:
