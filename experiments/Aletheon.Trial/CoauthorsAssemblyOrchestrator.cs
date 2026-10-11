@@ -516,6 +516,37 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
             s.Key, s.Author, s.Initial, s.Revised, s.Reviews, s.PreliminaryVotes,
             s.FinalVotes, s.Outcome
         }));
+        // Record only salient overlaps: an APPLIED MODIFY/REPLACE of an article
+        // previously selected as strongest or weakest in independent analysis.
+        var appliedAssessments = new List<object>();
+        foreach (var submission in submissions.Where(s =>
+            s.Outcome == "APPLIED" && s.Revised.Action is "MODIFY" or "REPLACE"))
+        {
+            foreach (var analysis in analyses)
+            {
+                using var doc = JsonDocument.Parse(Serialize(analysis));
+                var root = doc.RootElement;
+                var assessor = root.GetProperty("Id").GetString()!;
+                foreach (var kind in new[] { "Strongest", "Weakest" })
+                {
+                    var selection = root.GetProperty(kind);
+                    if (selection.GetProperty("ArticleId").GetString() != submission.Revised.TargetId)
+                        continue;
+                    appliedAssessments.Add(new {
+                        Generation = generation, Proposal = submission.Key,
+                        Action = submission.Revised.Action, TargetId = submission.Revised.TargetId,
+                        AuthorRole = submission.Author, AssessorRole = assessor,
+                        Assessment = kind, AssessmentReason = selection.GetProperty("Reason").GetString(),
+                        InitialText = submission.Initial.Text, AppliedText = submission.Revised.Text,
+                        Outcome = submission.Outcome,
+                        Evidence = new[] { "assembly-analyses.json", "assembly-discussion.json",
+                            "assembly-decisions.json", "assembly-next-state.json" }
+                    });
+                }
+            }
+        }
+        if (appliedAssessments.Count > 0)
+            await Save("assembly-applied-assessment-links.json", appliedAssessments);
         state.Generation = generation;
         await Save("assembly-next-state.json", state);
         var md = "# Codex Dubitantium — Coauthors Assembly\n\nGeneration: " + generation +
