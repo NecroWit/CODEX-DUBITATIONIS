@@ -112,9 +112,9 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
     private static string RequiredSchema<T>() where T : class
     {
         if (typeof(T) == typeof(Review))
-            return "Return JSON with nonempty strings: {\\"For\\":\\"...\\",\\"Against\\":\\"...\\",\\"Improvement\\":\\"...\\"}.";
+            return "Return JSON with nonempty strings: {\"For\":\"...\",\"Against\":\"...\",\"Improvement\":\"...\"}.";
         if (typeof(T) == typeof(Vote))
-            return "Return JSON: {\\"Choice\\":\\"ACCEPT\\",\\"Reason\\":\\"...\\"}. Choice must be ACCEPT or REJECT; Reason nonempty.";
+            return "Return JSON: {\"Choice\":\"ACCEPT\",\"Reason\":\"...\"}. Choice must be ACCEPT or REJECT; Reason nonempty.";
         return "Return exactly one valid JSON object with all required fields.";
     }
 
