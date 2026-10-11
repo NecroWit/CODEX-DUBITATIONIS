@@ -24,6 +24,20 @@ internal sealed class OpenRouterClient : IDisposable
             return "critic-" + parts[1];
         if (parts.Length >= 2 && parts[0] == "arbiter")
             return "arbiter-" + parts[1];
+        // Assembly labels contain the stable role ID, optionally followed by
+        // retry suffixes. Keep replacements attached to that role.
+        if (parts.Length >= 4 && parts[0] == "assembly" &&
+            parts[1].Length > 1 && parts[1][0] == 'g')
+        {
+            var role = parts[3];
+            if (parts[2] == "review" || parts[2] == "preliminary" ||
+                parts[2] == "final")
+            {
+                // e.g. assembly-g7-review-P02-logic
+                if (parts.Length >= 5) role = parts[4];
+            }
+            return "assembly-role-" + role;
+        }
         return label;
     }
 
@@ -56,7 +70,7 @@ internal sealed class OpenRouterClient : IDisposable
         // One replacement per logical request prevents endless model substitution chains.
         var participant = Participant(label);
         var currentFamily = TrialConfig.ModelFamily(failedModel);
-        var occupied = new HashSet<string>(config.Agents.Select(a => ResolveModel("assembly-" + a.Id, a.Model)),
+        var occupied = new HashSet<string>(config.Agents.Select(a => ResolveModel("assembly-g0-analysis-" + a.Id, a.Model)),
             StringComparer.OrdinalIgnoreCase);
         var pool = config.RotationModels.Concat(config.StandbyModels)
             .Where(m => !string.Equals(m, failedModel, StringComparison.OrdinalIgnoreCase) &&
