@@ -278,7 +278,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
             var p = submission.Revised;
             if (p.Action == "PASS") { submission.Outcome = "PASS"; continue; }
             var accepted = submission.FinalVotes.Count(v =>
-                Serialize(v).Contains("\"Choice\": \"ACCEPT\"", StringComparison.Ordinal));
+                JsonSerializer.Deserialize<Vote>(Serialize(v), Json)?.Choice == "ACCEPT");
             if (accepted < threshold) { submission.Outcome = "REJECTED"; continue; }
             if (p.Action is "MODIFY" or "DELETE" && !changedTargets.Add(p.TargetId))
             { submission.Outcome = "CONFLICT_DEFERRED"; continue; }
