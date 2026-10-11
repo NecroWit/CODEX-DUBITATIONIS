@@ -249,10 +249,28 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
             var prompt = "Independently examine ORIGINAL CODEX:\n" + originalCodex +
                 "\nCURRENT DOUBTERS CODEX:\n" + snapshot +
                 "\nExplain strengths, tensions and missing principles in both texts. " +
-                "Do not propose a binding edit yet. Return JSON {\"Strengths\":\"...\",\"Tensions\":\"...\",\"Gaps\":\"...\"}.";
+                "Identify the single strongest and single weakest article in the CURRENT DOUBTERS CODEX, " +
+                "using their exact article IDs. Give a substantive reason for each choice. " +
+                "Assess the articles as written, not their authors or popularity. " +
+                "Do not propose a binding edit yet. Return JSON " +
+                "{\"Strengths\":\"...\",\"Tensions\":\"...\",\"Gaps\":\"...\"," +
+                "\"Strongest\":{\"ArticleId\":\"D001\",\"Reason\":\"...\"}," +
+                "\"Weakest\":{\"ArticleId\":\"D002\",\"Reason\":\"...\"}}. " +
+                "If the current Codex has no articles, use empty ArticleId values and explain why in both Reasons.";
             var response = await Ask<JsonElementBox>(agent, "assembly-g" + generation + "-analysis-" + agent.Id,
-                prompt, x => HasContent(x.Strengths) && HasContent(x.Tensions) && HasContent(x.Gaps));
-            return response is null ? null : (object)new { agent.Id, response.Strengths, response.Tensions, response.Gaps };
+                prompt, x => HasContent(x.Strengths) && HasContent(x.Tensions) && HasContent(x.Gaps) &&
+                    x.Strongest is not null && x.Weakest is not null &&
+                    !string.IsNullOrWhiteSpace(x.Strongest.Reason) &&
+                    !string.IsNullOrWhiteSpace(x.Weakest.Reason) &&
+                    (state.Articles.Count == 0
+                        ? string.IsNullOrEmpty(x.Strongest.ArticleId) && string.IsNullOrEmpty(x.Weakest.ArticleId)
+                        : state.Articles.Any(a => a.Id == x.Strongest.ArticleId) &&
+                          state.Articles.Any(a => a.Id == x.Weakest.ArticleId) &&
+                          (state.Articles.Count == 1 || x.Strongest.ArticleId != x.Weakest.ArticleId)));
+            return response is null ? null : (object)new {
+                agent.Id, response.Strengths, response.Tensions, response.Gaps,
+                response.Strongest, response.Weakest
+            };
         }));
         if (analysisResults.Any(x => x is null)) return false;
         var analyses = analysisResults.ToList();
@@ -266,7 +284,9 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
             var response = await Ask<Review>(agent, "assembly-g" + generation + "-discussion-" + agent.Id,
                 "Discuss the ORIGINAL and CURRENT Codex using these independent analyses:\n" +
                 Serialize(analyses) +
-                "\nGive the strongest case for continuity, the strongest case for change, and a reconciliation. " +
+                "\nCompare the participants' strongest and weakest article selections and their reasons. " +
+                "Address important agreements and disagreements, without assuming the majority is correct. " +
+                "Give the strongest case for continuity, the strongest case for change, and a reconciliation. " +
                 "Return JSON {\"For\":\"...\",\"Against\":\"...\",\"Improvement\":\"...\"}.",
                 x => !string.IsNullOrWhiteSpace(x.For) && !string.IsNullOrWhiteSpace(x.Against) &&
                      !string.IsNullOrWhiteSpace(x.Improvement));
@@ -529,5 +549,13 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         public JsonElement Strengths { get; set; }
         public JsonElement Tensions { get; set; }
         public JsonElement Gaps { get; set; }
+        public ArticleAssessment? Strongest { get; set; }
+        public ArticleAssessment? Weakest { get; set; }
+    }
+
+    private sealed class ArticleAssessment
+    {
+        public string ArticleId { get; set; } = "";
+        public string Reason { get; set; } = "";
     }
 }
