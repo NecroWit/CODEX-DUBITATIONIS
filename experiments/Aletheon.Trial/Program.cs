@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Net.Http.Headers;
 
 var experimentDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
 var configFile = "agents.json";
@@ -46,12 +47,6 @@ var codexPath = Path.GetFullPath(Path.Combine(experimentDir, "../CODEX-DUBITATIO
 if (!File.Exists(configPath) || !File.Exists(codexPath))
     throw new FileNotFoundException("Expected the selected experiments config and CODEX-DUBITATIONIS.md.");
 var config = TrialConfig.Load(configPath, mode);
-if (config.RotationModels.Count > 0)
-{
-    Console.WriteLine($"Model rotation: {config.Agents.Count} participants selected from {config.RotationModels.Count} candidates.");
-    foreach (var agent in config.Agents)
-        Console.WriteLine($"  {agent.Id}: {agent.Model}");
-}
 if ((council ? 1 : 0) + (forum ? 1 : 0) + (doubters ? 1 : 0) + (assembly ? 1 : 0) > 1)
     throw new ArgumentException("Choose only one of --council, --forum, --doubters, --assembly.");
 if (!(doubters || assembly) && doubtersState is not null)
@@ -64,6 +59,59 @@ if (forumControl && hypothesisFile is not null)
     throw new ArgumentException("--forum-control cannot be combined with --hypothesis-file.");
 var key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(key)) throw new InvalidOperationException("Set OPENROUTER_API_KEY.");
+// Probe candidate models before committing the roster. A probe is a real, billable
+// OpenRouter request; only HTTP 429 disqualifies a candidate for this run.
+var rotationChecks = new List<object>();
+if (config.RotationModels.Count > 0)
+{
+    using var probeClient = new HttpClient { Timeout = TimeSpan.FromSeconds(45) };
+    probeClient.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Bearer", key);
+    probeClient.DefaultRequestHeaders.Add("HTTP-Referer", "https://github.com/NecroWit/CODEX-DUBITATIONIS");
+    probeClient.DefaultRequestHeaders.Add("X-Title", "Aletheon Trial model preflight");
+    var selected = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+    // Initial choices are randomized by TrialConfig.Load; shuffle the remaining pool.
+    var candidates = config.RotationModels.Where(m => !config.Agents.Any(a =>
+        string.Equals(a.Model, m, StringComparison.OrdinalIgnoreCase))).ToList();
+    for (var i = candidates.Count - 1; i > 0; i--)
+    {
+        var j = RandomNumberGenerator.GetInt32(i + 1);
+        (candidates[i], candidates[j]) = (candidates[j], candidates[i]);
+    }
+    foreach (var agent in config.Agents)
+    {
+        var candidate = agent.Model;
+        while (true)
+        {
+            using var request = new HttpRequestMessage(HttpMethod.Post, config.Endpoint) {
+                Content = new StringContent(JsonSerializer.Serialize(new {
+                    model = candidate, max_tokens = 8,
+                    messages = new[] { new { role = "user", content = "Reply OK." } }
+                }), Encoding.UTF8, "application/json")
+            };
+            using var response = await probeClient.SendAsync(request);
+            var body = await response.Content.ReadAsStringAsync();
+            rotationChecks.Add(new { role = agent.Id, model = candidate,
+                status = (int)response.StatusCode, utc = DateTimeOffset.UtcNow });
+            if (response.IsSuccessStatusCode)
+            {
+                selected.Add(candidate);
+                agent.Model = candidate;
+                Console.WriteLine($"MODEL READY: {agent.Id}: {candidate}");
+                break;
+            }
+            if ((int)response.StatusCode != 429)
+                throw new InvalidOperationException(
+                    $"Model preflight failed for {candidate}: HTTP {(int)response.StatusCode}. {body[..Math.Min(body.Length, 500)]}");
+            Console.WriteLine($"MODEL THROTTLED: {candidate} (HTTP 429); selecting replacement.");
+            if (candidates.Count == 0)
+                throw new InvalidOperationException(
+                    $"Rotation pool exhausted: cannot find {config.Mode} available models after HTTP 429.");
+            candidate = candidates[0];
+            candidates.RemoveAt(0);
+        }
+    }
+    Console.WriteLine($"Model rotation: {config.Agents.Count} verified participants from {config.RotationModels.Count} candidates.");
+}
 var codex = await File.ReadAllTextAsync(codexPath);
 var hash = Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(codex))).ToLowerInvariant();
 var output = Path.Combine(experimentDir, "results",
@@ -71,6 +119,7 @@ var output = Path.Combine(experimentDir, "results",
 Directory.CreateDirectory(output);
 await File.WriteAllTextAsync(Path.Combine(output, "codex.md"), codex);
 await File.WriteAllTextAsync(Path.Combine(output, "config.json"), JsonSerializer.Serialize(config, TrialConfig.Json));
+await File.WriteAllTextAsync(Path.Combine(output, "model-preflight.json"), JsonSerializer.Serialize(rotationChecks, TrialConfig.Json));
 await File.WriteAllTextAsync(Path.Combine(output, "manifest.json"),
     JsonSerializer.Serialize(new { utc = DateTimeOffset.UtcNow, codexSha256 = hash, protocol = "v0.5" }, TrialConfig.Json));
 Console.WriteLine($"Experiment output: {output}");
