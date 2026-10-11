@@ -409,6 +409,39 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         await Save("assembly-final-votes.json",
             submissions.Select(s => new { s.Key, s.FinalVotes }));
 
+        // Research observations are descriptive evidence, not claims of persuasion.
+        // Preserve all four transition types and link them to the immutable run audit.
+        var transitions = submissions
+            .Where(s => s.Initial.Action != "PASS")
+            .SelectMany(s => s.PreliminaryVotes.Select(before =>
+            {
+                var first = JsonSerializer.Deserialize<Vote>(Serialize(before), Json)!;
+                using var voterDoc = JsonDocument.Parse(Serialize(before));
+                var voter = voterDoc.RootElement.GetProperty("Voter").GetString()!;
+                var afterObject = s.FinalVotes.Single(v =>
+                {
+                    using var doc = JsonDocument.Parse(Serialize(v));
+                    return doc.RootElement.GetProperty("Voter").GetString() == voter;
+                });
+                var last = JsonSerializer.Deserialize<Vote>(Serialize(afterObject), Json)!;
+                return new {
+                    Generation = generation, Proposal = s.Key, VoterRole = voter,
+                    Model = config.Agents.Single(a => a.Id == voter).Model,
+                    AuthorRole = s.Author, Action = s.Initial.Action, TargetId = s.Initial.TargetId,
+                    InitialText = s.Initial.Text, RevisedText = s.Revised.Text,
+                    TextChanged = s.Initial.Text != s.Revised.Text,
+                    PreliminaryChoice = first.Choice, PreliminaryReason = first.Reason,
+                    FinalChoice = last.Choice, FinalReason = last.Reason,
+                    Transition = first.Choice + "->" + last.Choice,
+                    RunDirectory = Path.GetFileName(client.OutputDirectory),
+                    Evidence = new[] { "assembly-anonymous-proposals.json", "assembly-reviews.json",
+                        "assembly-preliminary-votes.json", "assembly-revisions.json",
+                        "assembly-final-votes.json", "assembly-authorship.json" }
+                };
+            })).ToList();
+        await Save("assembly-vote-transitions.json", transitions);
+
+
         stages.Complete();
         stages.Begin(8, "Применение решений и архивация", false);
         // Conflict resolution: deterministic proposal order; no silent overwrites.
