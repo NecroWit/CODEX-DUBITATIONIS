@@ -11,6 +11,7 @@ internal sealed class TrialConfig
     public string ArbiterModel { get; set; } = "";
     public List<string> ArbiterModels { get; set; } = new();
     public List<string> StandbyModels { get; set; } = new();
+    public List<string> RotationModels { get; set; } = new();
     public int Mode { get; set; } = 10;
     public Dictionary<string, ModelPrice> ModelPrices { get; set; } = new(StringComparer.OrdinalIgnoreCase);
     public int MaxReviewCharacters { get; set; } = 4500;
@@ -34,6 +35,27 @@ internal sealed class TrialConfig
             config.ArbiterModels.Distinct(StringComparer.OrdinalIgnoreCase).Count() != 2 ||
             config.Agents.Any(a => config.ArbiterModels.Contains(a.Model, StringComparer.OrdinalIgnoreCase)))
             throw new InvalidOperationException("Configure two distinct arbiters, neither used as a critic.");
+        if (config.RotationModels.Count > 0)
+        {
+            if (config.RotationModels.Any(string.IsNullOrWhiteSpace) ||
+                config.RotationModels.Distinct(StringComparer.OrdinalIgnoreCase).Count() != config.RotationModels.Count ||
+                config.RotationModels.Count < config.Mode ||
+                config.RotationModels.Any(m => config.ArbiterModels.Contains(m, StringComparer.OrdinalIgnoreCase)))
+                throw new InvalidOperationException("Rotation pool must contain at least Mode distinct models, excluding arbiters.");
+            foreach (var model in config.RotationModels)
+                if (!config.ModelPrices.TryGetValue(model, out var price) ||
+                    price.InputUsdPerMillionTokens <= 0 || price.OutputUsdPerMillionTokens <= 0)
+                    throw new InvalidOperationException($"Missing positive modelPrices entry for rotation model {model}.");
+            // Fisher-Yates: unbiased random assignment, with no replacement within a run.
+            var pool = config.RotationModels.ToList();
+            for (var i = pool.Count - 1; i > 0; i--)
+            {
+                var j = System.Security.Cryptography.RandomNumberGenerator.GetInt32(i + 1);
+                (pool[i], pool[j]) = (pool[j], pool[i]);
+            }
+            for (var i = 0; i < config.Mode; i++)
+                config.Agents[i].Model = pool[i];
+        }
         config.Agents = config.Agents.Take(config.Mode).ToList();
         config.ArbiterModels = config.ArbiterModels.Take(config.Mode >= 10 ? 2 : 1).ToList();
         config.ArbiterModel = config.ArbiterModels[0];
