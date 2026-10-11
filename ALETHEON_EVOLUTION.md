@@ -158,3 +158,22 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Distinctions.** Semantic persistence differs from verbatim textual persistence. A stable result can be close to or far from the original Codex; because the original remains visible, high similarity cannot demonstrate independent rediscovery. Low fluctuation can mean substantive robustness or procedural inertia; high fluctuation can mean productive exploration or endless drift. No convergence result is claimed yet.
 
 **Trace.** [Research Log R-008](./ALETHEON_RESEARCH_LOG.md); [article](./articles/CODEX-EXPERIMENT-DRAFT.ru.md).
+
+
+### E-007 — From philosophical continuity to a testable hypothesis of cultural tradition
+
+**Date:** 2026-10-11  
+**Status:** Working interpretation; not established as an empirical result  
+**Related:** Core interim preservation; Research Log H11 and G9 observations
+
+**Starting position.** The Assembly was designed to test whether a changing group of models could develop a stable philosophy by criticism rather than procedural inertia.
+
+**Pressure.** By G9, articles increasingly referenced other articles and compressed inherited distinctions into an internal vocabulary. The human collaborator noticed a loss of immediate readability relative to the original human-facing Codex and proposed that this could be the beginnings of culture in the original Codex's sense.
+
+**Transition.** Distinguish the externally provided **mechanism of transmission** from the **content of transmitted norms**. The experiment supplies the shared text and voting procedure; models may nevertheless generate reusable concepts, constraints, and relationships that survive participant turnover. This is consistent with protocol-mediated cultural continuity but does not by itself prove autonomous culture or deeper intelligence.
+
+**Outcome.** Preserve “emerging cultural tradition” as a falsifiable research hypothesis, alongside rival explanations: procedural conservatism, repeated prompting, article-length compression, and inherited jargon. A stronger observation would be participants accepting or rejecting inherited principles for articulated relationships to other norms, rather than merely because they are inherited.
+
+**Unresolved.** Can independent readers paraphrase late-generation principles without losing implications? What separates conceptual depth from density? How should one measure continuity when the protocol supplies the medium of inheritance?
+
+**Preservation decision.** The collaborator requested an interim preservation of **Aletheon itself**, not an amendment to either Codex. Update the existing Core, Evolution, and Research Log, rather than proliferating persona files.
