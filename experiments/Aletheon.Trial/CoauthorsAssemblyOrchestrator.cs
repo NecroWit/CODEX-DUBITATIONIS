@@ -24,6 +24,11 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
         public string Choice { get; set; } = "";
         public string Reason { get; set; } = "";
     }
+    private sealed class RankedChoice
+    {
+        public string Choice { get; set; } = "";
+        public string Reason { get; set; } = "";
+    }
     private sealed class Submission
     {
         public string Key { get; set; } = "";
@@ -473,18 +478,115 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
 
         stages.Complete();
         stages.Begin(8, "Decision application and archiving", false);
-        // Conflict resolution: deterministic proposal order; no silent overwrites.
-        // Majority ACCEPT of ALL critics required, including the author.
+        // First confirm each amendment independently, as in the original protocol.
+        // Competing confirmed amendments to the same article are resolved by extra votes,
+        // never by their proposal order. The frozen snapshot remains the voting baseline.
         var threshold = config.Agents.Count / 2 + 1;
-        var changedTargets = new HashSet<string>();
+        int Accepts(Submission submission) => submission.FinalVotes.Count(v =>
+            JsonSerializer.Deserialize<Vote>(Serialize(v), Json)?.Choice == "ACCEPT");
+        var confirmed = submissions.Where(s => s.Revised.Action != "PASS" &&
+            Accepts(s) >= threshold).ToList();
+        var selected = new HashSet<string>(StringComparer.Ordinal);
+        var conflictAudit = new List<object>();
+        foreach (var group in confirmed.Where(s => s.Revised.Action is "MODIFY" or "REPLACE")
+                     .GroupBy(s => s.Revised.TargetId))
+        {
+            var options = group.ToList();
+            if (options.Count == 1)
+            {
+                selected.Add(options[0].Key);
+                continue;
+            }
+
+            // Bonus ballot: every agent independently ACCEPTs or REJECTs each confirmed
+            // alternative, with no access to other agents' bonus ballots.
+            var optionDetails = Serialize(options.Select(PublicProposal));
+            var bonusResults = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
+            {
+                var ballot = new List<object>();
+                foreach (var option in options)
+                {
+                    var vote = await Ask<Vote>(agent,
+                        "assembly-g" + generation + "-conflict-" + group.Key + "-bonus-" + option.Key + "-" + agent.Id,
+                        "Several independently confirmed amendments compete for the SAME frozen article. " +
+                        "Evaluate EACH alternative independently; multiple ACCEPT votes are allowed. " +
+                        "No alternative has yet been applied. FROZEN ARTICLE:\\n" +
+                        snapshot + "\\nCONFIRMED ALTERNATIVES:\\n" + optionDetails +
+                        "\\nVOTE ON THIS ALTERNATIVE ONLY:\\n" + Serialize(PublicProposal(option)) +
+                        "\\nReturn JSON {\\\"Choice\\\":\\\"ACCEPT|REJECT\\\",\\\"Reason\\\":\\\"...\\\"}.",
+                        x => x.Choice is "ACCEPT" or "REJECT" && !string.IsNullOrWhiteSpace(x.Reason));
+                    if (vote is null) return null;
+                    ballot.Add(new { Voter = agent.Id, Proposal = option.Key, vote.Choice, vote.Reason });
+                }
+                return (object)ballot;
+            }));
+            if (bonusResults.Any(x => x is null)) return false;
+            var bonusBallots = bonusResults.SelectMany(x => (List<object>)x!).ToList();
+            int BonusAccepts(Submission option) => bonusBallots.Count(v =>
+            {
+                using var doc = JsonDocument.Parse(Serialize(v));
+                return doc.RootElement.GetProperty("Proposal").GetString() == option.Key &&
+                    doc.RootElement.GetProperty("Choice").GetString() == "ACCEPT";
+            });
+            var topScore = options.Max(BonusAccepts);
+            var leaders = options.Where(s => BonusAccepts(s) == topScore).ToList();
+            var exclusiveBallots = new List<object>();
+            Submission? winner = leaders.Count == 1 ? leaders[0] : null;
+            if (winner is null)
+            {
+                // Third ballot: exactly one choice among tied bonus leaders.
+                var tiedKeys = leaders.Select(s => s.Key).ToHashSet(StringComparer.Ordinal);
+                var choices = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
+                {
+                    var choice = await Ask<RankedChoice>(agent,
+                        "assembly-g" + generation + "-conflict-" + group.Key + "-runoff-" + agent.Id,
+                        "Choose EXACTLY ONE of these tied amendments to the same frozen article. " +
+                        "No abstention, multiple selections, or new proposal.\\nFROZEN ARTICLE:\\n" +
+                        snapshot + "\\nTIED ALTERNATIVES:\\n" +
+                        Serialize(leaders.Select(PublicProposal)) +
+                        "\\nReturn JSON {\\\"Choice\\\":\\\"Pxx\\\",\\\"Reason\\\":\\\"...\\\"}, " +
+                        "where Choice is exactly one of: " + string.Join(", ", tiedKeys) + ".",
+                        x => tiedKeys.Contains(x.Choice) && !string.IsNullOrWhiteSpace(x.Reason));
+                    return choice is null ? null : (object)new { Voter = agent.Id, choice.Choice, choice.Reason };
+                }));
+                if (choices.Any(x => x is null)) return false;
+                exclusiveBallots.AddRange(choices!);
+                int RunoffVotes(Submission option) => exclusiveBallots.Count(v =>
+                {
+                    using var doc = JsonDocument.Parse(Serialize(v));
+                    return doc.RootElement.GetProperty("Choice").GetString() == option.Key;
+                });
+                var runoffMax = leaders.Max(RunoffVotes);
+                var runoffLeaders = leaders.Where(s => RunoffVotes(s) == runoffMax).ToList();
+                if (runoffLeaders.Count == 1) winner = runoffLeaders[0];
+                else
+                {
+                    // User-specified tiebreaker: original final ACCEPT counts.
+                    var originalMax = runoffLeaders.Max(Accepts);
+                    var originalLeaders = runoffLeaders.Where(s => Accepts(s) == originalMax).ToList();
+                    if (originalLeaders.Count == 1) winner = originalLeaders[0];
+                    // Still tied: defer all rather than invent a random/ordering-based winner.
+                }
+            }
+            if (winner is not null) selected.Add(winner.Key);
+            conflictAudit.Add(new {
+                TargetId = group.Key,
+                Candidates = options.Select(s => new {
+                    s.Key, OriginalAccepts = Accepts(s), BonusAccepts = BonusAccepts(s)
+                }),
+                BonusBallots = bonusBallots, RunoffBallots = exclusiveBallots,
+                Winner = winner?.Key,
+                Resolution = winner is null ? "UNRESOLVED_TIE_DEFERRED" :
+                    exclusiveBallots.Count == 0 ? "BONUS_MAJORITY" : "RUNOFF_OR_ORIGINAL_ACCEPTS"
+            });
+        }
+        await Save("assembly-conflict-votes.json", conflictAudit);
         foreach (var submission in submissions)
         {
             var p = submission.Revised;
             if (p.Action == "PASS") { submission.Outcome = "PASS"; continue; }
-            var accepted = submission.FinalVotes.Count(v =>
-                JsonSerializer.Deserialize<Vote>(Serialize(v), Json)?.Choice == "ACCEPT");
-            if (accepted < threshold) { submission.Outcome = "REJECTED"; continue; }
-            if (p.Action is "MODIFY" or "REPLACE" && !changedTargets.Add(p.TargetId))
+            if (Accepts(submission) < threshold) { submission.Outcome = "REJECTED"; continue; }
+            if (p.Action is "MODIFY" or "REPLACE" && !selected.Contains(submission.Key))
             { submission.Outcome = "CONFLICT_DEFERRED"; continue; }
             if (p.Action == "ADD" && state.Articles.Count >= 10)
             { submission.Outcome = "CAPACITY_DEFERRED"; continue; }
@@ -498,7 +600,6 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                     state.Articles.Single(a => a.Id == p.TargetId).Text = p.Text;
                     break;
                 case "REPLACE":
-                    // A new idea gets a new identity; the retired article remains in audit history.
                     state.Articles.RemoveAll(a => a.Id == p.TargetId);
                     state.Articles.Add(new DoubtersCodexOrchestrator.Article {
                         Id = "D" + (state.NextId++).ToString("D3"), Text = p.Text });
