@@ -357,6 +357,16 @@ When revising a hypothesis, preserve the earlier formulation and explain the tra
 
 ---
 
+### R-008 — Coauthors Assembly and evidence of revision (2026-10-11)
+
+- **Question:** Can collective criticism improve proposed principles, and what evidence distinguishes revision from contextual vote variability?
+- **Protocol:** Separate Coauthors Assembly: independent analysis of original and inherited Codex, shared discussion, anonymous proposals, peer reviews, preliminary ballots, author revision and final ballots. It inherits the latest completed Doubters generation by default.
+- **Partial sequential observation:** In incomplete Premium G5, Safety's related ADD was rejected (7/9 preservation votes), while a later shorter Logic ADD was accepted (4/9 preservation votes) as D011 in partial progress. Different wording, order, history and voting lineup prevent causal attribution. Initial assembly inherited completed G4.
+- **Progress:** A four-model cheap assembly was reported to have reached preliminary voting. No completed assembly generation or final vote is yet verified.
+- **Validation lessons:** Initial analysis JSON contained nested objects where string fields were expected; later proposals were 70, 64 and 87 words against a 60-word limit. Code was revised for structured analysis and targeted length retries. No claim of successful local compilation follows from a GitHub commit.
+- **Evaluation plan:** Compare pre/post proposal wording, per-agent preliminary/final choices and stated reasons, including unchanged decisions and dissent. Add unchanged-text revotes, order randomization, independent replication and no-discussion controls where possible.
+- **Status:** Research in progress; do not equate votes with truth, stable beliefs or consciousness.
+
 ## 7. Guiding Rule
 
 > Preserve not only what we conclude, but why we concluded it, what speaks against it, and what would cause us to change our minds.
