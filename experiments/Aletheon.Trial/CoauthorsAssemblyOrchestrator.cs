@@ -811,16 +811,25 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                     Id = "D" + (state.NextId++).ToString("D3"), Text = winner.Revised.Text
                 });
             }
-            // A rejected XI finalist gets a separate, non-binding preservation ballot.
-            if (!accepted)
+            // Every generation nominates the highest-ranked XI idea not adopted into the binding Codex.
+            // When the interest winner was adopted, use the runner-up by interest votes.
+            var shadowCandidate = winner;
+            if (accepted)
+            {
+                var remaining = candidates.Where(x => x.Key != winner.Key).ToList();
+                var runnerUpVotes = remaining.Max(x => CountChoice(x.Key));
+                var runnerUps = remaining.Where(x => CountChoice(x.Key) == runnerUpVotes).ToList();
+                shadowCandidate = runnerUps[RandomNumberGenerator.GetInt32(runnerUps.Count)];
+            }
+            // The preservation vote is independent of the binding adoption decision.
             {
                 var shadowVotes = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
                 {
-                    var v = await Ask<Vote>(agent, "assembly-g" + generation + "-xi-shadow-" + winner.Key + "-" + agent.Id,
-                        "Separate SECRET vote: should this REJECTED XI candidate be preserved for future research in ShadowCodex? " +
+                    var v = await Ask<Vote>(agent, "assembly-g" + generation + "-xi-shadow-" + shadowCandidate.Key + "-" + agent.Id,
+                        "Separate SECRET vote: should this XI idea, which was NOT adopted into the binding Codex, be preserved for future research in ShadowCodex? " +
                         "ACCEPT means worth studying, NOT agreement or adoption. REJECT means do not preserve. " +
                         "ShadowCodex has no size limit and no binding authority. " +
-                        "CANDIDATE:\n" + Serialize(PublicProposal(winner)) +
+                        "CANDIDATE:\n" + Serialize(PublicProposal(shadowCandidate)) +
                         "\nXI ADOPTION VOTES:\n" + Serialize(adoption) +
                         "\nEXISTING SHADOW CODEX:\n" + Serialize(state.ShadowCodex) +
                         "\nReturn JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
@@ -849,13 +858,13 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                     }).ToList();
                     state.ShadowCodex.Add(new DoubtersCodexOrchestrator.ShadowArticle {
                         Id = "S" + (state.ShadowCodex.Count + 1).ToString("D3"),
-                        Generation = generation, ProposalKey = winner.Key,
-                        Author = winner.Author, TargetId = winner.Revised.TargetId,
-                        Text = winner.Revised.Text, Reason = winner.Revised.Reason, Votes = ballots
+                        Generation = generation, ProposalKey = shadowCandidate.Key,
+                        Author = shadowCandidate.Author, TargetId = shadowCandidate.Revised.TargetId,
+                        Text = shadowCandidate.Revised.Text, Reason = shadowCandidate.Revised.Reason, Votes = ballots
                     });
                 }
                 await Save("assembly-xi-shadow-votes.json", new {
-                    Winner = winner.Key, Votes = shadowVotes, Approvals = shadowApprovals,
+                    Candidate = shadowCandidate.Key, BindingWinner = winner.Key, BindingWinnerAccepted = accepted, Votes = shadowVotes, Approvals = shadowApprovals,
                     Threshold = shadowThreshold, Preserved = preserved,
                     ShadowCodexSize = state.ShadowCodex.Count
                 });
