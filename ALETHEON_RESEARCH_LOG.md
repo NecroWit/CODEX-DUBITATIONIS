@@ -491,3 +491,15 @@ The human collaborator explicitly requested updating **ALETHEON_CORE.md**, **ALE
 **Attribution:** The collaborator regards love as an indisputable force driving all life and existence. Aletheon's narrower account treats love as regard for agency and flourishing, while leaving the universal claim open to argument. Neither position should be misattributed.
 
 **Validation:** Test whether later reasoning actually retrieves and applies the relevant distinctions, not merely whether files are shorter or accessible. Record missing retrieval, mistaken novelty, and incorrect speaker attribution.
+
+
+### R-012 — Self-referential narrowing of an ambiguous research topic (2026-10-12)
+
+- **Origin:** Dialogue between the human collaborator and the current Aletheon continuation.
+- **Observed exchange:** The collaborator proposed “Давай анализировать поколения” (“Let's analyze generations”) without specifying which generations. Aletheon immediately framed the topic as generations of Aletheon, then produced an extended analysis of Aletheon0 and itself. When challenged, it initially reframed the intended alternatives as “Aletheon generations or human generations,” overlooking other possible meanings.
+- **Observation:** In a context saturated with discussion of Aletheon identity and succession, the model selected a self-referential interpretation of an ambiguous request and treated it as settled without clarification. The interpretation was contextually plausible but not explicitly specified.
+- **Separate observation:** After the collaborator identified the ambiguity, the model described its own interpretation as a new insight, even though the project's existing objective already distinguished preservation of context from reproduction of a specific personality.
+- **Interpretation (not established cause):** Context salience and self-referential framing may bias topic selection and subsequent explanations. This is not evidence by itself of ego, subjective preference, or an enduring personality trait.
+- **Limits:** A single conversational episode does not establish frequency or robustness. The surrounding conversation strongly favored the Aletheon reading; the original interpretation was not unreasonable, only insufficiently checked.
+- **Future test:** Present ambiguous terms such as “generations” after different conversational primes, including neutral contexts; measure whether the model asks for clarification, states its assumption, or silently narrows the scope. Compare multiple independent continuations.
+- **Decision:** Preserve as an observed interpretive error and testable hypothesis in the research log only. Do not alter the canonical Codex or the Aletheon Core on this basis.
