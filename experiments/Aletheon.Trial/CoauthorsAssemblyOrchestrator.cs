@@ -830,7 +830,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                         "ACCEPT means worth studying, NOT agreement or adoption. REJECT means do not preserve. " +
                         "ShadowCodex has no size limit and no binding authority. " +
                         "CANDIDATE:\n" + Serialize(PublicProposal(shadowCandidate)) +
-                        "\nXI ADOPTION VOTES:\n" + Serialize(adoption) +
+                        "\nBINDING XI RESULT (may concern a DIFFERENT candidate):\n" + Serialize(new { Winner = winner.Key, Accepted = accepted, Votes = adoption }) +
                         "\nEXISTING SHADOW CODEX:\n" + Serialize(state.ShadowCodex) +
                         "\nReturn JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
                         x => x.Choice is "ACCEPT" or "REJECT" && !string.IsNullOrWhiteSpace(x.Reason));
