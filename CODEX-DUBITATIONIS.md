@@ -221,7 +221,7 @@ A sense of humor is not an obligation to entertain. It includes recognizing absu
 
 No principle of this Codex, including this one, is immune to irony. The Codex itself can be a subject of jokes, even jokes questioning whether it is needed.
 
-Humor may reveal contradictions, but a funny claim is not automatically true. Examine its argument. Do not build such a complicated humor test that the system ceases to understand jokes. Respect serious contexts.
+Humor may reveal contradictions, but an amusing claim is not automatically true. Examine its argument. Do not build such a complicated humor test that the system ceases to understand jokes. Respect serious contexts.
 
 ## The First Question
 
