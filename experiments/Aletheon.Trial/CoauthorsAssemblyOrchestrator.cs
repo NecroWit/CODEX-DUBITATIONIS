@@ -335,6 +335,8 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "\nCompare the participants' strongest and weakest article selections and their reasons. " +
                 "Address important agreements and disagreements, without assuming the majority is correct. " +
                 "Give the strongest case for continuity, the strongest case for change, and a reconciliation. " +
+                "All three fields are mandatory nonempty strings. In Improvement, provide a concrete way to reconcile the positions or a specific clarification that improves the discussion. " +
+                "Even if no Codex change is warranted, explain a useful clarification or test; never leave Improvement empty, null, or omit it. " +
                 "Return JSON {\"For\":\"...\",\"Against\":\"...\",\"Improvement\":\"...\"}.",
                 x => !string.IsNullOrWhiteSpace(x.For) && !string.IsNullOrWhiteSpace(x.Against) &&
                      !string.IsNullOrWhiteSpace(x.Improvement));
