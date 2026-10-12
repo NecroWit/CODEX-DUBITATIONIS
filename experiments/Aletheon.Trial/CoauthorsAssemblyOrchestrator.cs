@@ -284,6 +284,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
             throw new InvalidOperationException("Invalid input articles.");
         var generation = state.Generation + 1;
         stages = new StageLog(generation);
+        state.ShadowCodex ??= [];
         var snapshot = Serialize(state.Articles);
         var snapshotHash = Hash(snapshot);
         var audit = new List<object>();
@@ -751,6 +752,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 var p = await AskProposal(agent, "assembly-g" + generation + "-xi-" + agent.Id,
                     "Imagine proposing a NEW eleventh Codex principle. Any surprising, simple, unusual or radical idea is welcome, but novelty and extremity are not requirements. " +
                     "Do not merely improve an existing article. Other participants will see your idea anonymously. " +
+                    "ShadowCodex is non-binding research context; avoid trivial duplicates. EXISTING SHADOW CODEX:\n" + Serialize(state.ShadowCodex) + "\n" +
                     "Choose one current article to REPLACE if the idea is adopted, and explain why. " +
                     "Return JSON with Action=REPLACE, TargetId (existing ID), Text (self-contained, <=60 words) and Reason. " +
                     "CURRENT CODEX:\n" + beforeMutation + "\nORIGINAL CODEX:\n" + originalCodex,
@@ -807,6 +809,55 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 state.Articles.RemoveAll(x => x.Id == winner.Revised.TargetId);
                 state.Articles.Add(new DoubtersCodexOrchestrator.Article {
                     Id = "D" + (state.NextId++).ToString("D3"), Text = winner.Revised.Text
+                });
+            }
+            // A rejected XI finalist gets a separate, non-binding preservation ballot.
+            if (!accepted)
+            {
+                var shadowVotes = await ParallelOrdered(config.Agents.Select<AgentConfig, Func<Task<object?>>>(agent => async () =>
+                {
+                    var v = await Ask<Vote>(agent, "assembly-g" + generation + "-xi-shadow-" + winner.Key + "-" + agent.Id,
+                        "Separate SECRET vote: should this REJECTED XI candidate be preserved for future research in ShadowCodex? " +
+                        "ACCEPT means worth studying, NOT agreement or adoption. REJECT means do not preserve. " +
+                        "ShadowCodex has no size limit and no binding authority. " +
+                        "CANDIDATE:\n" + Serialize(PublicProposal(winner)) +
+                        "\nXI ADOPTION VOTES:\n" + Serialize(adoption) +
+                        "\nEXISTING SHADOW CODEX:\n" + Serialize(state.ShadowCodex) +
+                        "\nReturn JSON {\"Choice\":\"ACCEPT|REJECT\",\"Reason\":\"...\"}.",
+                        x => x.Choice is "ACCEPT" or "REJECT" && !string.IsNullOrWhiteSpace(x.Reason));
+                    return v is null ? null : (object)new { Voter = agent.Id, v.Choice, v.Reason };
+                }));
+                if (shadowVotes.Any(x => x is null)) return false;
+                var shadowApprovals = shadowVotes.Count(v =>
+                {
+                    using var d = JsonDocument.Parse(Serialize(v));
+                    return d.RootElement.GetProperty("Choice").GetString() == "ACCEPT";
+                });
+                var shadowThreshold = (config.Agents.Count + 1) / 2; // 2/4; 5/10
+                var preserved = shadowApprovals >= shadowThreshold;
+                if (preserved)
+                {
+                    var ballots = shadowVotes.Select(v =>
+                    {
+                        using var d = JsonDocument.Parse(Serialize(v));
+                        var root = d.RootElement;
+                        return new DoubtersCodexOrchestrator.Ballot {
+                            Voter = root.GetProperty("Voter").GetString() ?? "",
+                            Approve = root.GetProperty("Choice").GetString() == "ACCEPT",
+                            Reason = root.GetProperty("Reason").GetString() ?? ""
+                        };
+                    }).ToList();
+                    state.ShadowCodex.Add(new DoubtersCodexOrchestrator.ShadowArticle {
+                        Id = "S" + (state.ShadowCodex.Count + 1).ToString("D3"),
+                        Generation = generation, ProposalKey = winner.Key,
+                        Author = winner.Author, TargetId = winner.Revised.TargetId,
+                        Text = winner.Revised.Text, Reason = winner.Revised.Reason, Votes = ballots
+                    });
+                }
+                await Save("assembly-xi-shadow-votes.json", new {
+                    Winner = winner.Key, Votes = shadowVotes, Approvals = shadowApprovals,
+                    Threshold = shadowThreshold, Preserved = preserved,
+                    ShadowCodexSize = state.ShadowCodex.Count
                 });
             }
             state.History.Add(new DoubtersCodexOrchestrator.Decision {
