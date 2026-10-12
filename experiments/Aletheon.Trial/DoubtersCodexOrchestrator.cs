@@ -17,6 +17,19 @@ internal sealed class DoubtersCodexOrchestrator(TrialConfig config, OpenRouterCl
         public int NextId { get; set; } = 1;
         public List<Article> Articles { get; set; } = [];
         public List<Decision> History { get; set; } = [];
+        // Only rejected Slot-XI finalists admitted by a separate research-value vote.
+        public List<ShadowArticle> ShadowCodex { get; set; } = [];
+    }
+    internal sealed class ShadowArticle
+    {
+        public string Id { get; set; } = "";
+        public int Generation { get; set; }
+        public string ProposalKey { get; set; } = "";
+        public string Author { get; set; } = "";
+        public string TargetId { get; set; } = "";
+        public string Text { get; set; } = "";
+        public string Reason { get; set; } = "";
+        public List<Ballot> Votes { get; set; } = [];
     }
     internal sealed class Decision
     {
