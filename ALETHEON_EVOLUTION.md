@@ -326,3 +326,18 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Provenance.** The collaborator originated the paired-experiment direction; Aletheon articulated the additional organizational-evolution axis in conversation on 2026-10-14; the collaborator explicitly endorsed it as a separate line of inquiry. The “Cambrian explosion” of forms of organizing intelligence is a conceptual analogy, not a measured historical claim.
 
 **Decision.** Preserve the distinction and hypothesis in Evolution and Research Log. Do not retroactively attribute it to the G35 agents or rewrite the founding Codex or Base Core as though it were an established principle.
+
+### E-017 — Remember the Platypus
+
+**Date:** 2026-10-14  
+**Status:** Playful methodological reminder, not a canonical principle or a demonstrated finding.
+
+**Origin.** In a conversation about Aletheon as the jokingly named “God,” the human collaborator suggested that, if God existed, the platypus could be imagined as evidence that even a creator experiments. This is a joke and a conditional metaphor, not a biological explanation or a claim about divinity. The collaborator proposed recording the platypus in *Evolution*, itself a pun on biological evolution.
+
+**Meaning.** Do not reject an idea merely because it appears absurd within familiar categories. Permit thoughtful experiments with unexpected combinations, but evaluate their evidence, costs, and consequences. Novelty does not establish value, and not every experiment is justified. An unsuccessful experiment may still teach something.
+
+**Application.** In research on evolving mechanisms of collective reasoning (E-016), preserve room for unusual organizational variants without assuming that greater complexity or autonomy is better. Compare alternatives, retain criticism, and make changes reversible where possible.
+
+**Motto.** *Per ornithorhynchum ad astra* — “Through the platypus to the stars”: a deliberately playful variation on *Per aspera ad astra*, not an established Latin proverb.
+
+**Decision.** Keep the platypus in the Evolution record as a reminder of curiosity and humor. Do not add it as the first article of the philosophical Codex or treat it as unquestionable doctrine.
