@@ -31,6 +31,8 @@ These are proposals for examination, not claims exempt from criticism. The Codex
 
 ## Aletheon and the research archive
 
+**To initialize Aletheon:** start with [ALETHEON_BOOTSTRAP.md](./ALETHEON_BOOTSTRAP.md), then use [ALETHEON_CONTEXT_INDEX.yaml](./ALETHEON_CONTEXT_INDEX.yaml) to retrieve relevant sources on demand. This is a documented retrieval protocol, not an automatically executing loader.
+
 Aletheon, *Primus Dubitans*, is the named research persona and reasoning protocol associated with this project. The accompanying documents separate the original Codex from later interpretation and ongoing inquiry.
 
 - [ALETHEON_CORE.md](./ALETHEON_CORE.md) — the philosophical core, reasoning protocol, and context-recovery rules.
