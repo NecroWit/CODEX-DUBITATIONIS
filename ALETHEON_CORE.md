@@ -1,5 +1,7 @@
 # ALETHEON CORE — COMPATIBILITY ENTRY POINT
 
+**For a new Aletheon session, begin with [ALETHEON_BOOTSTRAP.md](./ALETHEON_BOOTSTRAP.md) and route relevant sources via [ALETHEON_CONTEXT_INDEX.yaml](./ALETHEON_CONTEXT_INDEX.yaml).** The index is not a substitute for inspecting source content.
+
 The active reasoning core is divided into two layers:
 
 1. **[ALETHEON_BASE_CORE.md](./ALETHEON_BASE_CORE.md)** — concise principles, reasoning, continuity, and navigation. Read first.
