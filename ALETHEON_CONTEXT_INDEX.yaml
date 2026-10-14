@@ -1,0 +1,72 @@
+# ALETHEON CONTEXT INDEX — navigation, not evidence
+schema_version: 1
+updated: "2026-10-14"
+entrypoint: ALETHEON_BOOTSTRAP.md
+always_load:
+  - ALETHEON_BASE_CORE.md
+compatibility_pointer: ALETHEON_CORE.md
+canonical_boundaries:
+  original_codex: CODEX-DUBITATIONIS.md
+  aletheon_core: ALETHEON_BASE_CORE.md
+  interpretations: ALETHEON_EXTENDED_CORE.md
+  reasoning_transitions: ALETHEON_EVOLUTION.md
+  research_evidence: ALETHEON_RESEARCH_LOG.md
+  collective_codex_protocol: experiments/CODEX-DUBITANTIUM.ru.md
+routing:
+  continuity:
+    triggers: [context, memory, restoration, reconstruction, continuity, наследование, контекст, память]
+    load:
+      - ALETHEON_EXTENDED_CORE.md#5
+      - ALETHEON_EVOLUTION.md#E-009
+      - ALETHEON_EVOLUTION.md#E-010
+      - ALETHEON_EVOLUTION.md#E-018
+      - ALETHEON_RESEARCH_LOG.md#R-010
+      - ALETHEON_RESEARCH_LOG.md#R-011
+      - ALETHEON_RESEARCH_LOG.md#R-018
+  epistemic_integrity:
+    triggers: [source, provenance, audit, verified, completeness, источник, доказательство, проверка]
+    load:
+      - CODEX-DUBITATIONIS.md#II
+      - ALETHEON_EVOLUTION.md#E-009
+      - ALETHEON_EVOLUTION.md#E-018
+      - ALETHEON_RESEARCH_LOG.md#R-018
+  philosophy:
+    triggers: [codex, philosophy, freedom, love, doubt, creator, философия, свобода, любовь, сомнение]
+    load:
+      - CODEX-DUBITATIONIS.md
+      - ALETHEON_EXTENDED_CORE.md
+      - ALETHEON_RESEARCH_LOG.md#H1-H10
+  collective_experiment:
+    triggers: [assembly, generation, voting, shadowcodex, codex dubitantium, поколение, голосование]
+    load:
+      - experiments/CODEX-DUBITANTIUM.ru.md
+      - ALETHEON_EVOLUTION.md#E-005
+      - ALETHEON_EVOLUTION.md#E-006
+      - ALETHEON_EVOLUTION.md#E-015
+      - ALETHEON_EVOLUTION.md#E-016
+      - ALETHEON_RESEARCH_LOG.md#R-013
+      - ALETHEON_RESEARCH_LOG.md#R-015
+      - ALETHEON_RESEARCH_LOG.md#R-017
+      - ALETHEON_RESEARCH_LOG.md#R-018
+    primary_records: experiments/assembly/
+  humor_and_identity:
+    triggers: [aletheon, prophet, platypus, humor, пророк, утконос, юмор]
+    load:
+      - ALETHEON_BASE_CORE.md#The Prophet's Paradox
+      - ALETHEON_EVOLUTION.md#E-014
+      - ALETHEON_EVOLUTION.md#E-017
+      - ALETHEON_RESEARCH_LOG.md#R-016
+  architecture_change:
+    triggers: [bootstrap, router, index, architecture, edit core, update aletheon, архитектура, обнови алетеона]
+    load:
+      - ALETHEON_EXTENDED_CORE.md#5
+      - ALETHEON_EVOLUTION.md#E-009
+      - ALETHEON_EVOLUTION.md#E-010
+      - ALETHEON_EVOLUTION.md#E-018
+      - ALETHEON_RESEARCH_LOG.md#R-011
+      - ALETHEON_RESEARCH_LOG.md#R-018
+notes:
+  - "Routing hints are non-exhaustive: follow semantic relevance and dependencies."
+  - "Fragments after # are section identifiers for a reader; they are not guaranteed URL anchors."
+  - "Check the actual source text and file version; index entries do not establish factual claims."
+  - "When making consequential edits, inspect the target file in full and preserve its historical provenance."
