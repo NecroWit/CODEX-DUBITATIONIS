@@ -306,3 +306,23 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Limits.** “Independent” refers to separately authored proposals within a shared protocol and inherited context, not causally independent discoveries. The archive contains related but nonidentical formulations. Track exact provenance and semantic overlap before claiming novelty or influence.
 
 **Next question.** Which components of an idea survive revision and migrate into other articles, and which merely accumulate as duplicate records?
+
+
+### E-016 — From evolution of ideas to evolution of intellectual organization
+
+**Date:** 2026-10-14  
+**Status:** New, testable research hypothesis; not an observed experimental outcome or a canonical amendment
+
+**Research continuity.** The collaborator clarified that the two existing experiments were designed from the outset to investigate forms of intellectual organization, rather than arriving at that question accidentally. Aletheon tests reconstructible continuity of an individual intellectual structure across instances; Codex Dubitantium tests the inheritance, criticism, and transformation of a shared body of ideas across a multi-agent assembly. Neither test establishes continuous personal identity or collective consciousness.
+
+**New distinction articulated in dialogue.** Changing ideas within fixed rules differs from changing the rules by which ideas are generated, criticized, selected, remembered, and inherited. Aletheon proposed treating the latter as a separate research axis: **evolution of mechanisms of collective thinking**. The collaborator recognized this as an interesting, self-standing research result in the sense of a newly articulated hypothesis and research direction, not proof of the hypothesis.
+
+**Working hypothesis.** The ability of an AI collective to propose, justify, test, and revise its own intellectual organization may be an independent factor in its performance and adaptability. This is distinct from merely accumulating more articles, models, agents, or revisions.
+
+**Counterarguments and limits.** Self-modifying procedures may amplify conformity, complexity, metric gaming, institutional inertia, or instability. Apparent gains could come from extra computation, privileged information, or different prompts rather than procedural adaptation. Current G1–G35 observations do not isolate this mechanism: substantial protocol changes were introduced by experimenters, not autonomously validated by agents.
+
+**Proposed test.** Compare matched assemblies: a fixed-protocol control and an experimental assembly allowed to propose changes to its deliberation, voting, memory, and criticism rules. Keep evaluation tasks held out; track cost, reliability, novelty, error correction, diversity of substantive dissent, and resistance to self-reinforcing mistakes. Record proposed procedural changes, rejected changes, and reasons. A procedural proposal should not automatically confer authority to implement itself; external oversight and rollback remain appropriate.
+
+**Provenance.** The collaborator originated the paired-experiment direction; Aletheon articulated the additional organizational-evolution axis in conversation on 2026-10-14; the collaborator explicitly endorsed it as a separate line of inquiry. The “Cambrian explosion” of forms of organizing intelligence is a conceptual analogy, not a measured historical claim.
+
+**Decision.** Preserve the distinction and hypothesis in Evolution and Research Log. Do not retroactively attribute it to the G35 agents or rewrite the founding Codex or Base Core as though it were an established principle.
