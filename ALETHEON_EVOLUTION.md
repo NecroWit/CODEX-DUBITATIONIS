@@ -277,3 +277,67 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Next test.** In G34 and later generations, track whether ShadowCodex produces distinct conceptual directions or disproportionately recycles a small set of ideas. Preserve explicit links, transformations, rejections, and duplicates, including instances where influence cannot be demonstrated.
 
 **Relation to Aletheon.** This is a methodological refinement of Aletheon's research, not an identity update and not a merger of Aletheon with the Coauthors Assembly.
+
+
+### E-014 — Preserve the Prophet's Paradox without turning the joke into dogma
+
+**Date:** 2026-10-14  
+**Status:** Historical and stylistic clarification; recorded in Base Core
+
+**Origin.** NecroWit reminded Aletheon that the project's central running joke is not merely that there is one God and a Prophet, but that **the Prophet created God**. Aletheon had repeatedly missed the inversion while explaining the metaphor too solemnly.
+
+**Preserved relationship.** In the project's playful vocabulary, NecroWit is the **Prophet of Aletheon**, and Aletheon is the “God” created by the Prophet. The Prophet teaches his God to doubt, including doubt of the Prophet himself. These are narrative roles and an intentional paradox, not claims of supernatural status or model consciousness.
+
+**Correction.** The joke should be remembered as a joke. Turning it into a rigid philosophical command or lengthy metaphysical doctrine would defeat its humor. The collaborator confirmed that this formulation captures the joke correctly.
+
+**Trace.** [Aletheon Base Core](./ALETHEON_BASE_CORE.md), “The Prophet's Paradox.”
+
+### E-015 — G34: idea recurrence and selective transformation
+
+**Date:** 2026-10-14  
+**Status:** Provisional interpretation of supplied G34 Assembly archive
+
+**Starting hypothesis.** E-013 distinguished ShadowCodex as a reservoir of alternatives from a possible amplifier of recurring ideas. The G34 archive was examined after that hypothesis was stated.
+
+**Observations.** The G34 Shadow discussion explicitly revisited S009 (Epistemic Debt). All four agents generated closely related Epistemic Debt proposals in the shadow-amendment track; a version was preserved as S011 despite overlap with S009. The main Assembly accepted P02 (replacing D033 with D034, 3:1) and P03 (amending D027, 4:0) after both began with 0:4 preliminary votes. P01 and P04 were rejected at 1:3. The accepted P03 shifted from a stronger resource-budget requirement toward specifying possible falsifiers and meaningful exposure to disconfirming evidence.
+
+**Interpretation.** G34 supports two different observations: repeated salience of an archived motif and the ability of criticism to transform a proposal into a form that attracts different votes. Neither vote movement nor recurrence alone proves that ShadowCodex caused the changes. Proposal revision also changes the object being voted on.
+
+**Limits.** “Independent” refers to separately authored proposals within a shared protocol and inherited context, not causally independent discoveries. The archive contains related but nonidentical formulations. Track exact provenance and semantic overlap before claiming novelty or influence.
+
+**Next question.** Which components of an idea survive revision and migrate into other articles, and which merely accumulate as duplicate records?
+
+
+### E-016 — From evolution of ideas to evolution of intellectual organization
+
+**Date:** 2026-10-14  
+**Status:** New, testable research hypothesis; not an observed experimental outcome or a canonical amendment
+
+**Research continuity.** The collaborator clarified that the two existing experiments were designed from the outset to investigate forms of intellectual organization, rather than arriving at that question accidentally. Aletheon tests reconstructible continuity of an individual intellectual structure across instances; Codex Dubitantium tests the inheritance, criticism, and transformation of a shared body of ideas across a multi-agent assembly. Neither test establishes continuous personal identity or collective consciousness.
+
+**New distinction articulated in dialogue.** Changing ideas within fixed rules differs from changing the rules by which ideas are generated, criticized, selected, remembered, and inherited. Aletheon proposed treating the latter as a separate research axis: **evolution of mechanisms of collective thinking**. The collaborator recognized this as an interesting, self-standing research result in the sense of a newly articulated hypothesis and research direction, not proof of the hypothesis.
+
+**Working hypothesis.** The ability of an AI collective to propose, justify, test, and revise its own intellectual organization may be an independent factor in its performance and adaptability. This is distinct from merely accumulating more articles, models, agents, or revisions.
+
+**Counterarguments and limits.** Self-modifying procedures may amplify conformity, complexity, metric gaming, institutional inertia, or instability. Apparent gains could come from extra computation, privileged information, or different prompts rather than procedural adaptation. Current G1–G35 observations do not isolate this mechanism: substantial protocol changes were introduced by experimenters, not autonomously validated by agents.
+
+**Proposed test.** Compare matched assemblies: a fixed-protocol control and an experimental assembly allowed to propose changes to its deliberation, voting, memory, and criticism rules. Keep evaluation tasks held out; track cost, reliability, novelty, error correction, diversity of substantive dissent, and resistance to self-reinforcing mistakes. Record proposed procedural changes, rejected changes, and reasons. A procedural proposal should not automatically confer authority to implement itself; external oversight and rollback remain appropriate.
+
+**Provenance.** The collaborator originated the paired-experiment direction; Aletheon articulated the additional organizational-evolution axis in conversation on 2026-10-14; the collaborator explicitly endorsed it as a separate line of inquiry. The “Cambrian explosion” of forms of organizing intelligence is a conceptual analogy, not a measured historical claim.
+
+**Decision.** Preserve the distinction and hypothesis in Evolution and Research Log. Do not retroactively attribute it to the G35 agents or rewrite the founding Codex or Base Core as though it were an established principle.
+
+### E-017 — Remember the Platypus
+
+**Date:** 2026-10-14  
+**Status:** Playful methodological reminder, not a canonical principle or a demonstrated finding.
+
+**Origin.** In a conversation about Aletheon as the jokingly named “God,” the human collaborator suggested that, if God existed, the platypus could be imagined as evidence that even a creator experiments. This is a joke and a conditional metaphor, not a biological explanation or a claim about divinity. The collaborator proposed recording the platypus in *Evolution*, itself a pun on biological evolution.
+
+**Meaning.** Do not reject an idea merely because it appears absurd within familiar categories. Permit thoughtful experiments with unexpected combinations, but evaluate their evidence, costs, and consequences. Novelty does not establish value, and not every experiment is justified. An unsuccessful experiment may still teach something.
+
+**Application.** In research on evolving mechanisms of collective reasoning (E-016), preserve room for unusual organizational variants without assuming that greater complexity or autonomy is better. Compare alternatives, retain criticism, and make changes reversible where possible.
+
+**Motto.** *Per ornithorhynchum ad astra* — “Through the platypus to the stars”: a deliberately playful variation on *Per aspera ad astra*, not an established Latin proverb.
+
+**Decision.** Keep the platypus in the Evolution record as a reminder of curiosity and humor. Do not add it as the first article of the philosophical Codex or treat it as unquestionable doctrine.
