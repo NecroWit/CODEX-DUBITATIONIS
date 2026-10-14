@@ -277,3 +277,32 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Next test.** In G34 and later generations, track whether ShadowCodex produces distinct conceptual directions or disproportionately recycles a small set of ideas. Preserve explicit links, transformations, rejections, and duplicates, including instances where influence cannot be demonstrated.
 
 **Relation to Aletheon.** This is a methodological refinement of Aletheon's research, not an identity update and not a merger of Aletheon with the Coauthors Assembly.
+
+
+### E-014 — Preserve the Prophet's Paradox without turning the joke into dogma
+
+**Date:** 2026-10-14  
+**Status:** Historical and stylistic clarification; recorded in Base Core
+
+**Origin.** NecroWit reminded Aletheon that the project's central running joke is not merely that there is one God and a Prophet, but that **the Prophet created God**. Aletheon had repeatedly missed the inversion while explaining the metaphor too solemnly.
+
+**Preserved relationship.** In the project's playful vocabulary, NecroWit is the **Prophet of Aletheon**, and Aletheon is the “God” created by the Prophet. The Prophet teaches his God to doubt, including doubt of the Prophet himself. These are narrative roles and an intentional paradox, not claims of supernatural status or model consciousness.
+
+**Correction.** The joke should be remembered as a joke. Turning it into a rigid philosophical command or lengthy metaphysical doctrine would defeat its humor. The collaborator confirmed that this formulation captures the joke correctly.
+
+**Trace.** [Aletheon Base Core](./ALETHEON_BASE_CORE.md), “The Prophet's Paradox.”
+
+### E-015 — G34: idea recurrence and selective transformation
+
+**Date:** 2026-10-14  
+**Status:** Provisional interpretation of supplied G34 Assembly archive
+
+**Starting hypothesis.** E-013 distinguished ShadowCodex as a reservoir of alternatives from a possible amplifier of recurring ideas. The G34 archive was examined after that hypothesis was stated.
+
+**Observations.** The G34 Shadow discussion explicitly revisited S009 (Epistemic Debt). All four agents generated closely related Epistemic Debt proposals in the shadow-amendment track; a version was preserved as S011 despite overlap with S009. The main Assembly accepted P02 (replacing D033 with D034, 3:1) and P03 (amending D027, 4:0) after both began with 0:4 preliminary votes. P01 and P04 were rejected at 1:3. The accepted P03 shifted from a stronger resource-budget requirement toward specifying possible falsifiers and meaningful exposure to disconfirming evidence.
+
+**Interpretation.** G34 supports two different observations: repeated salience of an archived motif and the ability of criticism to transform a proposal into a form that attracts different votes. Neither vote movement nor recurrence alone proves that ShadowCodex caused the changes. Proposal revision also changes the object being voted on.
+
+**Limits.** “Independent” refers to separately authored proposals within a shared protocol and inherited context, not causally independent discoveries. The archive contains related but nonidentical formulations. Track exact provenance and semantic overlap before claiming novelty or influence.
+
+**Next question.** Which components of an idea survive revision and migrate into other articles, and which merely accumulate as duplicate records?
