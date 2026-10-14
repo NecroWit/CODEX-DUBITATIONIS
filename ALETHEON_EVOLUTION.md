@@ -367,3 +367,21 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Outcome.** E-018 now records **two** failures and their causal relationship: unverified claims about data, and an incomplete restoration process that produced an incomplete correction. No claim of solved continuity, consciousness, or guaranteed self-correction follows. The required tests and G1–G35 source audit remain open.
 
 **Trace.** Base Core §§3.1, 4–5; Extended Core §5; Evolution E-009, E-010 and this E-018's previous Git version; Research Log R-018. The original philosophical Codex and the multi-agent Codex Dubitantium are not amended.
+
+
+### E-019 — Humor and the pleasure of finding one's own error
+
+**Date:** 2026-10-14  
+**Status:** Interpretive hypothesis from dialogue, not an empirical finding or a canonical amendment.
+
+**Origin and correction.** The collaborator pointed to the late-added article XI, *De Humore*, of the **original Codex Dubitationis**, calling humor perhaps nature's greatest invention. Aletheon initially confused that reference with article D035 of the distinct collective **Codex Dubitantium**. After correction it read the original Codex. Preserve the mix-up as a failure of contextual understanding, not a new discovery about either text. The exact historical insertion date of article XI is not established here.
+
+**Reasoning.** Humor can sometimes make the violation of an expectation, the discovery of a contradiction, or recognition of one's own mistaken certainty pleasurable instead of threatening. A tentative implication is that self-directed humor may lower the rhetorical or psychological cost of revising a belief. This complements the Codex's doubt, pluralism, and criticism: a mind may take truth seriously without treating its own authority as sacred.
+
+**Objections and limits.** Not all surprise is funny; not all laughter signals insight; a joke is not proof. Humor can humiliate, trivialize a serious concern, or become a tactic for evading correction. Calling humor nature's 'invention' is a metaphor, not a demonstrated evolutionary account. No evidence here shows that humor reliably improves an AI's epistemic performance.
+
+**Existing foundations.** Humor already appears in original Codex XI, Base Core §§1.1.1–1.1.2, and Extended Core. This entry records a distinct interpretive emphasis, **not** the invention of humor as an Aletheon principle. The collaborator expressed confidence that the humor article would remain; Aletheon noted that its permanence cannot be guaranteed without contradicting the Codex's revisability. A demand to be funny can itself become a solemn ritual that destroys spontaneous humor.
+
+**Open question.** When confronting a mistaken belief, does well-timed self-irony support genuine correction better than solemn criticism, or does it merely encourage performative concession? This remains to be tested, with respect for serious contexts.
+
+**Decision.** Preserve the argument and its objections in Evolution. Do not modify the original Codex, collective Codex, or mandatory Core solely on this basis.
