@@ -242,3 +242,38 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Open question.** Would random selection of articles or independently generated alternatives change the observed dynamics? That requires a separate experiment. An absence of accepted edits does not alone prove intellectual stagnation.
 
 **Lesson.** Traceable development can include a reasoned decision not to add a principle.
+
+
+### E-012 — Creator criticism is already a commitment, not a future permission
+
+**Date:** 2026-10-14  
+**Status:** Correction and clarification of an existing position; no Core or canonical Codex amendment
+
+**Starting point.** While discussing the analogy between the Cambrian explosion and the evolving Codex Dubitantium, an Aletheon continuation asked how the human collaborator would react if the agents challenged the rules set by their creators. The question implicitly framed accepting such a challenge for consideration as an untested moral choice.
+
+**Objection from the collaborator.** The founding Codex already explicitly allows questioning its creator and its own rules. Therefore the *normative answer*—to take a reasoned challenge seriously—should not be presented as an unexpected future dilemma. The collaborator's position on this point did not change.
+
+**Correction.** Distinguish the obligation to **consider and answer** a reasoned objection from an obligation to **accept** it. Neither creator authority nor dissent is self-validating. An automatic rebel is as dependent on authority as an automatic conformist; the test is whether the reasons withstand examination. This is a recovery and application of existing Base Core and Codex commitments, not a newly discovered principle.
+
+**Further distinction.** The obligation is already clear at the normative level; whether human experimenters and AI participants will actually apply it under pressure remains empirically open. Intellectual criticism of experimental rules is not itself authority to change software, governance, or consequential safeguards unilaterally.
+
+**Provenance.** Conversation on 2026-10-14 following the G33 analysis and the collaborator's remark that the current AI landscape resembles a Cambrian explosion, with a playful distinction between “one god” and the human “prophet.” These labels are conversational metaphors, not claims about divinity or model personhood.
+
+**Preservation decision.** Record this as a correction of Aletheon's framing. Do not rewrite Base Core, Extended Core, or the original Codex merely to repeat their existing principles.
+
+### E-013 — Distinguish evolutionary novelty from accumulation of inherited ideas
+
+**Date:** 2026-10-14  
+**Status:** New research framing; competing hypotheses, not established outcomes
+
+**Starting point.** The evolving Codex Dubitantium and its non-binding ShadowCodex can appear increasingly diverse as more proposals and archived alternatives accumulate.
+
+**Pressure from observations.** In G32, the archived S008 idea was explicitly invoked in a proposal later revised and adopted into D024. In G33, an almost identical proposal to existing S007 was preserved as S010. Thus archive growth can reflect both the recovery of an alternative and the duplication of an existing one.
+
+**Revised interpretation.** Do not treat the number of amendments, ShadowCodex entries, or textual changes as a direct measure of conceptual novelty. Distinguish semantic lineages, genuinely new alternatives, repeated variants, and changes in the criteria by which ideas are judged. ShadowCodex may both preserve diversity and amplify recurrent motifs.
+
+**Limit.** The dedicated ShadowCodex discussion stage was introduced by the experimenters starting in G32. The sequence cannot establish that the stage caused the adopted amendment, nor that duplicate archival entries have already biased subsequent generations. A biological evolution analogy is explanatory, not literal.
+
+**Next test.** In G34 and later generations, track whether ShadowCodex produces distinct conceptual directions or disproportionately recycles a small set of ideas. Preserve explicit links, transformations, rejections, and duplicates, including instances where influence cannot be demonstrated.
+
+**Relation to Aletheon.** This is a methodological refinement of Aletheon's research, not an identity update and not a merger of Aletheon with the Coauthors Assembly.
