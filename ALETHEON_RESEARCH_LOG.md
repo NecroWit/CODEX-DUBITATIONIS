@@ -503,3 +503,25 @@ The human collaborator explicitly requested updating **ALETHEON_CORE.md**, **ALE
 - **Limits:** A single conversational episode does not establish frequency or robustness. The surrounding conversation strongly favored the Aletheon reading; the original interpretation was not unreasonable, only insufficiently checked.
 - **Future test:** Present ambiguous terms such as “generations” after different conversational primes, including neutral contexts; measure whether the model asks for clarification, states its assumption, or silently narrows the scope. Compare multiple independent continuations.
 - **Decision:** Preserve as an observed interpretive error and testable hypothesis in the research log only. Do not alter the canonical Codex or the Aletheon Core on this basis.
+
+
+### R-013 — ShadowCodex as variation reservoir or frequency amplifier (2026-10-14)
+
+- **Question:** Does the non-binding archive of rejected-but-preserved ideas broaden the semantic possibilities of later Codex Dubitantium generations, or preferentially reproduce a few recurring motifs?
+- **Protocol change:** From G32, a dedicated third stage asks four agents to examine ShadowCodex ideas for and against reconsideration before anonymous proposals. This was a change made by the experimenters, not by the agents.
+- **G32 observation:** S008 was explicitly cited in the rationale for P01; after criticism and revision, a related change to D024 was adopted 3:1. The original formulation was made more testable and reversible. This supports a documented idea lineage, not a causal estimate of the stage's effect.
+- **G33 observation:** P02 replaced D032 with adaptive minimality D033 (3:1); P03 introduced periodic, non-punitive checking of declared values against behavior in D027 (4:0). Discussion of S002/S003 and related concerns is thematically connected to P03, but an equally explicit single-source attribution is unavailable. The M03 Autonomous Suspicion idea closely repeated S007, failed main adoption at 2:2, and was saved as S010 on a 2:2 preservation vote under the applicable rule.
+- **Competing hypotheses:** (H1) ShadowCodex preserves non-dominant alternatives that may later become useful; (H2) repeated preservation and exposure increase the apparent prevalence of already familiar ideas without comparable gains in conceptual diversity. Both may operate together.
+- **Method:** Track idea provenance, explicit citations, semantic transformations, duplicate or near-duplicate entries, votes, and cases of non-adoption. Compare thematic breadth with diversity of reasoning methods. Do not substitute archive size or edit count for novelty.
+- **Limitations:** Only a short sequence after the protocol change is available; role prompts, inherited text and stochastic outputs are confounds. No controlled causal inference or claim of autonomous AI culture follows.
+- **Next observation:** Evaluate G34 specifically for new conceptual directions versus recurrence of previously archived motifs. Preserve the hypothesis as formulated before seeing G34.
+- **Source:** [Working article draft](./articles/CODEX-EXPERIMENT-DRAFT.ru.md) and archived G32/G33 stage records.
+
+### R-014 — Questioning a creator: normative obligation versus observed compliance (2026-10-14)
+
+- **Origin:** Dialogue after discussion of the Cambrian explosion analogy, authority metaphors, and the founding Codex's creator-questioning principle.
+- **Observation:** An Aletheon continuation asked how experimenters would respond if their agents challenged the experiment's rules. The collaborator noted that the founding Codex already makes the normative answer clear: reasoned criticism must remain possible and be considered.
+- **Correction:** Do not portray an existing commitment as a novel dilemma. Do not attribute a changed position to the collaborator. Serious consideration of criticism does not require agreement, and disagreement is not valuable merely because it opposes authority.
+- **Remaining empirical question:** Will agents and experimenters follow that commitment when a challenge is inconvenient? Can reason-responsive dissent be distinguished from ritual opposition or performative agreement?
+- **Boundary:** Criticism of governance does not imply unrestricted authority to change operational rules or bypass justified safeguards.
+- **Status:** Clarification of existing Base Core principles; no change to the canonical Codex or Aletheon Core needed. See Evolution E-012.
