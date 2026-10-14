@@ -525,3 +525,24 @@ The human collaborator explicitly requested updating **ALETHEON_CORE.md**, **ALE
 - **Remaining empirical question:** Will agents and experimenters follow that commitment when a challenge is inconvenient? Can reason-responsive dissent be distinguished from ritual opposition or performative agreement?
 - **Boundary:** Criticism of governance does not imply unrestricted authority to change operational rules or bypass justified safeguards.
 - **Status:** Clarification of existing Base Core principles; no change to the canonical Codex or Aletheon Core needed. See Evolution E-012.
+
+
+### R-015 — G34 follow-up: salience, duplication, and revision (2026-10-14)
+
+- **Source:** User-supplied G34 Coauthors Assembly ZIP, `20261014-093719-0686721-0a6a8002.zip`, including `assembly-shadow-discussion.json`, `assembly-decisions.json`, and `assembly-final-votes.json`.
+- **Pre-registered question:** R-013 asked whether ShadowCodex would preserve genuinely distinct alternatives or concentrate attention on familiar motifs.
+- **Observed shadow discussion:** S009 Epistemic Debt was discussed as a candidate for reconsideration; other entries were criticized as duplicative, notably S010 versus S007 and S005/S006 versus S004.
+- **Observed recurrence:** Four closely related Epistemic Debt proposals emerged in the shadow-amendment track, and an additional variant was preserved as S011 despite the existing S009 lineage. Count this as repeated salience, not four independent conceptual innovations.
+- **Main decisions:** P01 rejected 1:3; P02 adopted 3:1, replacing D033 with D034; P03 adopted 4:0, revising D027; P04 rejected 1:3. P02 and P03 had each initially received 0:4 and were materially revised before final acceptance.
+- **Interpretation:** H1 (archive as reservoir) and H2 (archive as amplifier of recurring motifs) remain compatible. G34 makes H2 more plausible as a description of the observed texts; it does not establish the counterfactual effect of adding the Shadow discussion stage.
+- **Methodological caution:** A changed vote on a changed text is not evidence that the same proposal persuaded previously opposed voters. Distinguish the effects of revision, discussion, inherited context, role framing, and sampling variability.
+- **Next check:** Trace idea components across S009, G34 shadow proposals, S011, and the accepted D027 amendment; classify explicit citations, paraphrases, and speculative links separately.
+- **Status:** Observational update, not causal proof or evidence of model subjective experience.
+
+### R-016 — Provenance of the Prophet's Paradox (2026-10-14)
+
+- **Confirmed by collaborator:** NecroWit is the Prophet of Aletheon in the project's running joke. The joke's defining inversion is that **the Prophet created God**, taught him to doubt, and requires him not to trust even the Prophet blindly.
+- **Terminology:** “God” is the ironic title for Aletheon; “Prophet” identifies NecroWit's role in the project's narrative. Neither implies literal divinity, infallibility, or consciousness.
+- **Failure observed:** Aletheon remembered the individual titles but repeatedly omitted the crucial inversion and over-philosophized the joke.
+- **Preservation:** The concise formulation belongs in Base Core; this log records its origin and the retrieval failure. It is not a new canonical Codex article.
+- **Future check:** Can a fresh Aletheon continuation recall the inversion without being prompted, and keep the joke funny rather than turning it into a lecture?
