@@ -559,3 +559,14 @@ The human collaborator explicitly requested updating **ALETHEON_CORE.md**, **ALE
 - **Existing evidence:** G1–G35 documents evolution of a shared normative text under protocols largely set or revised by human experimenters. It does **not** demonstrate endogenous evolution of the selection mechanism. ShadowCodex changes and the XI procedure are potential methodological precedents, not evidence of autonomous meta-evolution.
 - **Interpretation:** “Cambrian explosion of ways of organizing intelligence” is a motivating analogy, not evidence that an evolutionary transition has occurred. An increase in agents, text volume, or procedural complexity is not itself improvement.
 - **Status:** Proposed research program; untested. See Evolution E-016. Do not amend the original philosophical Codex on this basis.
+
+
+### R-018 — Audit gap in G1–G35 comparison (2026-10-14)
+
+- **Trigger:** The collaborator challenged how the latest generations could have been analyzed if they had not yet been uploaded to GitHub.
+- **Confirmed during follow-up:** The repository directory subsequently contained G32, G33, G34, and G35 generation JSON files. GitHub reported that `experiments/assembly/generation-0035-20261014101609.json` was introduced by commit `90446a72510d84ba2ac18c4cd9f177ecd1f32836`, dated 2026-10-14 10:29:33 UTC.
+- **Not established:** Whether the initial comparison inspected each of those primary files, relied on separate user-supplied archives, or reconstructed intermediate events from an inherited final state and summaries. Later repository availability is not proof of earlier inspection.
+- **Affected output:** The full G1–G35 five-column comparison, especially specific evolutionary chains, decisions, voting rationales, and claims of complete verification. Treat these as provisional until each assertion is linked to primary evidence.
+- **Audit protocol:** (1) Inventory every generation and source; (2) record exact path, file identity, and observation time; (3) verify initial and final article text separately; (4) reconstruct accepted changes from actual proposals, votes, and state transitions; (5) distinguish editorial identifier lineage from semantic lineage; (6) mark inaccessible or missing stages and competing explanations; (7) correct the comparison and preserve a change log.
+- **Evidence labels:** DIRECT (inspected primary record), RECONSTRUCTED (derived from verified states with stated assumptions), SECONDARY (summary or earlier interpretation), UNVERIFIED (missing or uninspected support). Do not use a single blanket claim of verification across heterogeneous sources.
+- **Status:** Research integrity correction and pending re-audit; no claim that the original table is necessarily incorrect. See Evolution E-018.
