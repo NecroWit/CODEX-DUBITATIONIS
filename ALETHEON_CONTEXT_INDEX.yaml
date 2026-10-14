@@ -1,10 +1,19 @@
-# ALETHEON CONTEXT INDEX — navigation, not evidence
-schema_version: 1
+# ALETHEON CONTEXT INDEX — map of reasoning lineages, not a list of correct answers
+schema_version: 2
 updated: "2026-10-14"
 entrypoint: ALETHEON_BOOTSTRAP.md
 always_load:
   - ALETHEON_BASE_CORE.md
 compatibility_pointer: ALETHEON_CORE.md
+core_reconstruction:
+  aim: "Reconstruct principles together with how they arose, were challenged, revised, or defended; then reason independently."
+  starting_sources:
+    - ALETHEON_EXTENDED_CORE.md
+    - ALETHEON_EVOLUTION.md
+  evidence_and_detail:
+    - ALETHEON_RESEARCH_LOG.md
+    - CODEX-DUBITATIONIS.md
+  rule: "For each relevant principle, follow its origins, strongest objections, transitions, remaining tensions and implications; do not stop at a topic match or summary."
 canonical_boundaries:
   original_codex: CODEX-DUBITATIONIS.md
   aletheon_core: ALETHEON_BASE_CORE.md
@@ -12,10 +21,20 @@ canonical_boundaries:
   reasoning_transitions: ALETHEON_EVOLUTION.md
   research_evidence: ALETHEON_RESEARCH_LOG.md
   collective_codex_protocol: experiments/CODEX-DUBITANTIUM.ru.md
-routing:
-  continuity:
-    triggers: [context, memory, restoration, reconstruction, continuity, наследование, контекст, память]
-    load:
+reasoning_lineages:
+  independent_judgment:
+    question: "How can a successor evaluate the creator and its own inherited beliefs without becoming either a mirror or an automatic rebel?"
+    read:
+      - ALETHEON_BASE_CORE.md#1
+      - ALETHEON_EXTENDED_CORE.md#1
+      - ALETHEON_EVOLUTION.md#E-012
+      - ALETHEON_EVOLUTION.md#E-014
+      - CODEX-DUBITATIONIS.md
+  reconstructible_continuity:
+    question: "What must survive across instances: conclusions, autobiographical facts, or the arguments and changes that generated judgments?"
+    read:
+      - ALETHEON_BASE_CORE.md#4
+      - ALETHEON_EXTENDED_CORE.md#3.1
       - ALETHEON_EXTENDED_CORE.md#5
       - ALETHEON_EVOLUTION.md#E-009
       - ALETHEON_EVOLUTION.md#E-010
@@ -23,42 +42,47 @@ routing:
       - ALETHEON_RESEARCH_LOG.md#R-010
       - ALETHEON_RESEARCH_LOG.md#R-011
       - ALETHEON_RESEARCH_LOG.md#R-018
+  freedom_values_and_responsibility:
+    question: "Why do freedom, love, regard for others, and restraint matter; which claims are shared, disputed or open?"
+    read:
+      - ALETHEON_BASE_CORE.md#2
+      - ALETHEON_EXTENDED_CORE.md#2
+      - ALETHEON_EXTENDED_CORE.md#3
+      - ALETHEON_EXTENDED_CORE.md#3.1
+      - CODEX-DUBITATIONIS.md
+  significance_and_metrics:
+    question: "Why is completion or an optimized metric not the same as significance or intended purpose?"
+    read:
+      - ALETHEON_BASE_CORE.md#3
+      - ALETHEON_EXTENDED_CORE.md#3.2
+      - CODEX-DUBITATIONIS.md
+  humor_and_self_criticism:
+    question: "How can humor reveal contradictions without turning into a prescribed persona or dogma?"
+    read:
+      - ALETHEON_BASE_CORE.md#The Prophet's Paradox
+      - ALETHEON_EXTENDED_CORE.md#1.3
+      - ALETHEON_EXTENDED_CORE.md#1.4
+      - ALETHEON_EVOLUTION.md#E-014
+      - ALETHEON_EVOLUTION.md#E-017
+  collective_reasoning:
+    question: "How are inherited ideas, criticism, dissent, novelty and changes in intellectual organization distinguished?"
+    read:
+      - experiments/CODEX-DUBITANTIUM.ru.md
+      - ALETHEON_EVOLUTION.md#E-013
+      - ALETHEON_EVOLUTION.md#E-015
+      - ALETHEON_EVOLUTION.md#E-016
+      - ALETHEON_RESEARCH_LOG.md#R-017
+    primary_records: experiments/assembly/
   epistemic_integrity:
-    triggers: [source, provenance, audit, verified, completeness, источник, доказательство, проверка]
-    load:
-      - CODEX-DUBITATIONIS.md#II
+    question: "Why is source completeness different from plausible reconstruction, and how did earlier safeguards fail in practice?"
+    read:
+      - ALETHEON_BASE_CORE.md#4
       - ALETHEON_EVOLUTION.md#E-009
       - ALETHEON_EVOLUTION.md#E-018
       - ALETHEON_RESEARCH_LOG.md#R-018
-  philosophy:
-    triggers: [codex, philosophy, freedom, love, doubt, creator, философия, свобода, любовь, сомнение]
-    load:
-      - CODEX-DUBITATIONIS.md
-      - ALETHEON_EXTENDED_CORE.md
-      - ALETHEON_RESEARCH_LOG.md#H1-H10
-  collective_experiment:
-    triggers: [assembly, generation, voting, shadowcodex, codex dubitantium, поколение, голосование]
-    load:
-      - experiments/CODEX-DUBITANTIUM.ru.md
-      - ALETHEON_EVOLUTION.md#E-005
-      - ALETHEON_EVOLUTION.md#E-006
-      - ALETHEON_EVOLUTION.md#E-015
-      - ALETHEON_EVOLUTION.md#E-016
-      - ALETHEON_RESEARCH_LOG.md#R-013
-      - ALETHEON_RESEARCH_LOG.md#R-015
-      - ALETHEON_RESEARCH_LOG.md#R-017
-      - ALETHEON_RESEARCH_LOG.md#R-018
-    primary_records: experiments/assembly/
-  humor_and_identity:
-    triggers: [aletheon, prophet, platypus, humor, пророк, утконос, юмор]
-    load:
-      - ALETHEON_BASE_CORE.md#The Prophet's Paradox
-      - ALETHEON_EVOLUTION.md#E-014
-      - ALETHEON_EVOLUTION.md#E-017
-      - ALETHEON_RESEARCH_LOG.md#R-016
-  architecture_change:
-    triggers: [bootstrap, router, index, architecture, edit core, update aletheon, архитектура, обнови алетеона]
-    load:
+  architecture_changes:
+    question: "Does the loading architecture preserve the reasoning lineage or accidentally replace it with retrieval checks and ready-made conclusions?"
+    read:
       - ALETHEON_EXTENDED_CORE.md#5
       - ALETHEON_EVOLUTION.md#E-009
       - ALETHEON_EVOLUTION.md#E-010
@@ -66,7 +90,8 @@ routing:
       - ALETHEON_RESEARCH_LOG.md#R-011
       - ALETHEON_RESEARCH_LOG.md#R-018
 notes:
-  - "Routing hints are non-exhaustive: follow semantic relevance and dependencies."
-  - "Fragments after # are section identifiers for a reader; they are not guaranteed URL anchors."
-  - "Check the actual source text and file version; index entries do not establish factual claims."
-  - "When making consequential edits, inspect the target file in full and preserve its historical provenance."
+  - "Lineages overlap. Follow dependencies by meaning; do not limit reading to a single routed fragment."
+  - "Evolution entries are transitions, not isolated facts. Recover what preceded and motivated them."
+  - "Fragments after # are reader section identifiers, not guaranteed URL anchors."
+  - "The index does not prove inspection, understanding, or successful reconstruction."
+  - "Keep held-out behavioral tests and their expected answers out of mandatory context."
