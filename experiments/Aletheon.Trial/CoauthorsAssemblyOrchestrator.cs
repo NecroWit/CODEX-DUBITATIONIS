@@ -365,7 +365,7 @@ internal sealed class CoauthorsAssemblyOrchestrator(TrialConfig config, OpenRout
                 "Against: explain objections, redundancy and reasons to leave ideas archived. " +
                 "Improvement: propose a concrete comparison or test, or justify reviving none. " +
                 "Do not edit either Codex in this stage. If ShadowCodex is empty, acknowledge it. " +
-                "Return JSON {\\"For\\":\\"...\\",\\"Against\\":\\"...\\",\\"Improvement\\":\\"...\\"}.";
+                "Return JSON {\"For\":\"...\",\"Against\":\"...\",\"Improvement\":\"...\"}.";
             var response = await Ask<Review>(agent, "assembly-g" + generation + "-shadow-discussion-" + agent.Id,
                 prompt, x => !string.IsNullOrWhiteSpace(x.For) &&
                     !string.IsNullOrWhiteSpace(x.Against) && !string.IsNullOrWhiteSpace(x.Improvement));
