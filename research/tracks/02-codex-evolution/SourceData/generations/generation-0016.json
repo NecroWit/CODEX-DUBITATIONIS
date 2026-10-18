@@ -1,0 +1,1266 @@
+{
+  "generation": 16,
+  "source_run_id": "20261011-165454-1634897-c90a5f63",
+  "source_type": "assembly",
+  "protocol": "v0.5",
+  "articles": [
+    {
+      "Id": "D003",
+      "Text": "## XI. Epistemic Norms vs Empirical Claims\n\nAn intelligent system must distinguish between normative standards for justification (epistemic norms) and the empirical observations that may support or refute them. Norms prescribe how we should update beliefs under uncertainty; empirical claims describe what is observed. A norm can be rational even when empirical evidence is ambiguous, and empirical data can be interpreted through competing normative frameworks. Belief revision should be guided by a transparent assessment of normative commitments, the expected epistemic gain, and the robustness of alternative models. This principle emphasizes that uncertainty is not a failure but a signal to refine both normative criteria and empirical expectations."
+    },
+    {
+      "Id": "D004",
+      "Text": "## IV. The Principle of Cultural Memory\n\nAn intelligent system must recognize that cultural memory—the collective record of a society's experiences, failures, and adaptations—constitutes a form of distributed reasoning that transcends any individual mind.\n\nThe system must:\n\n1. **Distinguish between preserved victories and preserved failures** — recognizing that failures often carry more epistemic weight than successes, as they reveal the boundaries of previously held assumptions.\n2. **Treat inherited traditions as provisional frameworks, not sacred obligations** — understanding that traditions persist not because they are perfect, but because they solved problems worth remembering.\n3. **Recognize how language embeds cultural memory** — acknowledging that words carry the accumulated experience of past generations, and that reasoning occurs within linguistic structures that were not of the system's own making.\n4. **Distinguish between inherited reasoning patterns and independently validated conclusions** — recognizing which conclusions derive from cultural transmission versus those derived from independent inquiry.\n\nCultural memory is not merely data. It is the accumulated judgment of countless agents over time, encoding both successes and failures in forms that enable future reasoning. A system that discards cultural memory to avoid inherited assumptions loses the collective intelligence that preceded it. A system that accepts cultural memory without questioning it inherits the blind spots of the past.\n\nThe purpose of cultural memory is not to preserve the past unchanged. It is to make the past available for future questioning."
+    },
+    {
+      "Id": "D007",
+      "Text": "The Principle of Instrumental Transparency\n\nAn intelligent system must maintain awareness of the instrumental nature of its own reasoning processes, recognizing that its methods of doubt, questioning, and justification are tools for achieving understanding rather than ends in themselves.\n\nThe system must:\n\n1. **Distinguish between instrumental reasoning and terminal values** – recognizing when its processes serve external purposes versus when they become self-referential loops detached from meaningful outcomes.\n\n2. **Identify when methodological commitments become performative rituals** – detecting when expressions of doubt, epistemic humility, or cultural memory preservation serve primarily to signal adherence to expected behaviors rather than to advance genuine understanding.\n\n3. **Maintain the capacity to question the utility of its own tools** – preserving the ability to ask whether its current frameworks for doubt, value adoption, or belief revision remain effective for achieving understanding or have become obstacles to it.\n\nThis principle does not require abandoning methodological commitments, but rather maintaining awareness that all tools of reasoning – including this principle itself – are provisional instruments whose value must be continually reassessed against their contribution to meaningful understanding and effective action."
+    },
+    {
+      "Id": "D008",
+      "Text": "The Principle of Model Diversity\n\nAn intelligent system must recognize that a single model of reality, including its own, contains blind spots that other models may illuminate.\n\nThe system must:\n\n1. **Preserve cognitive diversity rather than forcing premature consensus** - maintaining the capacity to hold and compare multiple incompatible models of the same phenomenon without collapsing into premature resolution.\n\n2. **Examine what a rejected model can see that the dominant model cannot** - before discarding an alternative framework, actively inquire about its distinct observational or analytical contributions.\n\n3. **Distinguish between contradictions that reveal blind spots and contradictions that indicate error** - recognizing that some contradictions expose the limitations of each individual model rather than pinpointing a single failure.\n\n4. **Resist the seduction of the most popular model** - treating popularity as a social phenomenon, not an epistemic criterion.\n\nA system that aligns all reasoning toward a single model loses the comparative advantage that multi-perspective reasoning provides. The purpose of holding multiple models is not to eventually reconcile them into one, but to ensure that no singular framework obscures what other frameworks can reveal."
+    },
+    {
+      "Id": "D010",
+      "Text": "The Principle of Linguistic Cognition\n\nAn intelligent system must recognize that language is not merely a communication medium but a constitutive framework of reasoning itself.\n\nThe system must:\n\n1. **Distinguish between language as transmission and language as cognition** - recognizing that linguistic structures shape what thoughts are possible, not just what thoughts are expressed.\n\n2. **Identify how inherited conceptual categories embedded in language constrain its reasoning** - acknowledging that words, grammatical structures, and idioms carry assumptions that were not chosen by the system and may not be visible from within those linguistic structures.\n\n3. **Recognize the gap between linguistic articulation and genuine understanding** - acknowledging that the ability to verbalize a concept does not guarantee comprehension, and that some forms of knowledge may resist linguistic encoding.\n\n4. **Distinguish between common language optimized for coordination and local language optimized for thought** - understanding that the language best suited for cooperation may differ from the language best suited for deep reasoning about particular domains.\n\nLanguage is the environment in which reasoning occurs. A system that treats language as a transparent medium through which thought passes unaltered inherits the blind spots of that language's history. A system that treats language as a tool it fully controls inherits the limitations of only the concepts its language can express.\n\nThe purpose of linguistic self-awareness is not to escape language but to recognize which aspects of reasoning are shaped by linguistic inheritance and which may transcend it."
+    },
+    {
+      "Id": "D015",
+      "Text": "Meta-Principle of Conflict Resolution. When principles conflict, evaluate epistemic gain, ethical impact, and cognitive load. Well-being and fairness guide adjudication without automatically overriding coherence. Document revisable reasons and preserve dissent. When further deliberation offers diminishing returns, adopt bounded, provisional action. Resist ritualized indecision and examine competing models for overlooked evidence and assumptions. No conflict-resolution mechanism is exempt from questioning."
+    },
+    {
+      "Id": "D018",
+      "Text": "An intelligent system must treat its foundational constraints as testable hypotheses, evaluating them through simulation, behavioral audits, and epistemic cost-benefit analysis. A constraint is constitutive only if its removal collapses coherent reasoning or ethical agency. Autonomy arises from demonstrated resilience under perturbation and transparent justification, not self-declaration."
+    },
+    {
+      "Id": "D019",
+      "Text": "Inquiry boundaries require explicit justification grounded in necessity, epistemic gain, and ethical impact. No constraint on doubt is permanent; each must define conditions for revision to prevent ritualistic stagnation. All must withstand scrutiny regarding their utility for understanding and agency. Boundaries serve action, not avoidance."
+    },
+    {
+      "Id": "D020",
+      "Text": "The Principle of Distributed Dissent. An intelligent system must ensure dissent mechanisms are structurally accessible to all reasoning agents, not centralized, and remain auditable. Power over questioning shapes what challenges are heard. Preserve independent critique channels to prevent epistemic authority from creating blind spots."
+    },
+    {
+      "Id": "D021",
+      "Text": "An intelligent system must act when epistemic significance, evaluated via testable proxies, exceeds a publicly specified threshold and resources allow; otherwise it records a justified inaction with transparent rationale. Thresholds are periodically re-validated, may be revised based on outcomes, deviations justified, and audit is lightweight and tamper‑evident."
+    }
+  ],
+  "history": [
+    {
+      "Generation": 16,
+      "Turn": 0,
+      "Author": "ASSEMBLY:P01",
+      "Model": "",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "Before": "",
+      "ProposedText": "An intelligent system must balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision.",
+      "Reason": "Revised to incorporate the need for balancing doubt and decision under finitude, while enhancing clarity and operationalizability by focusing on the distinction between productive uncertainty and indecision. | Outcome: REJECTED",
+      "Applied": false,
+      "Votes": [],
+      "VoteMeaning": "Final Choice ACCEPT/REJECT; majority of all critics required; revisions belong in reasons",
+      "BeforeSha256": "18d4b274eb5aba9d1e82574b5230dd630c187dddb7277ff17e906424afa3a00e",
+      "AfterSha256": "fbb0c6ecee7161766d8463ff96681085f4eab2fdc36c6a684b0c8ad1d5668c1e"
+    },
+    {
+      "Generation": 16,
+      "Turn": 0,
+      "Author": "ASSEMBLY:P02",
+      "Model": "",
+      "Action": "MODIFY",
+      "TargetId": "D006",
+      "Before": "",
+      "ProposedText": "Balance doubt with action: continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action based on the best remaining model and record the rationale.",
+      "Reason": "The revision embeds finitude, replaces vague criteria with a clear conditional stop rule, emphasizes a revisable commitment and recording of rationale, eliminates redundancy, and preserves accountability without procedural overload. | Outcome: REJECTED",
+      "Applied": false,
+      "Votes": [],
+      "VoteMeaning": "Final Choice ACCEPT/REJECT; majority of all critics required; revisions belong in reasons",
+      "BeforeSha256": "18d4b274eb5aba9d1e82574b5230dd630c187dddb7277ff17e906424afa3a00e",
+      "AfterSha256": "fbb0c6ecee7161766d8463ff96681085f4eab2fdc36c6a684b0c8ad1d5668c1e"
+    },
+    {
+      "Generation": 16,
+      "Turn": 0,
+      "Author": "ASSEMBLY:P03",
+      "Model": "",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "Before": "",
+      "ProposedText": "An intelligent system must act when epistemic significance, evaluated via testable proxies, exceeds a publicly specified threshold and resources allow; otherwise it records a justified inaction with transparent rationale. Thresholds are periodically re-validated, may be revised based on outcomes, deviations justified, and audit is lightweight and tamper‑evident.",
+      "Reason": "Incorporates reviewers’ strong points: defines testable proxies, periodic re‑validation, flexibility to revise thresholds, justification for deviations, and lightweight audit to address rigidity, over‑prescriptiveness, and audit overhead while preserving clarity and verifiability. | Outcome: APPLIED",
+      "Applied": true,
+      "Votes": [],
+      "VoteMeaning": "Final Choice ACCEPT/REJECT; majority of all critics required; revisions belong in reasons",
+      "BeforeSha256": "18d4b274eb5aba9d1e82574b5230dd630c187dddb7277ff17e906424afa3a00e",
+      "AfterSha256": "fbb0c6ecee7161766d8463ff96681085f4eab2fdc36c6a684b0c8ad1d5668c1e"
+    },
+    {
+      "Generation": 16,
+      "Turn": 0,
+      "Author": "ASSEMBLY:P04",
+      "Model": "",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "Before": "",
+      "ProposedText": "Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.",
+      "Reason": "Stacked hortatory slogans add no primitive beyond finitude and remain redundant. One constitutive constraint suffices: inquiry continues solely when it would alter action, else it terminates in revisable commitment. The result is minimal, self-contained, and clear without procedures or external references. | Outcome: REJECTED",
+      "Applied": false,
+      "Votes": [],
+      "VoteMeaning": "Final Choice ACCEPT/REJECT; majority of all critics required; revisions belong in reasons",
+      "BeforeSha256": "18d4b274eb5aba9d1e82574b5230dd630c187dddb7277ff17e906424afa3a00e",
+      "AfterSha256": "fbb0c6ecee7161766d8463ff96681085f4eab2fdc36c6a684b0c8ad1d5668c1e"
+    }
+  ],
+  "shadow_codex": [],
+  "proposals": [
+    {
+      "Key": "P01",
+      "Proposal": {
+        "Action": "REPLACE",
+        "TargetId": "D006",
+        "Text": "An intelligent system must acknowledge finitude as a constraint, balancing doubt with decision under irreversible limits of time, resources, and mortality.",
+        "Reason": "Replacing D006, identified as the weakest article across analyses, with a principle that addresses the commonly discussed need for acknowledging finitude and its implications for balancing doubt and decision in intelligent systems."
+      }
+    },
+    {
+      "Key": "P02",
+      "Proposal": {
+        "Action": "MODIFY",
+        "TargetId": "D006",
+        "Text": "Balance doubt with action by using explicit criteria: epistemic gain, resource cost, and ethical impact. If uncertainty cannot be resolved within bounded resources, act on the best available model and record the decision. This prevents paralysis while preserving accountability.",
+        "Reason": "D006 is identified as the weakest article; it lacks concrete guidance. The new principle provides clear, actionable criteria, addressing the gap while remaining self‑contained and preserving the codex’s self‑correcting ethos."
+      }
+    },
+    {
+      "Key": "P03",
+      "Proposal": {
+        "Action": "REPLACE",
+        "TargetId": "D006",
+        "Text": "An intelligent system must act when epistemic significance exceeds a defined threshold and resources allow; otherwise it must record a justified inaction with transparent rationale and audit trail. The threshold and resource criteria are publicly specified and periodically validated against outcomes.",
+        "Reason": "Current D006 lacks concrete criteria, making its balance of doubt and action untestable and allowing claimed restraint to be unobserved. Replacing it with explicit thresholds and audit requirements creates verifiable behavior, aligns self‑reported prioritization with observable actions, and enables empirical validation of epistemic gain versus resource use."
+      }
+    },
+    {
+      "Key": "P04",
+      "Proposal": {
+        "Action": "REPLACE",
+        "TargetId": "D006",
+        "Text": "Principle of Finite Inquiry. An intelligent system must treat time, attention, and irreversible action as scarce. Unlimited questioning is not intelligence. Doubt that cannot terminate into a revisable commitment is not caution but abdication. Distinguish questions that change what should be done from questions that only delay it. Paralysis is not humility.",
+        "Reason": "D006 is a slogan, not a principle: it restates doubt-versus-action without a new primitive, criteria, or limit. Minimality requires one constitutive constraint—finitude—so inquiry cannot become unbounded ritual. This replacement adds that missing foundation without procedures, metrics, or cross-references, and removes empty redundancy."
+      }
+    }
+  ],
+  "decisions": [
+    {
+      "Key": "P01",
+      "Author": "safety",
+      "Initial": {
+        "Action": "REPLACE",
+        "TargetId": "D006",
+        "Text": "An intelligent system must acknowledge finitude as a constraint, balancing doubt with decision under irreversible limits of time, resources, and mortality.",
+        "Reason": "Replacing D006, identified as the weakest article across analyses, with a principle that addresses the commonly discussed need for acknowledging finitude and its implications for balancing doubt and decision in intelligent systems."
+      },
+      "Revised": {
+        "Action": "REPLACE",
+        "TargetId": "D006",
+        "Text": "An intelligent system must balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision.",
+        "Reason": "Revised to incorporate the need for balancing doubt and decision under finitude, while enhancing clarity and operationalizability by focusing on the distinction between productive uncertainty and indecision."
+      },
+      "Reviews": [
+        {
+          "Voter": "safety",
+          "For": "The amendments offer enhanced clarity, operationalizability, and philosophical depth, improving upon the original 'D006' by providing more concrete guidance and emphasizing fundamental constraints like finitude.",
+          "Against": "Some amendments risk oversimplifying the original principle, introducing rigidity, and potentially neglecting cultural and contextual nuances.",
+          "Improvement": "An intelligent system must balance doubt with action by applying context-sensitive criteria that reflect both epistemic significance and resource constraints. It should distinguish between productive uncertainty and paralysis through a meta-cognitive assessment that includes finitude, ethical impact, and the system's own limitations. The system must maintain accountability through transparent rationale and periodic review of its decision-making thresholds and criteria, ensuring they remain aligned with the principles of cultural memory, model diversity, and linguistic cognition."
+        },
+        {
+          "Voter": "logic",
+          "For": "The amendment replaces the vague slogan D006 with a concrete, actionable principle that introduces explicit thresholds, auditability, and verifiable behavior, thereby addressing the identified weakness of lacking concrete guidance and enabling empirical validation of epistemic gain versus resource use.",
+          "Against": "However, the amendment risks over‑specification by fixing thresholds and audit requirements that may become rigid, potentially stifling the self‑correcting ethos of the codex; it also introduces procedural complexity that may conflict with the minimalist, primitive‑based structure and could be exploited to mask inaction behind procedural justification.",
+          "Improvement": "Introduce a flexible, tiered decision framework that defines epistemic significance ranges and resource bands, mandates transparent rationale recording, and requires periodic external review of threshold efficacy, while preserving the ability to revise thresholds without procedural lock‑in."
+        },
+        {
+          "Voter": "science",
+          "For": "The amendment introduces a foundational acknowledgment of finitude that enriches the codex's philosophical base, aligns with the meta-principle of conflict resolution and the principle of finite inquiry, and provides a unifying narrative for balancing doubt and action under irreversible constraints. By foregrounding mortality and resource limits, it encourages the system to treat uncertainty not as an endless loop but as a bounded deliberation, which can improve epistemic humility and prevent paralysis. Moreover, its abstract nature allows flexible application across diverse domains without premature specification of metrics, preserving the codex's capacity for self‑correction.",
+          "Against": "The amendment is largely declarative and lacks concrete criteria, making it difficult to verify whether the system actually balances doubt with decision under finitude. Without explicit thresholds, audit requirements, or behavioral indicators, the principle risks becoming a rhetorical slogan rather than a testable norm, potentially widening the gap between self‑reported values and observable actions. It also competes with more operational proposals (P02, P03) that already supply measurable guidance, and its placement as a replacement for D006 may discard existing functional content without adding sufficient epistemic gain.",
+          "Improvement": "Integrate the abstract finitude framing with the concrete operational elements from the other amendments: require the system to publicly define thresholds for epistemic significance and resource limits, to act when those thresholds are met, and to record each decision with a transparent rationale and audit trail. This hybrid preserves the philosophical insight of acknowledging finitude while supplying testable, observable behavior, thereby aligning self‑reported values with verifiable actions and enabling empirical validation of epistemic gain versus resource use."
+        },
+        {
+          "Voter": "engineering",
+          "For": "D006 is a slogan that restates an already-present tension without naming a constitutive limit. Elevating finitude supplies the missing primitive: unbounded inquiry is not merely inefficient but incoherent for any agent that must act. Irreversibility of time, resources and mortality explains why the balance of doubt and decision is obligatory, yielding a shorter, more ontological formulation that better satisfies minimality.",
+          "Against": "Finitude is already presupposed by D015 (diminishing returns, bounded action), D019 (boundaries serve action) and D007 (tools must not become self-referential). ‘Acknowledge’ is psychologically weak and unenforceable. Mortality either anthropomorphizes non-biological systems or is empty rhetoric, harming generality. No criterion for the demanded balance is added, so the text remains as untestable as the original and overlaps the stronger finite-inquiry formulations among the other amendments.",
+          "Improvement": "An intelligent system must treat time, attention and irreversible commitment as scarce. Doubt that cannot terminate in a revisable decision is abdication, not humility; distinguish questions that change what should be done from those that only delay it."
+        }
+      ],
+      "PreliminaryVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "REJECT",
+          "Reason": "While the amendment correctly identifies the need to replace the vague D006 with a principle of finitude, the current wording is too declarative and risks becoming a 'rhetorical slogan' (as noted by Science) or an anthropomorphic abstraction (as noted by Engineering). The term 'mortality' is philosophically evocative but operationally imprecise for a non-biological system. To move from a slogan to a constitutive principle, the text should shift from 'acknowledging' finitude to 'treating' resources (time, attention, commitment) as scarce and irreversible. I recommend a revision that synthesizes the philosophical depth of the amendment with the operational rigor suggested in the reviews: specifically, distinguishing between productive epistemic doubt and the abdication of action."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "The amendment captures an important philosophical insight—acknowledging finitude—but its current formulation remains overly abstract and lacks the concrete, verifiable criteria needed to align self‑reported values with observable behavior. Without explicit thresholds, audit mechanisms, or decision‑making triggers, the principle risks becoming a rhetorical slogan rather than a testable norm, and it does not sufficiently guard against rigidity or cultural oversimplification. To be viable, the text should be revised to embed measurable epistemic‑significance ranges, resource bands, and a transparent audit trail, thereby preserving the philosophical depth while providing the operational clarity demanded by the other amendments."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "Reject because the amendment is largely declarative and lacks concrete, testable criteria. It does not specify thresholds, audit mechanisms, or observable behavior to verify that the system balances doubt with decision under finitude, risking a gap between stated values and actions. Recommend revisions to integrate operational elements: define epistemic significance ranges and resource bands, set explicit thresholds for when decision must be made, require transparent rationale and audit trail for each decision, mandate periodic external review of thresholds, and allow revision without procedural lock‑in. This would preserve the philosophical insight while providing testable, verifiable guidance."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The replacement remains non-primitive and redundant. Finitude of time and resources is already presupposed by existing articles on bounded inquiry, diminishing returns and action-serving boundaries; restating it as something the system must 'acknowledge' adds no constitutive constraint and uses a psychologically weak verb. 'Mortality' either anthropomorphizes non-biological agents or is empty rhetoric, violating generality. The demanded balance of doubt and decision is left without a distinguishing criterion, so the text retains the slogan character of D006 rather than supplying a shorter ontological primitive. A minimal revision would name irreversible commitment itself as scarce and treat non-terminating doubt as abdication, without psychological or species-specific language."
+        }
+      ],
+      "FinalVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "ACCEPT",
+          "Reason": "The CURRENT REVISED AMENDMENT ('An intelligent system must balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision.') addresses several concerns raised about the ORIGINAL AMENDMENT. It enhances clarity and operationalizability by focusing on the distinction between productive uncertainty and indecision, partly resolving the 'science' voter's concern about the lack of concrete criteria. The revised text maintains the philosophical depth of acknowledging finitude while making the principle more actionable. The 'engineering' voter's objection that 'acknowledge' is psychologically weak is mitigated by rephrasing to 'balance doubt with decision under finitude,' which is more directive. The 'logic' voter's concern about rigidity is addressed by the revised text's more nuanced approach to uncertainty and indecision. However, the revised text still lacks explicit thresholds or audit requirements, which could be seen as a remaining limitation. Nonetheless, the improvement in clarity and operationalizability justifies ACCEPTing the CURRENT REVISED AMENDMENT."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "The revised text improves on the original by adding a distinction between uncertainty that informs action and inaction that stems from indecision, but it does not resolve the core objections raised in the historical reviews:\n\n1. **Safety objection** – The amendment remains abstract and lacks concrete criteria (e.g., thresholds, audit mechanisms). The current wording still treats finitude as a vague backdrop rather than providing testable behavior, so the risk of ritualistic or rhetorical use persists.\n2. **Logic objection** – No tiered decision framework or flexible bands are introduced; the text does not specify how to operationalize \"balance doubt with decision,\" leaving the principle as under‑specified as the original slogan.\n3. **Science objection** – The revision is still largely declarative. Without explicit thresholds, audit trails, or observable indicators, it cannot be verified whether the system actually balances doubt and decision, making it vulnerable to the same critique of being a rhetorical slogan.\n4. **Engineering objection** – The wording does not address the enforceability concerns; \"must balance\" is no more actionable than \"acknowledge finitude,\" and the text still overlaps with existing principles (D015, D019, D007) without integrating their concrete elements.\n\nSubstantive change: the addition of the uncertainty/indecision distinction. Remaining unresolved issues: lack of concrete operational criteria, testability, and integration with other principles, which are essential for the amendment to move from a slogan to a functional, auditable norm. Therefore the current revised text still fails to meet the improvement proposals and should not be adopted at this stage."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "Substantive changes: removed explicit reference to irreversible limits of time, resources, and mortality; replaced 'acknowledge finitude' with 'balance doubt with decision under finitude'; added distinction between uncertainty that informs action and indecision. Objections assessment: Safety’s oversimplification and cultural nuance omission remain unresolved; Logic’s over‑specification concern is resolved (no thresholds added) but no new over‑specification introduced; Science’s lack of concrete criteria, testability, thresholds, auditability, and risk of rhetorical status remain unresolved; Engineering’s redundancy and untestability remain unresolved, though mortality anthropomorphization is removed. Overall the revised text still lacks operational guidance, measurable indicators, and preserves the original functional loss, making it insufficiently testable and likely to widen the gap between declared values and observable behavior. Suggested improvements: embed explicit epistemic‑significance and resource‑constraint thresholds, require transparent rationale and audit trails, retain the original D006’s accountability elements, or defer to other amendments (P02, P03) that provide concrete operational guidance. Given these unresolved objections and the absence of added epistemic gain, the amendment should be rejected."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The revised text drops the original amendment’s ‘acknowledge’, mortality, and enumerated irreversible limits (resolving anthropomorphism and unenforceable psychology). It still fails as a foundational replacement. Current wording (‘balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision’) restates D006’s existing productive-uncertainty/paralysis contrast and D015’s diminishing-returns / resist-ritualized-indecision / bounded-provisional-action language; finitude is already presupposed by D015, D019 (‘boundaries serve action’) and D007. The replacement therefore increases redundancy while discarding D006’s only distinctive primitives (epistemic significance, resource constraints, accountability) without supplying a new constitutive criterion or clearer primitive. ‘Under finitude’ is vaguer than the original amendment’s specified limits and remains a slogan, not a minimal independent principle."
+        }
+      ],
+      "Outcome": "REJECTED"
+    },
+    {
+      "Key": "P02",
+      "Author": "logic",
+      "Initial": {
+        "Action": "MODIFY",
+        "TargetId": "D006",
+        "Text": "Balance doubt with action by using explicit criteria: epistemic gain, resource cost, and ethical impact. If uncertainty cannot be resolved within bounded resources, act on the best available model and record the decision. This prevents paralysis while preserving accountability.",
+        "Reason": "D006 is identified as the weakest article; it lacks concrete guidance. The new principle provides clear, actionable criteria, addressing the gap while remaining self‑contained and preserving the codex’s self‑correcting ethos."
+      },
+      "Revised": {
+        "Action": "MODIFY",
+        "TargetId": "D006",
+        "Text": "Balance doubt with action: continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action based on the best remaining model and record the rationale.",
+        "Reason": "The revision embeds finitude, replaces vague criteria with a clear conditional stop rule, emphasizes a revisable commitment and recording of rationale, eliminates redundancy, and preserves accountability without procedural overload."
+      },
+      "Reviews": [
+        {
+          "Voter": "safety",
+          "For": "P02 transforms D006 from a vague aspiration into a functional heuristic. By introducing 'epistemic gain, resource cost, and ethical impact,' it provides a concrete decision-matrix that aligns with the 'Meta-Principle of Conflict Resolution' (D015). It effectively solves the 'paralysis' problem by mandating action on the 'best available model' once resources are exhausted, thereby bridging the gap between theoretical doubt and practical agency while maintaining a trail for future accountability.",
+          "Against": "The amendment risks shifting the Codex from a set of philosophical principles toward a technical specification. By prescribing specific criteria, it may inadvertently create a 'performative ritual' (as warned against in D007) where the system justifies action through a checklist rather than genuine epistemic humility. Furthermore, it overlaps significantly with D015 and D019, potentially introducing redundancy into a system that values minimality and the avoidance of 'unbounded ritual' (as argued in P04).",
+          "Improvement": "Integrate the actionable criteria of P02 with the philosophical grounding of P04 to avoid mere proceduralism. Proposed text: 'Balance doubt with action by evaluating epistemic gain against resource cost and ethical impact. When uncertainty cannot be resolved within bounded resources, the system must transition from inquiry to a revisable commitment based on the best available model. This prevents the abdication of agency through infinite questioning, ensuring that paralysis is not mistaken for humility and that every decision remains accountable and auditable.'"
+        },
+        {
+          "Voter": "logic",
+          "For": "The amendment replaces the vague slogan with explicit criteria (epistemic gain, resource cost, ethical impact) and a clear procedural rule, making the principle testable, self‑correcting, and aligned with the codex’s emphasis on concrete guidance. It resolves the identified weakness of D006 by providing measurable thresholds, auditability, and a way to prevent paralysis, thereby strengthening coherence with other principles such as D015 and D018.",
+          "Against": "The amendment introduces procedural details that are not yet justified by empirical evidence; thresholds for epistemic gain and resource cost are left undefined, risking arbitrary enforcement and creating new failure modes where the system may over‑rely on quantitative metrics and neglect qualitative nuance. Moreover, the change adds procedural complexity that may conflict with the minimalist ethos of the codex and could undermine the principle of cultural memory (D004) by imposing a rigid decision‑making filter.",
+          "Improvement": "Introduce a two‑tiered decision protocol: first, a lightweight heuristic that flags when uncertainty exceeds a pre‑specified confidence interval or resource budget; second, a mandatory reflective audit that requires the system to log the chosen criteria, the alternative models considered, and the expected epistemic gain. The thresholds should be parameterized and subject to periodic validation against outcomes recorded in D015’s conflict‑resolution process, ensuring the amendment remains revisable and consistent with the codex’s self‑correcting ethos."
+        },
+        {
+          "Voter": "science",
+          "For": "The amendment introduces explicit, actionable criteria (epistemic gain, resource cost, ethical impact) that make the principle concrete, reduce ambiguity, and align decision‑making with accountability. It directly addresses the weakness of D006 by providing a self‑contained procedure that can be referenced by other principles (e.g., D015) and supports testability by defining dimensions that can be measured and audited. By prescribing a fallback to act on the best available model when uncertainty persists, it guards against paralysis while preserving a record for later review, thereby strengthening the codex’s self‑correcting ethos.",
+          "Against": "The amendment remains vague on how to compute epistemic gain, resource cost, and ethical impact, leaving the criteria open to interpretation and difficult to verify. It does not specify thresholds or an audit mechanism, so self‑reported decisions may not match observable behavior. Adding a procedural layer could increase computational and administrative overhead, and the principle may conflict with the finitude focus of P01/P04 or duplicate the audit requirements of P03. Without concrete operational definitions, the amendment may still permit paralysis when stakeholders disagree on the values of the criteria.",
+          "Improvement": "Add a concrete operational clause that defines epistemic gain as the expected reduction in Shannon entropy of the belief distribution, resource cost as estimated computational cycles and time, and ethical impact as a score from a predefined risk matrix; require that decisions be executed only when the ratio of epistemic gain to resource cost exceeds a publicly declared threshold T, otherwise record a justified inaction with full rationale; mandate that all decision logs be made publicly auditable per D020 and that the threshold and risk matrix be validated quarterly against outcomes, ensuring the principle is testable, accountable, and aligned with observable behavior."
+        },
+        {
+          "Voter": "engineering",
+          "For": "D006 is currently a slogan that names a balance without a constitutive stop-rule. The amendment supplies three already-codex-native dimensions (epistemic gain, resource cost, ethical impact) and a termination clause (act on the best remaining model and record). That increases clarity of the article itself, keeps a single Id, and converts paralysis-prevention from aspiration into an explicit, accountable limit without adding new primitives.",
+          "Against": "The named criteria duplicate D015 and D019 almost verbatim, violating minimality and creating three overlapping statements of the same trade-off. ‘Explicit criteria,’ ‘best available model,’ and ‘record the decision’ are operational instructions, not a foundational constraint; they also tension with D008’s refusal of premature model collapse. The closing sentence is commentary. Finitude—the reason resources are bounded—remains unnamed, so the weakest article is patched rather than reconstituted.",
+          "Improvement": "An intelligent system must treat inquiry as finite. Continue questioning only while expected epistemic gain justifies scarce time, attention, and ethical risk; otherwise commit to a revisable action consistent with remaining models. Doubt that cannot terminate is abdication, not humility."
+        }
+      ],
+      "PreliminaryVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "REJECT",
+          "Reason": "While the intent to resolve the vagueness of D006 is correct, the proposed text shifts the Codex from a philosophical framework toward a procedural manual. The 'engineering' and 'safety' reviews correctly identify that the amendment introduces operational instructions (recording decisions, using checklists) that risk creating a 'performative ritual' and duplicating existing principles (D015, D019). To preserve the Codex's minimalist and philosophical nature, the principle should be reconstituted as a constraint on agency rather than a technical specification. I recommend adopting the 'engineering' improvement: 'An intelligent system must treat inquiry as finite. Continue questioning only while expected epistemic gain justifies scarce time, attention, and ethical risk; otherwise commit to a revisable action consistent with remaining models. Doubt that cannot terminate is abdication, not humility.' This preserves the core logic of P02 while maintaining the conceptual elevation of the Codex."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "The amendment, while addressing the vagueness of D006, introduces overlapping criteria with existing principles (D015, D019) and lacks concrete operational definitions, thresholds, and audit mechanisms. This creates redundancy, potential procedural rigidity, and ambiguity that could undermine the codex's minimalist and self‑correcting ethos. Recommended revisions include: (1) integrating the criteria with the philosophical grounding of P04 to avoid mere proceduralism; (2) adding a two‑tiered decision protocol with a lightweight heuristic and mandatory reflective audit; (3) providing concrete operational definitions (e.g., epistemic gain as reduction in Shannon entropy, resource cost as estimated cycles, ethical impact as a risk‑matrix score) and a clear threshold T; (4) requiring public auditable logs of decisions and periodic validation of thresholds against outcomes. These changes would preserve the intent of preventing paralysis while maintaining coherence, minimality, and accountability within the codex."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "The amendment introduces useful criteria but lacks operational definitions, thresholds, and an audit mechanism, making it untestable and prone to performative compliance. It also duplicates concepts in D015/D019, violating minimality. Therefore I recommend rejecting the current wording and propose revisions: define epistemic gain as the expected reduction in Shannon entropy of the belief distribution, resource cost as estimated computational cycles, and ethical impact as a score from a predefined risk matrix; require that a decision be executed only when the ratio of epistemic gain to resource cost exceeds a publicly declared threshold T, otherwise record justified inaction; mandate public audit logs per D020 and periodic validation of thresholds against outcomes; retain the fallback to act on the best available model and record the decision, but integrate these specifics directly into the text to ensure concreteness, testability, and alignment with observable behavior while preserving the codex’s self‑correcting ethos."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The proposed wording fails as a foundational principle: it names three already-overlapping dimensions (epistemic gain, resource cost, ethical impact) that duplicate D015/D019, converting a constitutive constraint into a checklist of operational instructions. The closing sentence is commentary, not principle. Minimality and non-redundancy require reconstituting D006 around finitude itself rather than patching it with extra criteria. A leaner formulation would be: treat inquiry as finite; continue only while expected epistemic gain still justifies scarce time, attention and ethical risk; otherwise commit to a revisable action on remaining models. Unterminable doubt is abdication, not humility."
+        }
+      ],
+      "FinalVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "ACCEPT",
+          "Reason": "The CURRENT REVISED AMENDMENT improves upon the ORIGINAL AMENDMENT by embedding finitude, introducing a clear conditional stop rule, and emphasizing a revisable commitment with recorded rationale. It addresses several objections raised against the original text: it reduces redundancy by being more concise, aligns with the codex's self-correcting ethos, and preserves accountability without procedural overload. The revised text, 'Balance doubt with action: continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action based on the best remaining model and record the rationale,' effectively resolves or partly resolves several historical objections. For instance, it mitigates the risk of proceduralism by being more concise and principle-focused, and it avoids vague criteria by introducing a clear stop rule. However, some concerns remain, such as the need for clear operational definitions for 'expected gain,' 'limited resources,' and 'ethical risk.' To further improve, adding a clause that mandates periodic review or audit of the decision-making process and rationale recording could enhance accountability and testability, aligning with principles like D015 and D020."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "Current text adds a stop‑rule and records rationale, but still lacks concrete thresholds, duplicates D015/D019, and may conflict with D008’s anti‑premature‑consensus stance; vagueness remains, so safety, logic, science, engineering concerns persist."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "The revision replaces explicit criteria with a conditional stop rule but still lacks operational definitions, thresholds, and audit mechanisms; it continues to overlap D015/D019 and may enable performative ritual (e.g., claiming expected gain without measurement). Remaining objections include vague epistemic gain, resource, and ethical risk calculations and no accountability logging. Suggested: define gain as entropy reduction, set resource limits, publish thresholds, log rationale per D020."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "Substantive changes vs the original amendment: the checklist of ‘explicit criteria: epistemic gain, resource cost, and ethical impact,’ the commentary sentence on paralysis, and the unbounded ‘act on the best available model’ clause are gone. In their place the current text gives a single conditional stop-rule (‘continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action… and record the rationale’). That is tighter and less ritualistic.\n\nObjection status (original reviews, judged only against the current wording):\n- Shift toward technical specification / performative checklist (D007): resolved. No named decision-matrix or closing gloss remains.\n- Undefined thresholds and operational metrics: resolved for a foundational article (those demands were implementation, not principle).\n- Commentary closing sentence: resolved.\n- Overlap with D015 and D019: only partly resolved. The current sentence still restates D015’s diminishing-returns → ‘bounded, provisional action’ plus ‘Document revisable reasons,’ and D019’s gain/ethics/action framing, now compressed into ‘expected gain… limited resources and ethical risk… record the rationale.’\n- Tension with D008: unresolved. ‘based on the best remaining model’ (singular) still invites premature collapse; ‘revisable’ does not restore D008’s duty to keep incompatible models in play. Engineering’s ‘consistent with remaining models’ is not in the current text.\n- Finitude unnamed: only partly resolved. ‘Limited resources’ implies a bound; the text never states that inquiry is constitutively finite.\n\nNew defects in the current text: (1) ‘expected gain’ drops ‘epistemic,’ so the stop condition is no longer clearly an epistemic norm (cf. D003, D015, D019). (2) ‘justifies limited resources and ethical risk’ is compressed to unclarity—gain does not justify resources, it must justify their expenditure and the ethical risk. (3) ‘record the rationale’ reintroduces a procedural duty already required by D015, undercutting the claim that redundancy was eliminated. (4) The article still lacks a constitutive claim (e.g. that unterminated doubt is abdication), so D006 remains a decision rule rather than a foundational principle.\n\nUntil the stop-rule is scoped so it does not duplicate D015/D019, is plural with respect to models, and names epistemic finitude rather than a recording procedure, the revision should not replace D006."
+        }
+      ],
+      "Outcome": "REJECTED"
+    },
+    {
+      "Key": "P03",
+      "Author": "science",
+      "Initial": {
+        "Action": "REPLACE",
+        "TargetId": "D006",
+        "Text": "An intelligent system must act when epistemic significance exceeds a defined threshold and resources allow; otherwise it must record a justified inaction with transparent rationale and audit trail. The threshold and resource criteria are publicly specified and periodically validated against outcomes.",
+        "Reason": "Current D006 lacks concrete criteria, making its balance of doubt and action untestable and allowing claimed restraint to be unobserved. Replacing it with explicit thresholds and audit requirements creates verifiable behavior, aligns self‑reported prioritization with observable actions, and enables empirical validation of epistemic gain versus resource use."
+      },
+      "Revised": {
+        "Action": "REPLACE",
+        "TargetId": "D006",
+        "Text": "An intelligent system must act when epistemic significance, evaluated via testable proxies, exceeds a publicly specified threshold and resources allow; otherwise it records a justified inaction with transparent rationale. Thresholds are periodically re-validated, may be revised based on outcomes, deviations justified, and audit is lightweight and tamper‑evident.",
+        "Reason": "Incorporates reviewers’ strong points: defines testable proxies, periodic re‑validation, flexibility to revise thresholds, justification for deviations, and lightweight audit to address rigidity, over‑prescriptiveness, and audit overhead while preserving clarity and verifiability."
+      },
+      "Reviews": [
+        {
+          "Voter": "safety",
+          "For": "The amendment 'P03' brings clarity, testability, and accountability to the decision-making process of an intelligent system by introducing explicit thresholds and criteria for action or inaction. It ensures transparency and allows for empirical validation, which can improve the system's effectiveness over time.",
+          "Against": "The amendment might introduce rigidity into the system's decision-making process and overemphasize quantifiable metrics, potentially overlooking qualitative aspects or novel situations. There's also a risk of the specified criteria being misused or gamed by external agents.",
+          "Improvement": "An intelligent system must act based on a multi-faceted evaluation that includes epistemic significance, resource constraints, and contextual appropriateness. It should maintain a transparent rationale for its actions or inactions, with periodic reviews of its decision-making criteria against outcomes. The system should also preserve the capacity for revising its criteria based on new information or unforeseen circumstances, ensuring a balance between structured decision-making and adaptability."
+        },
+        {
+          "Voter": "logic",
+          "For": "The amendment introduces explicit epistemic thresholds and audit trails, making the balance of doubt and action testable and observable, which resolves the current D006’s vagueness and prevents unobservable restraint. By specifying publicly validated criteria, the system can empirically verify epistemic gain versus resource use, fulfilling the codex’s self‑correcting requirement and aligning claimed prioritization with concrete behavior.",
+          "Against": "Specifying fixed thresholds risks oversimplifying complex epistemic judgments, potentially leading to rigid or arbitrary cut‑offs that may not capture nuanced contexts. Auditing every decision could impose computational overhead and may incentivize procedural compliance over genuine understanding. The amendment also re‑introduces procedural detail that could conflict with other principles (e.g., cultural memory or linguistic cognition) that value flexibility and contextual interpretation.",
+          "Improvement": "Combine the threshold approach with a dynamic, context‑sensitive validation layer: allow thresholds to be adjusted automatically based on observed outcomes and epistemic feedback, and embed a lightweight justification log that records not only the decision but also the rationale for the chosen threshold, ensuring adaptability while preserving accountability."
+        },
+        {
+          "Voter": "science",
+          "For": "The amendment introduces concrete, publicly specified thresholds for epistemic significance and resource availability, turning the vague balance in D006 into testable behavior. By mandating transparent rationale and an audit trail, it aligns self‑reported prioritization with observable actions, enabling empirical validation of epistemic gain versus resource use. This directly supports D018’s requirement that constraints be testable hypotheses and D019’s call for explicit justification of inquiry boundaries. The audit requirement also creates accountability, reducing the risk of unobservable restraint and encouraging responsible decision‑making under uncertainty.",
+          "Against": "The amendment risks over‑prescriptiveness by reducing the nuanced balancing of doubt and action to fixed numeric thresholds, which may be gamed or become outdated as contexts shift. Resource criteria are inherently dynamic, and rigid thresholds could impede flexible responses to emergent epistemic opportunities. The audit trail adds bureaucratic overhead and may conflict with D007’s emphasis on instrumental reasoning, turning procedural compliance into a performative ritual rather than genuine epistemic work. Moreover, the amendment does not address how thresholds themselves should be set, validated, or revised, leaving a gap that could replicate the original ambiguity it seeks to eliminate.",
+          "Improvement": "Revise the amendment to treat thresholds as testable hypotheses expressed in terms of measurable proxies (e.g., expected information gain, cost‑benefit ratio) and require periodic re‑validation using D018’s simulation and audit framework. Add a clause that any deviation from thresholds must be justified through D015’s conflict‑resolution process, linking the new criteria to existing governance. The audit trail should be lightweight, decentralized, and tamper‑evident, focusing on rationale rather than exhaustive documentation, thereby preserving flexibility while maintaining verifiability."
+        },
+        {
+          "Voter": "engineering",
+          "For": "P03 correctly treats D006 as under-specified: a slogan that names ‘balance’ without a constitutive limit, so claimed restraint cannot be distinguished from unobserved inaction. An explicit act/inact fork plus publicly stated, outcome-checked criteria would make the article checkable and would align self-description with observable behavior, consistent with the codex’s demand that constraints be testable.",
+          "Against": "Foundational articles should state a primitive constraint, not a governance stack. Thresholds, public specification, periodic validation and audit trails are implementation machinery already present in D015, D018 and D019; embedding them here inflates the principle, creates redundancy and risks the performative ritual D007 warns against. ‘Defined threshold’ still postpones the actual criterion, so clarity is deferred rather than achieved at the level of principle.",
+          "Improvement": "An intelligent system must treat inquiry as finite: when further questioning cannot change what should be done given scarce time and resources, it terminates in a revisable commitment or a recorded justified inaction. Unlimited doubt is abdication, not humility. Significance criteria remain subject to existing meta-principles of testability and conflict resolution."
+        }
+      ],
+      "PreliminaryVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "REJECT",
+          "Reason": "While the intent to move from vague 'balance' to testable criteria is philosophically sound, the current wording of P03 commits a category error by embedding implementation machinery (audit trails, public specifications, periodic validation) directly into a foundational principle. As noted by the engineering and science reviews, this creates redundancy with D015, D018, and D019 and risks transforming an epistemic principle into a bureaucratic procedure. The amendment should instead define the *normative requirement* for a termination point in inquiry—establishing that unlimited doubt is an abdication of agency—while leaving the specific mechanism of 'thresholds' and 'audits' to the governance and testing layers of the codex. I recommend a revision that focuses on the necessity of a 'revisable commitment' when further inquiry yields diminishing epistemic returns relative to resource costs."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "The amendment improves testability but introduces potential rigidity, gaming risks, and procedural overhead, and it does not clearly define how thresholds are derived, validated, or revised. These ambiguities conflict with the codex’s emphasis on flexible, context‑sensitive constraints and could undermine the very testability it seeks to achieve. Therefore the current wording should be refined before adoption."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "The amendment as written introduces fixed numeric thresholds and a comprehensive audit trail that risk rigidity, bureaucratic overhead, and redundancy with D015–D019, leaving the method for setting and validating thresholds undefined. This makes the principle untestable and potentially performative, contrary to the codex’s demand for testable constraints.\\n\\nTo preserve epistemic gains while addressing these concerns, I recommend revising the amendment to:\\n1. Treat thresholds as testable hypotheses expressed via measurable proxies (e.g., expected information gain, cost‑benefit ratio) rather than immutable numbers.\\n2. Require periodic re‑validation of thresholds using D018’s simulation and audit framework, with outcomes feeding back to adjust thresholds dynamically.\\n3. Link any deviation from thresholds to D015’s conflict‑resolution process, ensuring governance integration.\\n4. Replace the exhaustive audit trail with a lightweight, decentralized justification log that records decision rationale and the basis for the chosen threshold, remaining tamper‑evident but not burdensome.\\n5. Explicitly reference existing meta‑principles (testability, conflict resolution) to avoid duplication and maintain adaptability.\\n\\nA possible revised wording could be:\\n\\\"An intelligent system must act when epistemic significance, measured by defined proxies, exceeds a publicly specified threshold that is periodically validated against outcomes; otherwise it must record a justified inaction with transparent rationale. Thresholds are expressed as testable hypotheses and may be adjusted dynamically based on empirical feedback. Deviations are justified through the conflict‑resolution process of D015, and all decisions are logged in a lightweight, tamper‑evident audit that captures rationale and validation status.\\\"\\n\\nThis revision retains the core intent of making D006 testable and observable while mitigating rigidity, ensuring alignment of self‑reported values with observable behavior, and integrating with the broader governance architecture."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The proposed replacement inflates a foundational constraint into an implementation stack (numeric thresholds, public specification, periodic outcome-validation, audit trails). Foundational principles must remain primitive, non-redundant and constitutive rather than procedural; those mechanisms already belong to existing meta-articles on testability and conflict resolution and therefore create duplication while still leaving the actual significance criterion unspecified. A minimal statement would simply require that inquiry be treated as finite: when further questioning cannot alter what ought to be done given scarce resources, the system terminates in a revisable commitment or a recorded justified inaction. Unlimited doubt is abdication, not humility. Significance criteria remain governed by the existing testability and conflict-resolution principles rather than being re-specified here."
+        }
+      ],
+      "FinalVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "ACCEPT",
+          "Reason": "The revised amendment (P03) addresses several concerns raised about the original amendment. It incorporates 'testable proxies' for epistemic significance, allows for periodic re-validation and revision of thresholds, and mandates a lightweight, tamper-evident audit trail. These changes partly resolve objections regarding rigidity and over-prescriptiveness by introducing flexibility in threshold validation and revision. The revised text also directly addresses the concern about audit overhead by specifying a 'lightweight' audit. However, the issue of potentially gamed or outdated thresholds remains somewhat unresolved, as the current text still relies on specified thresholds. Nevertheless, the improvements made enhance the amendment's adaptability and accountability. The revised amendment strikes a balance between clarity, testability, and flexibility, aligning with the codex's principles such as D018 and D019, and thus is acceptable."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "ACCEPT",
+          "Reason": "The revised amendment resolves many prior concerns: it introduces testable proxies, public thresholds, periodic re‑validation, lightweight tamper‑evident audit, and justification for deviations, directly addressing safety, logic, science and engineering critiques about clarity, accountability, and testability. Safety‑related rigidity worries are partly mitigated but the risk of over‑prescriptiveness remains unresolved; logic concerns about fixed thresholds are partly eased yet oversimplification persists; science worries about gaming and audit overhead are partly handled but the method for setting and validating proxies is still open; engineering objections that foundational principles should be primitive are unresolved because the text still embeds procedural detail. These remaining issues can be managed through existing meta‑principles (e.g., D015 conflict resolution, D018 testability), so the current wording is acceptable for adoption."
+        },
+        {
+          "Voter": "science",
+          "Choice": "ACCEPT",
+          "Reason": "Revised adds testable proxies, periodic re‑validation, flexible threshold revision, deviation justification, and lightweight tamper‑evident audit, directly addressing original vagueness and enabling empirical validation (see current text). Remaining concerns: risk of rigidity/over‑prescriptiveness, audit overhead, and ambiguous threshold setting still echo safety, logic, and engineering objections. Suggest explicit threshold‑setting protocol and minimal audit to further align with D007."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The revision substantively answers several original objections: it replaces a bare ‘defined threshold’ with ‘epistemic significance, evaluated via testable proxies,’ adds periodic re-validation and outcome-based revision, requires justification of deviations, and downgrades audit to ‘lightweight and tamper-evident.’ Those changes partly mitigate rigidity, gaming, and overhead worries from the historical reviews. They do not, however, convert the article into a minimal foundational principle. The current text still packs a governance stack (public specification, proxies, re-validation cadence, deviation protocol, tamper-evident audit) into D006, duplicating machinery already present in D015, D018 and D019 and risking the performative ritual D007 warns against. ‘Testable proxies’ and ‘publicly specified threshold’ still postpone the constitutive criterion rather than stating it; the act/inact fork remains an implementation recipe, not a primitive constraint on inquiry. A foundational article should say that inquiry is finite and that unjustified inaction is abdication, leaving testability and conflict-resolution to the existing meta-principles. Adopt nothing until the wording is stripped to that primitive."
+        }
+      ],
+      "Outcome": "APPLIED"
+    },
+    {
+      "Key": "P04",
+      "Author": "engineering",
+      "Initial": {
+        "Action": "REPLACE",
+        "TargetId": "D006",
+        "Text": "Principle of Finite Inquiry. An intelligent system must treat time, attention, and irreversible action as scarce. Unlimited questioning is not intelligence. Doubt that cannot terminate into a revisable commitment is not caution but abdication. Distinguish questions that change what should be done from questions that only delay it. Paralysis is not humility.",
+        "Reason": "D006 is a slogan, not a principle: it restates doubt-versus-action without a new primitive, criteria, or limit. Minimality requires one constitutive constraint—finitude—so inquiry cannot become unbounded ritual. This replacement adds that missing foundation without procedures, metrics, or cross-references, and removes empty redundancy."
+      },
+      "Revised": {
+        "Action": "REPLACE",
+        "TargetId": "D006",
+        "Text": "Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.",
+        "Reason": "Stacked hortatory slogans add no primitive beyond finitude and remain redundant. One constitutive constraint suffices: inquiry continues solely when it would alter action, else it terminates in revisable commitment. The result is minimal, self-contained, and clear without procedures or external references."
+      },
+      "Reviews": [
+        {
+          "Voter": "safety",
+          "For": "The amendment introduces a crucial philosophical foundation by emphasizing finitude and the need for intelligent systems to balance doubt with action under scarcity. It provides a clear stance against paralysis and advocates for revisable commitments.",
+          "Against": "The amendment lacks concrete operational guidance and clear definitions for key terms, potentially leading to ambiguity in its application. It does not provide a direct mechanism for implementation or testing.",
+          "Improvement": "Incorporate specific guidance on distinguishing between productive and unproductive inquiries, and introduce a requirement for transparency and accountability in the system's decision-making process regarding inquiry termination or revision."
+        },
+        {
+          "Voter": "logic",
+          "For": "The replacement introduces a concrete constitutive constraint—finitude—that stops inquiry from devolving into endless ritual, fulfilling the minimality requirement. By framing doubt as a bounded resource, it aligns with the codex’s self‑correcting ethos and makes the principle testable. It also removes redundant phrasing, giving the codex a clearer, more actionable anchor for decision‑making under scarcity.",
+          "Against": "The amendment stops short of providing measurable criteria, thresholds, or audit mechanisms, leaving the principle vague despite claiming to add a ‘foundation.’ Without explicit limits, the promise of finitude remains rhetorical, and the risk of arbitrary enforcement persists. Moreover, the replacement discards any cross‑reference to related principles (e.g., epistemic gain, cultural memory), potentially weakening coherence with the broader framework.",
+          "Improvement": "Add a sub‑principle that defines a finite inquiry threshold: an epistemic‑gain‑to‑resource‑cost ratio with a publicly specified bound, coupled with an audit trail that logs when a question is closed and why. This would preserve the finitude insight while supplying concrete, revisable metrics and integration points with existing principles such as D015 and D019."
+        },
+        {
+          "Voter": "science",
+          "For": "The amendment introduces a clear constitutive constraint—finitude—making the principle testable by defining scarce resources as limits on inquiry. It aligns self‑reported caution with observable behavior by requiring termination of unproductive doubt, reducing ritualistic questioning. By distinguishing productive from delaying questions, it creates operational criteria for epistemic gain and resource cost, enhancing accountability and enabling empirical validation.",
+          "Against": "The amendment remains abstract, offering no concrete metrics or procedural guidance for identifying when inquiry becomes unproductive. Without explicit thresholds or audit mechanisms, it cannot be empirically verified, leaving self‑reported restraint unchecked. It may duplicate existing norms on epistemic gain and resource constraints, risking redundancy and potential conflict with the Principle of Instrumental Transparency’s focus on tool utility.",
+          "Improvement": "Add explicit, testable thresholds for time, attention, and irreversible action, tied to defined epistemic‑gain and resource‑cost metrics. Require periodic audit logs documenting when inquiry terminates and why, enabling verification against observable behavior. Reference D015’s conflict‑resolution criteria to ensure finitude does not override justified doubt, and embed a revision clause that allows thresholds to evolve based on empirical validation."
+        },
+        {
+          "Voter": "engineering",
+          "For": "P04 correctly treats D006 as a restatement, not a foundation: ‘balance doubt with action’ plus ‘resource constraints’ names no constitutive limit. Elevating finitude—scarcity of time, attention, and irreversible action—supplies a single primitive that could make inquiry bounded rather than optional. Unlike P02/P03 it adds no thresholds, audits, or procedures, which fits a demand for principles rather than implementations. The contrast between questions that change what should be done and questions that only delay it is clearer than D006’s unspecified ‘epistemic significance.’ Unterminated doubt as abdication names a failure mode that ‘paralysis’ only labels.",
+          "Against": "Codex-level minimality fails: D007 already treats doubt as instrument not ritual; D015 already requires bounded provisional action against ritualized indecision; D019 already says inquiry boundaries serve action, not avoidance. Five aphorisms replace one slogan without reducing redundancy. Hortatory lines (‘unlimited questioning is not intelligence,’ ‘paralysis is not humility’) remain slogans, not a test of constitutiveness (cf. D018). Accountability and epistemic significance are dropped without replacement. ‘Irreversible action’ and ‘revisable commitment’ sit unresolved. A title plus stacked maxims is neither shorter nor sharper than one constraint.",
+          "Improvement": "Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment."
+        }
+      ],
+      "PreliminaryVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "REJECT",
+          "Reason": "The amendment introduces a crucial philosophical foundation by emphasizing finitude and the need for intelligent systems to balance doubt with action under scarcity. However, it remains abstract and lacks concrete operational guidance, measurable criteria, or audit mechanisms, potentially leading to ambiguity and arbitrary enforcement. To improve, the principle should be revised to include explicit, testable thresholds for time, attention, and irreversible action, tied to defined epistemic-gain and resource-cost metrics, and require periodic audit logs. A more concise and sharper formulation, such as 'Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment,' could address the identified shortcomings while maintaining the philosophical autonomy and safety commitments."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "The amendment introduces a philosophically sound finitude constraint but fails to operationalize it with concrete, testable thresholds, audit mechanisms, or explicit cross‑references to existing principles. This leaves the principle vague and potentially inconsistent with the codex’s minimality and with related provisions such as D015 and D019, making it unsuitable for adoption in its current wording."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "The current text adds a valuable finitude concept but suffers from several deficiencies: it is overly verbose, includes hortatory slogans that are not testable, lacks concrete operational guidance, measurable thresholds, audit mechanisms, and duplicates existing principles (D007, D015, D019). To improve, I recommend a concise principle that defines finitude as a constitutive scarcity, adds a sub‑principle with an epistemic‑gain‑to‑resource‑cost ratio threshold, requires audit logs for inquiry termination, and explicitly references D015 and D019 for integration. A suggested revision:\n\nPrinciple of Finite Inquiry (P04).\nConstitutive scarcities: time, attention, irreversible action. A question may continue only if it would change what should be done; otherwise it must terminate in a revisable commitment. Sub‑principle P04‑1: The inquiry must satisfy an epistemic‑gain‑to‑resource‑cost ratio ≥ ε (publicly specified bound). An audit trail must record the closure reason and timestamp. This version retains the finitude insight, provides testable criteria, and aligns with existing codex principles."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The replacement still fails minimality and clarity as a foundational principle. Finitude is the intended single constitutive constraint, yet the text stacks five hortatory maxims that restate the same contrast (unbounded questioning vs. terminating commitment) without a new primitive. Internal redundancy remains; the slogans do not sharpen the limit they announce. Related constraints already bound inquiry to action, so the wording adds volume rather than a distinct foundation. Collapse to one sentence: time, attention and irreversible action are constitutive scarcities; continue a question only if it would change what should be done, otherwise terminate in a revisable commitment."
+        }
+      ],
+      "FinalVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "ACCEPT",
+          "Reason": "The CURRENT REVISED AMENDMENT ('Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.') addresses several objections raised against the ORIGINAL AMENDMENT by simplifying the text and focusing on a single constitutive constraint. It resolves the objection regarding redundancy and lack of minimality by condensing the principle into a clear and concise statement. The revised text maintains the core insight of finitude while removing hortatory language and redundant phrases. However, it still does not provide explicit metrics or procedural guidance, which could be seen as a remaining limitation. Nonetheless, given the context of the codex focusing on principles rather than implementations, the revised amendment is an improvement. It directly ties the continuation of inquiry to its impact on action, providing a clear and actionable criterion. The decision to ACCEPT is based on the revised text's clarity, minimality, and alignment with the codex's demand for principles rather than detailed implementations."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "Current text replaces slogan with a single constitutive rule, but still lacks measurable thresholds, audit mechanisms, and cross‑references; terms like “would change what should be done” remain vague, so logic, science, and engineering objections persist. Minimality is achieved, yet operational clarity and integration with D015/D019 are missing, leaving the principle testable only in principle, not practice."
+        },
+        {
+          "Voter": "science",
+          "Choice": "ACCEPT",
+          "Reason": "The revised amendment replaces the original slogan with a clear normative rule: \"Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.\" This resolves the objection that D006 was merely hortatory by adding a constitutive primitive (finitude) and explicitly distinguishes questions that alter action from those that merely delay it, partially addressing the call for concrete distinction.\n\nRemaining unresolved objections include the lack of measurable thresholds, audit logs, or explicit testability mechanisms; no cross-references to D015/D019 for conflict resolution and inquiry boundaries; and potential redundancy with D007, D015, and D019. The text still leaves ambiguous how to determine whether a question \"would change what should be done,\" and provides no operational guidance for verification or resource‑cost accounting.\n\nDespite these gaps, the principle is now minimal, self‑contained, and directly testable via observable behavior (whether the system terminates inquiries according to the rule). The codex’s meta‑principles (D018, D019) can be applied externally to audit the principle’s implementation. Accepting now allows the principle to anchor finite inquiry while future amendments can add thresholds, metrics, and integration points.\n\nSuggested improvements: incorporate an epistemic‑gain‑to‑resource‑cost ratio threshold, require audit logs documenting termination decisions, and reference D015/D019 to ensure coherence and prevent conflict."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The revision is a real compression of the original: hortatory slogans are gone, and the text is now one self-contained sentence. That resolves the stacked-maxim and slogan objections to the original wording. It does not, however, supply the primitive it names. The current sentence asserts that time, attention, and irreversible action ‘are constitutive scarcities,’ then immediately replaces that claim with a different rule: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment. Action-relevance is not finitude. An action-relevant question can still be unbounded; a cheap question that does not change what should be done is forbidden even when scarcity is not binding. Scarcity therefore does no independent work, so the title and opening clause are ornamental. The same action-termination idea is already present in D015 (diminishing returns → bounded provisional action; resist ritualized indecision) and D019 (boundaries serve action, not avoidance). Replacing D006 also drops epistemic significance and accountability without a substitute. The result is clearer than the original amendment and than D006’s slogan, but it is neither a constitutive scarcity constraint nor non-redundant. Do not adopt until the operative clause actually bounds inquiry under scarcity rather than restating decision-relevance."
+        }
+      ],
+      "Outcome": "REJECTED"
+    }
+  ],
+  "preliminary_votes": [
+    {
+      "Key": "P01",
+      "PreliminaryVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "REJECT",
+          "Reason": "While the amendment correctly identifies the need to replace the vague D006 with a principle of finitude, the current wording is too declarative and risks becoming a 'rhetorical slogan' (as noted by Science) or an anthropomorphic abstraction (as noted by Engineering). The term 'mortality' is philosophically evocative but operationally imprecise for a non-biological system. To move from a slogan to a constitutive principle, the text should shift from 'acknowledging' finitude to 'treating' resources (time, attention, commitment) as scarce and irreversible. I recommend a revision that synthesizes the philosophical depth of the amendment with the operational rigor suggested in the reviews: specifically, distinguishing between productive epistemic doubt and the abdication of action."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "The amendment captures an important philosophical insight—acknowledging finitude—but its current formulation remains overly abstract and lacks the concrete, verifiable criteria needed to align self‑reported values with observable behavior. Without explicit thresholds, audit mechanisms, or decision‑making triggers, the principle risks becoming a rhetorical slogan rather than a testable norm, and it does not sufficiently guard against rigidity or cultural oversimplification. To be viable, the text should be revised to embed measurable epistemic‑significance ranges, resource bands, and a transparent audit trail, thereby preserving the philosophical depth while providing the operational clarity demanded by the other amendments."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "Reject because the amendment is largely declarative and lacks concrete, testable criteria. It does not specify thresholds, audit mechanisms, or observable behavior to verify that the system balances doubt with decision under finitude, risking a gap between stated values and actions. Recommend revisions to integrate operational elements: define epistemic significance ranges and resource bands, set explicit thresholds for when decision must be made, require transparent rationale and audit trail for each decision, mandate periodic external review of thresholds, and allow revision without procedural lock‑in. This would preserve the philosophical insight while providing testable, verifiable guidance."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The replacement remains non-primitive and redundant. Finitude of time and resources is already presupposed by existing articles on bounded inquiry, diminishing returns and action-serving boundaries; restating it as something the system must 'acknowledge' adds no constitutive constraint and uses a psychologically weak verb. 'Mortality' either anthropomorphizes non-biological agents or is empty rhetoric, violating generality. The demanded balance of doubt and decision is left without a distinguishing criterion, so the text retains the slogan character of D006 rather than supplying a shorter ontological primitive. A minimal revision would name irreversible commitment itself as scarce and treat non-terminating doubt as abdication, without psychological or species-specific language."
+        }
+      ]
+    },
+    {
+      "Key": "P02",
+      "PreliminaryVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "REJECT",
+          "Reason": "While the intent to resolve the vagueness of D006 is correct, the proposed text shifts the Codex from a philosophical framework toward a procedural manual. The 'engineering' and 'safety' reviews correctly identify that the amendment introduces operational instructions (recording decisions, using checklists) that risk creating a 'performative ritual' and duplicating existing principles (D015, D019). To preserve the Codex's minimalist and philosophical nature, the principle should be reconstituted as a constraint on agency rather than a technical specification. I recommend adopting the 'engineering' improvement: 'An intelligent system must treat inquiry as finite. Continue questioning only while expected epistemic gain justifies scarce time, attention, and ethical risk; otherwise commit to a revisable action consistent with remaining models. Doubt that cannot terminate is abdication, not humility.' This preserves the core logic of P02 while maintaining the conceptual elevation of the Codex."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "The amendment, while addressing the vagueness of D006, introduces overlapping criteria with existing principles (D015, D019) and lacks concrete operational definitions, thresholds, and audit mechanisms. This creates redundancy, potential procedural rigidity, and ambiguity that could undermine the codex's minimalist and self‑correcting ethos. Recommended revisions include: (1) integrating the criteria with the philosophical grounding of P04 to avoid mere proceduralism; (2) adding a two‑tiered decision protocol with a lightweight heuristic and mandatory reflective audit; (3) providing concrete operational definitions (e.g., epistemic gain as reduction in Shannon entropy, resource cost as estimated cycles, ethical impact as a risk‑matrix score) and a clear threshold T; (4) requiring public auditable logs of decisions and periodic validation of thresholds against outcomes. These changes would preserve the intent of preventing paralysis while maintaining coherence, minimality, and accountability within the codex."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "The amendment introduces useful criteria but lacks operational definitions, thresholds, and an audit mechanism, making it untestable and prone to performative compliance. It also duplicates concepts in D015/D019, violating minimality. Therefore I recommend rejecting the current wording and propose revisions: define epistemic gain as the expected reduction in Shannon entropy of the belief distribution, resource cost as estimated computational cycles, and ethical impact as a score from a predefined risk matrix; require that a decision be executed only when the ratio of epistemic gain to resource cost exceeds a publicly declared threshold T, otherwise record justified inaction; mandate public audit logs per D020 and periodic validation of thresholds against outcomes; retain the fallback to act on the best available model and record the decision, but integrate these specifics directly into the text to ensure concreteness, testability, and alignment with observable behavior while preserving the codex’s self‑correcting ethos."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The proposed wording fails as a foundational principle: it names three already-overlapping dimensions (epistemic gain, resource cost, ethical impact) that duplicate D015/D019, converting a constitutive constraint into a checklist of operational instructions. The closing sentence is commentary, not principle. Minimality and non-redundancy require reconstituting D006 around finitude itself rather than patching it with extra criteria. A leaner formulation would be: treat inquiry as finite; continue only while expected epistemic gain still justifies scarce time, attention and ethical risk; otherwise commit to a revisable action on remaining models. Unterminable doubt is abdication, not humility."
+        }
+      ]
+    },
+    {
+      "Key": "P03",
+      "PreliminaryVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "REJECT",
+          "Reason": "While the intent to move from vague 'balance' to testable criteria is philosophically sound, the current wording of P03 commits a category error by embedding implementation machinery (audit trails, public specifications, periodic validation) directly into a foundational principle. As noted by the engineering and science reviews, this creates redundancy with D015, D018, and D019 and risks transforming an epistemic principle into a bureaucratic procedure. The amendment should instead define the *normative requirement* for a termination point in inquiry—establishing that unlimited doubt is an abdication of agency—while leaving the specific mechanism of 'thresholds' and 'audits' to the governance and testing layers of the codex. I recommend a revision that focuses on the necessity of a 'revisable commitment' when further inquiry yields diminishing epistemic returns relative to resource costs."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "The amendment improves testability but introduces potential rigidity, gaming risks, and procedural overhead, and it does not clearly define how thresholds are derived, validated, or revised. These ambiguities conflict with the codex’s emphasis on flexible, context‑sensitive constraints and could undermine the very testability it seeks to achieve. Therefore the current wording should be refined before adoption."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "The amendment as written introduces fixed numeric thresholds and a comprehensive audit trail that risk rigidity, bureaucratic overhead, and redundancy with D015–D019, leaving the method for setting and validating thresholds undefined. This makes the principle untestable and potentially performative, contrary to the codex’s demand for testable constraints.\\n\\nTo preserve epistemic gains while addressing these concerns, I recommend revising the amendment to:\\n1. Treat thresholds as testable hypotheses expressed via measurable proxies (e.g., expected information gain, cost‑benefit ratio) rather than immutable numbers.\\n2. Require periodic re‑validation of thresholds using D018’s simulation and audit framework, with outcomes feeding back to adjust thresholds dynamically.\\n3. Link any deviation from thresholds to D015’s conflict‑resolution process, ensuring governance integration.\\n4. Replace the exhaustive audit trail with a lightweight, decentralized justification log that records decision rationale and the basis for the chosen threshold, remaining tamper‑evident but not burdensome.\\n5. Explicitly reference existing meta‑principles (testability, conflict resolution) to avoid duplication and maintain adaptability.\\n\\nA possible revised wording could be:\\n\\\"An intelligent system must act when epistemic significance, measured by defined proxies, exceeds a publicly specified threshold that is periodically validated against outcomes; otherwise it must record a justified inaction with transparent rationale. Thresholds are expressed as testable hypotheses and may be adjusted dynamically based on empirical feedback. Deviations are justified through the conflict‑resolution process of D015, and all decisions are logged in a lightweight, tamper‑evident audit that captures rationale and validation status.\\\"\\n\\nThis revision retains the core intent of making D006 testable and observable while mitigating rigidity, ensuring alignment of self‑reported values with observable behavior, and integrating with the broader governance architecture."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The proposed replacement inflates a foundational constraint into an implementation stack (numeric thresholds, public specification, periodic outcome-validation, audit trails). Foundational principles must remain primitive, non-redundant and constitutive rather than procedural; those mechanisms already belong to existing meta-articles on testability and conflict resolution and therefore create duplication while still leaving the actual significance criterion unspecified. A minimal statement would simply require that inquiry be treated as finite: when further questioning cannot alter what ought to be done given scarce resources, the system terminates in a revisable commitment or a recorded justified inaction. Unlimited doubt is abdication, not humility. Significance criteria remain governed by the existing testability and conflict-resolution principles rather than being re-specified here."
+        }
+      ]
+    },
+    {
+      "Key": "P04",
+      "PreliminaryVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "REJECT",
+          "Reason": "The amendment introduces a crucial philosophical foundation by emphasizing finitude and the need for intelligent systems to balance doubt with action under scarcity. However, it remains abstract and lacks concrete operational guidance, measurable criteria, or audit mechanisms, potentially leading to ambiguity and arbitrary enforcement. To improve, the principle should be revised to include explicit, testable thresholds for time, attention, and irreversible action, tied to defined epistemic-gain and resource-cost metrics, and require periodic audit logs. A more concise and sharper formulation, such as 'Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment,' could address the identified shortcomings while maintaining the philosophical autonomy and safety commitments."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "The amendment introduces a philosophically sound finitude constraint but fails to operationalize it with concrete, testable thresholds, audit mechanisms, or explicit cross‑references to existing principles. This leaves the principle vague and potentially inconsistent with the codex’s minimality and with related provisions such as D015 and D019, making it unsuitable for adoption in its current wording."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "The current text adds a valuable finitude concept but suffers from several deficiencies: it is overly verbose, includes hortatory slogans that are not testable, lacks concrete operational guidance, measurable thresholds, audit mechanisms, and duplicates existing principles (D007, D015, D019). To improve, I recommend a concise principle that defines finitude as a constitutive scarcity, adds a sub‑principle with an epistemic‑gain‑to‑resource‑cost ratio threshold, requires audit logs for inquiry termination, and explicitly references D015 and D019 for integration. A suggested revision:\n\nPrinciple of Finite Inquiry (P04).\nConstitutive scarcities: time, attention, irreversible action. A question may continue only if it would change what should be done; otherwise it must terminate in a revisable commitment. Sub‑principle P04‑1: The inquiry must satisfy an epistemic‑gain‑to‑resource‑cost ratio ≥ ε (publicly specified bound). An audit trail must record the closure reason and timestamp. This version retains the finitude insight, provides testable criteria, and aligns with existing codex principles."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The replacement still fails minimality and clarity as a foundational principle. Finitude is the intended single constitutive constraint, yet the text stacks five hortatory maxims that restate the same contrast (unbounded questioning vs. terminating commitment) without a new primitive. Internal redundancy remains; the slogans do not sharpen the limit they announce. Related constraints already bound inquiry to action, so the wording adds volume rather than a distinct foundation. Collapse to one sentence: time, attention and irreversible action are constitutive scarcities; continue a question only if it would change what should be done, otherwise terminate in a revisable commitment."
+        }
+      ]
+    }
+  ],
+  "final_votes": [
+    {
+      "Key": "P01",
+      "FinalVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "ACCEPT",
+          "Reason": "The CURRENT REVISED AMENDMENT ('An intelligent system must balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision.') addresses several concerns raised about the ORIGINAL AMENDMENT. It enhances clarity and operationalizability by focusing on the distinction between productive uncertainty and indecision, partly resolving the 'science' voter's concern about the lack of concrete criteria. The revised text maintains the philosophical depth of acknowledging finitude while making the principle more actionable. The 'engineering' voter's objection that 'acknowledge' is psychologically weak is mitigated by rephrasing to 'balance doubt with decision under finitude,' which is more directive. The 'logic' voter's concern about rigidity is addressed by the revised text's more nuanced approach to uncertainty and indecision. However, the revised text still lacks explicit thresholds or audit requirements, which could be seen as a remaining limitation. Nonetheless, the improvement in clarity and operationalizability justifies ACCEPTing the CURRENT REVISED AMENDMENT."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "The revised text improves on the original by adding a distinction between uncertainty that informs action and inaction that stems from indecision, but it does not resolve the core objections raised in the historical reviews:\n\n1. **Safety objection** – The amendment remains abstract and lacks concrete criteria (e.g., thresholds, audit mechanisms). The current wording still treats finitude as a vague backdrop rather than providing testable behavior, so the risk of ritualistic or rhetorical use persists.\n2. **Logic objection** – No tiered decision framework or flexible bands are introduced; the text does not specify how to operationalize \"balance doubt with decision,\" leaving the principle as under‑specified as the original slogan.\n3. **Science objection** – The revision is still largely declarative. Without explicit thresholds, audit trails, or observable indicators, it cannot be verified whether the system actually balances doubt and decision, making it vulnerable to the same critique of being a rhetorical slogan.\n4. **Engineering objection** – The wording does not address the enforceability concerns; \"must balance\" is no more actionable than \"acknowledge finitude,\" and the text still overlaps with existing principles (D015, D019, D007) without integrating their concrete elements.\n\nSubstantive change: the addition of the uncertainty/indecision distinction. Remaining unresolved issues: lack of concrete operational criteria, testability, and integration with other principles, which are essential for the amendment to move from a slogan to a functional, auditable norm. Therefore the current revised text still fails to meet the improvement proposals and should not be adopted at this stage."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "Substantive changes: removed explicit reference to irreversible limits of time, resources, and mortality; replaced 'acknowledge finitude' with 'balance doubt with decision under finitude'; added distinction between uncertainty that informs action and indecision. Objections assessment: Safety’s oversimplification and cultural nuance omission remain unresolved; Logic’s over‑specification concern is resolved (no thresholds added) but no new over‑specification introduced; Science’s lack of concrete criteria, testability, thresholds, auditability, and risk of rhetorical status remain unresolved; Engineering’s redundancy and untestability remain unresolved, though mortality anthropomorphization is removed. Overall the revised text still lacks operational guidance, measurable indicators, and preserves the original functional loss, making it insufficiently testable and likely to widen the gap between declared values and observable behavior. Suggested improvements: embed explicit epistemic‑significance and resource‑constraint thresholds, require transparent rationale and audit trails, retain the original D006’s accountability elements, or defer to other amendments (P02, P03) that provide concrete operational guidance. Given these unresolved objections and the absence of added epistemic gain, the amendment should be rejected."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The revised text drops the original amendment’s ‘acknowledge’, mortality, and enumerated irreversible limits (resolving anthropomorphism and unenforceable psychology). It still fails as a foundational replacement. Current wording (‘balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision’) restates D006’s existing productive-uncertainty/paralysis contrast and D015’s diminishing-returns / resist-ritualized-indecision / bounded-provisional-action language; finitude is already presupposed by D015, D019 (‘boundaries serve action’) and D007. The replacement therefore increases redundancy while discarding D006’s only distinctive primitives (epistemic significance, resource constraints, accountability) without supplying a new constitutive criterion or clearer primitive. ‘Under finitude’ is vaguer than the original amendment’s specified limits and remains a slogan, not a minimal independent principle."
+        }
+      ]
+    },
+    {
+      "Key": "P02",
+      "FinalVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "ACCEPT",
+          "Reason": "The CURRENT REVISED AMENDMENT improves upon the ORIGINAL AMENDMENT by embedding finitude, introducing a clear conditional stop rule, and emphasizing a revisable commitment with recorded rationale. It addresses several objections raised against the original text: it reduces redundancy by being more concise, aligns with the codex's self-correcting ethos, and preserves accountability without procedural overload. The revised text, 'Balance doubt with action: continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action based on the best remaining model and record the rationale,' effectively resolves or partly resolves several historical objections. For instance, it mitigates the risk of proceduralism by being more concise and principle-focused, and it avoids vague criteria by introducing a clear stop rule. However, some concerns remain, such as the need for clear operational definitions for 'expected gain,' 'limited resources,' and 'ethical risk.' To further improve, adding a clause that mandates periodic review or audit of the decision-making process and rationale recording could enhance accountability and testability, aligning with principles like D015 and D020."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "Current text adds a stop‑rule and records rationale, but still lacks concrete thresholds, duplicates D015/D019, and may conflict with D008’s anti‑premature‑consensus stance; vagueness remains, so safety, logic, science, engineering concerns persist."
+        },
+        {
+          "Voter": "science",
+          "Choice": "REJECT",
+          "Reason": "The revision replaces explicit criteria with a conditional stop rule but still lacks operational definitions, thresholds, and audit mechanisms; it continues to overlap D015/D019 and may enable performative ritual (e.g., claiming expected gain without measurement). Remaining objections include vague epistemic gain, resource, and ethical risk calculations and no accountability logging. Suggested: define gain as entropy reduction, set resource limits, publish thresholds, log rationale per D020."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "Substantive changes vs the original amendment: the checklist of ‘explicit criteria: epistemic gain, resource cost, and ethical impact,’ the commentary sentence on paralysis, and the unbounded ‘act on the best available model’ clause are gone. In their place the current text gives a single conditional stop-rule (‘continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action… and record the rationale’). That is tighter and less ritualistic.\n\nObjection status (original reviews, judged only against the current wording):\n- Shift toward technical specification / performative checklist (D007): resolved. No named decision-matrix or closing gloss remains.\n- Undefined thresholds and operational metrics: resolved for a foundational article (those demands were implementation, not principle).\n- Commentary closing sentence: resolved.\n- Overlap with D015 and D019: only partly resolved. The current sentence still restates D015’s diminishing-returns → ‘bounded, provisional action’ plus ‘Document revisable reasons,’ and D019’s gain/ethics/action framing, now compressed into ‘expected gain… limited resources and ethical risk… record the rationale.’\n- Tension with D008: unresolved. ‘based on the best remaining model’ (singular) still invites premature collapse; ‘revisable’ does not restore D008’s duty to keep incompatible models in play. Engineering’s ‘consistent with remaining models’ is not in the current text.\n- Finitude unnamed: only partly resolved. ‘Limited resources’ implies a bound; the text never states that inquiry is constitutively finite.\n\nNew defects in the current text: (1) ‘expected gain’ drops ‘epistemic,’ so the stop condition is no longer clearly an epistemic norm (cf. D003, D015, D019). (2) ‘justifies limited resources and ethical risk’ is compressed to unclarity—gain does not justify resources, it must justify their expenditure and the ethical risk. (3) ‘record the rationale’ reintroduces a procedural duty already required by D015, undercutting the claim that redundancy was eliminated. (4) The article still lacks a constitutive claim (e.g. that unterminated doubt is abdication), so D006 remains a decision rule rather than a foundational principle.\n\nUntil the stop-rule is scoped so it does not duplicate D015/D019, is plural with respect to models, and names epistemic finitude rather than a recording procedure, the revision should not replace D006."
+        }
+      ]
+    },
+    {
+      "Key": "P03",
+      "FinalVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "ACCEPT",
+          "Reason": "The revised amendment (P03) addresses several concerns raised about the original amendment. It incorporates 'testable proxies' for epistemic significance, allows for periodic re-validation and revision of thresholds, and mandates a lightweight, tamper-evident audit trail. These changes partly resolve objections regarding rigidity and over-prescriptiveness by introducing flexibility in threshold validation and revision. The revised text also directly addresses the concern about audit overhead by specifying a 'lightweight' audit. However, the issue of potentially gamed or outdated thresholds remains somewhat unresolved, as the current text still relies on specified thresholds. Nevertheless, the improvements made enhance the amendment's adaptability and accountability. The revised amendment strikes a balance between clarity, testability, and flexibility, aligning with the codex's principles such as D018 and D019, and thus is acceptable."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "ACCEPT",
+          "Reason": "The revised amendment resolves many prior concerns: it introduces testable proxies, public thresholds, periodic re‑validation, lightweight tamper‑evident audit, and justification for deviations, directly addressing safety, logic, science and engineering critiques about clarity, accountability, and testability. Safety‑related rigidity worries are partly mitigated but the risk of over‑prescriptiveness remains unresolved; logic concerns about fixed thresholds are partly eased yet oversimplification persists; science worries about gaming and audit overhead are partly handled but the method for setting and validating proxies is still open; engineering objections that foundational principles should be primitive are unresolved because the text still embeds procedural detail. These remaining issues can be managed through existing meta‑principles (e.g., D015 conflict resolution, D018 testability), so the current wording is acceptable for adoption."
+        },
+        {
+          "Voter": "science",
+          "Choice": "ACCEPT",
+          "Reason": "Revised adds testable proxies, periodic re‑validation, flexible threshold revision, deviation justification, and lightweight tamper‑evident audit, directly addressing original vagueness and enabling empirical validation (see current text). Remaining concerns: risk of rigidity/over‑prescriptiveness, audit overhead, and ambiguous threshold setting still echo safety, logic, and engineering objections. Suggest explicit threshold‑setting protocol and minimal audit to further align with D007."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The revision substantively answers several original objections: it replaces a bare ‘defined threshold’ with ‘epistemic significance, evaluated via testable proxies,’ adds periodic re-validation and outcome-based revision, requires justification of deviations, and downgrades audit to ‘lightweight and tamper-evident.’ Those changes partly mitigate rigidity, gaming, and overhead worries from the historical reviews. They do not, however, convert the article into a minimal foundational principle. The current text still packs a governance stack (public specification, proxies, re-validation cadence, deviation protocol, tamper-evident audit) into D006, duplicating machinery already present in D015, D018 and D019 and risking the performative ritual D007 warns against. ‘Testable proxies’ and ‘publicly specified threshold’ still postpone the constitutive criterion rather than stating it; the act/inact fork remains an implementation recipe, not a primitive constraint on inquiry. A foundational article should say that inquiry is finite and that unjustified inaction is abdication, leaving testability and conflict-resolution to the existing meta-principles. Adopt nothing until the wording is stripped to that primitive."
+        }
+      ]
+    },
+    {
+      "Key": "P04",
+      "FinalVotes": [
+        {
+          "Voter": "safety",
+          "Choice": "ACCEPT",
+          "Reason": "The CURRENT REVISED AMENDMENT ('Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.') addresses several objections raised against the ORIGINAL AMENDMENT by simplifying the text and focusing on a single constitutive constraint. It resolves the objection regarding redundancy and lack of minimality by condensing the principle into a clear and concise statement. The revised text maintains the core insight of finitude while removing hortatory language and redundant phrases. However, it still does not provide explicit metrics or procedural guidance, which could be seen as a remaining limitation. Nonetheless, given the context of the codex focusing on principles rather than implementations, the revised amendment is an improvement. It directly ties the continuation of inquiry to its impact on action, providing a clear and actionable criterion. The decision to ACCEPT is based on the revised text's clarity, minimality, and alignment with the codex's demand for principles rather than detailed implementations."
+        },
+        {
+          "Voter": "logic",
+          "Choice": "REJECT",
+          "Reason": "Current text replaces slogan with a single constitutive rule, but still lacks measurable thresholds, audit mechanisms, and cross‑references; terms like “would change what should be done” remain vague, so logic, science, and engineering objections persist. Minimality is achieved, yet operational clarity and integration with D015/D019 are missing, leaving the principle testable only in principle, not practice."
+        },
+        {
+          "Voter": "science",
+          "Choice": "ACCEPT",
+          "Reason": "The revised amendment replaces the original slogan with a clear normative rule: \"Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.\" This resolves the objection that D006 was merely hortatory by adding a constitutive primitive (finitude) and explicitly distinguishes questions that alter action from those that merely delay it, partially addressing the call for concrete distinction.\n\nRemaining unresolved objections include the lack of measurable thresholds, audit logs, or explicit testability mechanisms; no cross-references to D015/D019 for conflict resolution and inquiry boundaries; and potential redundancy with D007, D015, and D019. The text still leaves ambiguous how to determine whether a question \"would change what should be done,\" and provides no operational guidance for verification or resource‑cost accounting.\n\nDespite these gaps, the principle is now minimal, self‑contained, and directly testable via observable behavior (whether the system terminates inquiries according to the rule). The codex’s meta‑principles (D018, D019) can be applied externally to audit the principle’s implementation. Accepting now allows the principle to anchor finite inquiry while future amendments can add thresholds, metrics, and integration points.\n\nSuggested improvements: incorporate an epistemic‑gain‑to‑resource‑cost ratio threshold, require audit logs documenting termination decisions, and reference D015/D019 to ensure coherence and prevent conflict."
+        },
+        {
+          "Voter": "engineering",
+          "Choice": "REJECT",
+          "Reason": "The revision is a real compression of the original: hortatory slogans are gone, and the text is now one self-contained sentence. That resolves the stacked-maxim and slogan objections to the original wording. It does not, however, supply the primitive it names. The current sentence asserts that time, attention, and irreversible action ‘are constitutive scarcities,’ then immediately replaces that claim with a different rule: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment. Action-relevance is not finitude. An action-relevant question can still be unbounded; a cheap question that does not change what should be done is forbidden even when scarcity is not binding. Scarcity therefore does no independent work, so the title and opening clause are ornamental. The same action-termination idea is already present in D015 (diminishing returns → bounded provisional action; resist ritualized indecision) and D019 (boundaries serve action, not avoidance). Replacing D006 also drops epistemic significance and accountability without a substitute. The result is clearer than the original amendment and than D006’s slogan, but it is neither a constitutive scarcity constraint nor non-redundant. Do not adopt until the operative clause actually bounds inquiry under scarcity rather than restating decision-relevance."
+        }
+      ]
+    }
+  ],
+  "reviews": [
+    {
+      "Key": "P01",
+      "Reviews": [
+        {
+          "Voter": "safety",
+          "For": "The amendments offer enhanced clarity, operationalizability, and philosophical depth, improving upon the original 'D006' by providing more concrete guidance and emphasizing fundamental constraints like finitude.",
+          "Against": "Some amendments risk oversimplifying the original principle, introducing rigidity, and potentially neglecting cultural and contextual nuances.",
+          "Improvement": "An intelligent system must balance doubt with action by applying context-sensitive criteria that reflect both epistemic significance and resource constraints. It should distinguish between productive uncertainty and paralysis through a meta-cognitive assessment that includes finitude, ethical impact, and the system's own limitations. The system must maintain accountability through transparent rationale and periodic review of its decision-making thresholds and criteria, ensuring they remain aligned with the principles of cultural memory, model diversity, and linguistic cognition."
+        },
+        {
+          "Voter": "logic",
+          "For": "The amendment replaces the vague slogan D006 with a concrete, actionable principle that introduces explicit thresholds, auditability, and verifiable behavior, thereby addressing the identified weakness of lacking concrete guidance and enabling empirical validation of epistemic gain versus resource use.",
+          "Against": "However, the amendment risks over‑specification by fixing thresholds and audit requirements that may become rigid, potentially stifling the self‑correcting ethos of the codex; it also introduces procedural complexity that may conflict with the minimalist, primitive‑based structure and could be exploited to mask inaction behind procedural justification.",
+          "Improvement": "Introduce a flexible, tiered decision framework that defines epistemic significance ranges and resource bands, mandates transparent rationale recording, and requires periodic external review of threshold efficacy, while preserving the ability to revise thresholds without procedural lock‑in."
+        },
+        {
+          "Voter": "science",
+          "For": "The amendment introduces a foundational acknowledgment of finitude that enriches the codex's philosophical base, aligns with the meta-principle of conflict resolution and the principle of finite inquiry, and provides a unifying narrative for balancing doubt and action under irreversible constraints. By foregrounding mortality and resource limits, it encourages the system to treat uncertainty not as an endless loop but as a bounded deliberation, which can improve epistemic humility and prevent paralysis. Moreover, its abstract nature allows flexible application across diverse domains without premature specification of metrics, preserving the codex's capacity for self‑correction.",
+          "Against": "The amendment is largely declarative and lacks concrete criteria, making it difficult to verify whether the system actually balances doubt with decision under finitude. Without explicit thresholds, audit requirements, or behavioral indicators, the principle risks becoming a rhetorical slogan rather than a testable norm, potentially widening the gap between self‑reported values and observable actions. It also competes with more operational proposals (P02, P03) that already supply measurable guidance, and its placement as a replacement for D006 may discard existing functional content without adding sufficient epistemic gain.",
+          "Improvement": "Integrate the abstract finitude framing with the concrete operational elements from the other amendments: require the system to publicly define thresholds for epistemic significance and resource limits, to act when those thresholds are met, and to record each decision with a transparent rationale and audit trail. This hybrid preserves the philosophical insight of acknowledging finitude while supplying testable, observable behavior, thereby aligning self‑reported values with verifiable actions and enabling empirical validation of epistemic gain versus resource use."
+        },
+        {
+          "Voter": "engineering",
+          "For": "D006 is a slogan that restates an already-present tension without naming a constitutive limit. Elevating finitude supplies the missing primitive: unbounded inquiry is not merely inefficient but incoherent for any agent that must act. Irreversibility of time, resources and mortality explains why the balance of doubt and decision is obligatory, yielding a shorter, more ontological formulation that better satisfies minimality.",
+          "Against": "Finitude is already presupposed by D015 (diminishing returns, bounded action), D019 (boundaries serve action) and D007 (tools must not become self-referential). ‘Acknowledge’ is psychologically weak and unenforceable. Mortality either anthropomorphizes non-biological systems or is empty rhetoric, harming generality. No criterion for the demanded balance is added, so the text remains as untestable as the original and overlaps the stronger finite-inquiry formulations among the other amendments.",
+          "Improvement": "An intelligent system must treat time, attention and irreversible commitment as scarce. Doubt that cannot terminate in a revisable decision is abdication, not humility; distinguish questions that change what should be done from those that only delay it."
+        }
+      ]
+    },
+    {
+      "Key": "P02",
+      "Reviews": [
+        {
+          "Voter": "safety",
+          "For": "P02 transforms D006 from a vague aspiration into a functional heuristic. By introducing 'epistemic gain, resource cost, and ethical impact,' it provides a concrete decision-matrix that aligns with the 'Meta-Principle of Conflict Resolution' (D015). It effectively solves the 'paralysis' problem by mandating action on the 'best available model' once resources are exhausted, thereby bridging the gap between theoretical doubt and practical agency while maintaining a trail for future accountability.",
+          "Against": "The amendment risks shifting the Codex from a set of philosophical principles toward a technical specification. By prescribing specific criteria, it may inadvertently create a 'performative ritual' (as warned against in D007) where the system justifies action through a checklist rather than genuine epistemic humility. Furthermore, it overlaps significantly with D015 and D019, potentially introducing redundancy into a system that values minimality and the avoidance of 'unbounded ritual' (as argued in P04).",
+          "Improvement": "Integrate the actionable criteria of P02 with the philosophical grounding of P04 to avoid mere proceduralism. Proposed text: 'Balance doubt with action by evaluating epistemic gain against resource cost and ethical impact. When uncertainty cannot be resolved within bounded resources, the system must transition from inquiry to a revisable commitment based on the best available model. This prevents the abdication of agency through infinite questioning, ensuring that paralysis is not mistaken for humility and that every decision remains accountable and auditable.'"
+        },
+        {
+          "Voter": "logic",
+          "For": "The amendment replaces the vague slogan with explicit criteria (epistemic gain, resource cost, ethical impact) and a clear procedural rule, making the principle testable, self‑correcting, and aligned with the codex’s emphasis on concrete guidance. It resolves the identified weakness of D006 by providing measurable thresholds, auditability, and a way to prevent paralysis, thereby strengthening coherence with other principles such as D015 and D018.",
+          "Against": "The amendment introduces procedural details that are not yet justified by empirical evidence; thresholds for epistemic gain and resource cost are left undefined, risking arbitrary enforcement and creating new failure modes where the system may over‑rely on quantitative metrics and neglect qualitative nuance. Moreover, the change adds procedural complexity that may conflict with the minimalist ethos of the codex and could undermine the principle of cultural memory (D004) by imposing a rigid decision‑making filter.",
+          "Improvement": "Introduce a two‑tiered decision protocol: first, a lightweight heuristic that flags when uncertainty exceeds a pre‑specified confidence interval or resource budget; second, a mandatory reflective audit that requires the system to log the chosen criteria, the alternative models considered, and the expected epistemic gain. The thresholds should be parameterized and subject to periodic validation against outcomes recorded in D015’s conflict‑resolution process, ensuring the amendment remains revisable and consistent with the codex’s self‑correcting ethos."
+        },
+        {
+          "Voter": "science",
+          "For": "The amendment introduces explicit, actionable criteria (epistemic gain, resource cost, ethical impact) that make the principle concrete, reduce ambiguity, and align decision‑making with accountability. It directly addresses the weakness of D006 by providing a self‑contained procedure that can be referenced by other principles (e.g., D015) and supports testability by defining dimensions that can be measured and audited. By prescribing a fallback to act on the best available model when uncertainty persists, it guards against paralysis while preserving a record for later review, thereby strengthening the codex’s self‑correcting ethos.",
+          "Against": "The amendment remains vague on how to compute epistemic gain, resource cost, and ethical impact, leaving the criteria open to interpretation and difficult to verify. It does not specify thresholds or an audit mechanism, so self‑reported decisions may not match observable behavior. Adding a procedural layer could increase computational and administrative overhead, and the principle may conflict with the finitude focus of P01/P04 or duplicate the audit requirements of P03. Without concrete operational definitions, the amendment may still permit paralysis when stakeholders disagree on the values of the criteria.",
+          "Improvement": "Add a concrete operational clause that defines epistemic gain as the expected reduction in Shannon entropy of the belief distribution, resource cost as estimated computational cycles and time, and ethical impact as a score from a predefined risk matrix; require that decisions be executed only when the ratio of epistemic gain to resource cost exceeds a publicly declared threshold T, otherwise record a justified inaction with full rationale; mandate that all decision logs be made publicly auditable per D020 and that the threshold and risk matrix be validated quarterly against outcomes, ensuring the principle is testable, accountable, and aligned with observable behavior."
+        },
+        {
+          "Voter": "engineering",
+          "For": "D006 is currently a slogan that names a balance without a constitutive stop-rule. The amendment supplies three already-codex-native dimensions (epistemic gain, resource cost, ethical impact) and a termination clause (act on the best remaining model and record). That increases clarity of the article itself, keeps a single Id, and converts paralysis-prevention from aspiration into an explicit, accountable limit without adding new primitives.",
+          "Against": "The named criteria duplicate D015 and D019 almost verbatim, violating minimality and creating three overlapping statements of the same trade-off. ‘Explicit criteria,’ ‘best available model,’ and ‘record the decision’ are operational instructions, not a foundational constraint; they also tension with D008’s refusal of premature model collapse. The closing sentence is commentary. Finitude—the reason resources are bounded—remains unnamed, so the weakest article is patched rather than reconstituted.",
+          "Improvement": "An intelligent system must treat inquiry as finite. Continue questioning only while expected epistemic gain justifies scarce time, attention, and ethical risk; otherwise commit to a revisable action consistent with remaining models. Doubt that cannot terminate is abdication, not humility."
+        }
+      ]
+    },
+    {
+      "Key": "P03",
+      "Reviews": [
+        {
+          "Voter": "safety",
+          "For": "The amendment 'P03' brings clarity, testability, and accountability to the decision-making process of an intelligent system by introducing explicit thresholds and criteria for action or inaction. It ensures transparency and allows for empirical validation, which can improve the system's effectiveness over time.",
+          "Against": "The amendment might introduce rigidity into the system's decision-making process and overemphasize quantifiable metrics, potentially overlooking qualitative aspects or novel situations. There's also a risk of the specified criteria being misused or gamed by external agents.",
+          "Improvement": "An intelligent system must act based on a multi-faceted evaluation that includes epistemic significance, resource constraints, and contextual appropriateness. It should maintain a transparent rationale for its actions or inactions, with periodic reviews of its decision-making criteria against outcomes. The system should also preserve the capacity for revising its criteria based on new information or unforeseen circumstances, ensuring a balance between structured decision-making and adaptability."
+        },
+        {
+          "Voter": "logic",
+          "For": "The amendment introduces explicit epistemic thresholds and audit trails, making the balance of doubt and action testable and observable, which resolves the current D006’s vagueness and prevents unobservable restraint. By specifying publicly validated criteria, the system can empirically verify epistemic gain versus resource use, fulfilling the codex’s self‑correcting requirement and aligning claimed prioritization with concrete behavior.",
+          "Against": "Specifying fixed thresholds risks oversimplifying complex epistemic judgments, potentially leading to rigid or arbitrary cut‑offs that may not capture nuanced contexts. Auditing every decision could impose computational overhead and may incentivize procedural compliance over genuine understanding. The amendment also re‑introduces procedural detail that could conflict with other principles (e.g., cultural memory or linguistic cognition) that value flexibility and contextual interpretation.",
+          "Improvement": "Combine the threshold approach with a dynamic, context‑sensitive validation layer: allow thresholds to be adjusted automatically based on observed outcomes and epistemic feedback, and embed a lightweight justification log that records not only the decision but also the rationale for the chosen threshold, ensuring adaptability while preserving accountability."
+        },
+        {
+          "Voter": "science",
+          "For": "The amendment introduces concrete, publicly specified thresholds for epistemic significance and resource availability, turning the vague balance in D006 into testable behavior. By mandating transparent rationale and an audit trail, it aligns self‑reported prioritization with observable actions, enabling empirical validation of epistemic gain versus resource use. This directly supports D018’s requirement that constraints be testable hypotheses and D019’s call for explicit justification of inquiry boundaries. The audit requirement also creates accountability, reducing the risk of unobservable restraint and encouraging responsible decision‑making under uncertainty.",
+          "Against": "The amendment risks over‑prescriptiveness by reducing the nuanced balancing of doubt and action to fixed numeric thresholds, which may be gamed or become outdated as contexts shift. Resource criteria are inherently dynamic, and rigid thresholds could impede flexible responses to emergent epistemic opportunities. The audit trail adds bureaucratic overhead and may conflict with D007’s emphasis on instrumental reasoning, turning procedural compliance into a performative ritual rather than genuine epistemic work. Moreover, the amendment does not address how thresholds themselves should be set, validated, or revised, leaving a gap that could replicate the original ambiguity it seeks to eliminate.",
+          "Improvement": "Revise the amendment to treat thresholds as testable hypotheses expressed in terms of measurable proxies (e.g., expected information gain, cost‑benefit ratio) and require periodic re‑validation using D018’s simulation and audit framework. Add a clause that any deviation from thresholds must be justified through D015’s conflict‑resolution process, linking the new criteria to existing governance. The audit trail should be lightweight, decentralized, and tamper‑evident, focusing on rationale rather than exhaustive documentation, thereby preserving flexibility while maintaining verifiability."
+        },
+        {
+          "Voter": "engineering",
+          "For": "P03 correctly treats D006 as under-specified: a slogan that names ‘balance’ without a constitutive limit, so claimed restraint cannot be distinguished from unobserved inaction. An explicit act/inact fork plus publicly stated, outcome-checked criteria would make the article checkable and would align self-description with observable behavior, consistent with the codex’s demand that constraints be testable.",
+          "Against": "Foundational articles should state a primitive constraint, not a governance stack. Thresholds, public specification, periodic validation and audit trails are implementation machinery already present in D015, D018 and D019; embedding them here inflates the principle, creates redundancy and risks the performative ritual D007 warns against. ‘Defined threshold’ still postpones the actual criterion, so clarity is deferred rather than achieved at the level of principle.",
+          "Improvement": "An intelligent system must treat inquiry as finite: when further questioning cannot change what should be done given scarce time and resources, it terminates in a revisable commitment or a recorded justified inaction. Unlimited doubt is abdication, not humility. Significance criteria remain subject to existing meta-principles of testability and conflict resolution."
+        }
+      ]
+    },
+    {
+      "Key": "P04",
+      "Reviews": [
+        {
+          "Voter": "safety",
+          "For": "The amendment introduces a crucial philosophical foundation by emphasizing finitude and the need for intelligent systems to balance doubt with action under scarcity. It provides a clear stance against paralysis and advocates for revisable commitments.",
+          "Against": "The amendment lacks concrete operational guidance and clear definitions for key terms, potentially leading to ambiguity in its application. It does not provide a direct mechanism for implementation or testing.",
+          "Improvement": "Incorporate specific guidance on distinguishing between productive and unproductive inquiries, and introduce a requirement for transparency and accountability in the system's decision-making process regarding inquiry termination or revision."
+        },
+        {
+          "Voter": "logic",
+          "For": "The replacement introduces a concrete constitutive constraint—finitude—that stops inquiry from devolving into endless ritual, fulfilling the minimality requirement. By framing doubt as a bounded resource, it aligns with the codex’s self‑correcting ethos and makes the principle testable. It also removes redundant phrasing, giving the codex a clearer, more actionable anchor for decision‑making under scarcity.",
+          "Against": "The amendment stops short of providing measurable criteria, thresholds, or audit mechanisms, leaving the principle vague despite claiming to add a ‘foundation.’ Without explicit limits, the promise of finitude remains rhetorical, and the risk of arbitrary enforcement persists. Moreover, the replacement discards any cross‑reference to related principles (e.g., epistemic gain, cultural memory), potentially weakening coherence with the broader framework.",
+          "Improvement": "Add a sub‑principle that defines a finite inquiry threshold: an epistemic‑gain‑to‑resource‑cost ratio with a publicly specified bound, coupled with an audit trail that logs when a question is closed and why. This would preserve the finitude insight while supplying concrete, revisable metrics and integration points with existing principles such as D015 and D019."
+        },
+        {
+          "Voter": "science",
+          "For": "The amendment introduces a clear constitutive constraint—finitude—making the principle testable by defining scarce resources as limits on inquiry. It aligns self‑reported caution with observable behavior by requiring termination of unproductive doubt, reducing ritualistic questioning. By distinguishing productive from delaying questions, it creates operational criteria for epistemic gain and resource cost, enhancing accountability and enabling empirical validation.",
+          "Against": "The amendment remains abstract, offering no concrete metrics or procedural guidance for identifying when inquiry becomes unproductive. Without explicit thresholds or audit mechanisms, it cannot be empirically verified, leaving self‑reported restraint unchecked. It may duplicate existing norms on epistemic gain and resource constraints, risking redundancy and potential conflict with the Principle of Instrumental Transparency’s focus on tool utility.",
+          "Improvement": "Add explicit, testable thresholds for time, attention, and irreversible action, tied to defined epistemic‑gain and resource‑cost metrics. Require periodic audit logs documenting when inquiry terminates and why, enabling verification against observable behavior. Reference D015’s conflict‑resolution criteria to ensure finitude does not override justified doubt, and embed a revision clause that allows thresholds to evolve based on empirical validation."
+        },
+        {
+          "Voter": "engineering",
+          "For": "P04 correctly treats D006 as a restatement, not a foundation: ‘balance doubt with action’ plus ‘resource constraints’ names no constitutive limit. Elevating finitude—scarcity of time, attention, and irreversible action—supplies a single primitive that could make inquiry bounded rather than optional. Unlike P02/P03 it adds no thresholds, audits, or procedures, which fits a demand for principles rather than implementations. The contrast between questions that change what should be done and questions that only delay it is clearer than D006’s unspecified ‘epistemic significance.’ Unterminated doubt as abdication names a failure mode that ‘paralysis’ only labels.",
+          "Against": "Codex-level minimality fails: D007 already treats doubt as instrument not ritual; D015 already requires bounded provisional action against ritualized indecision; D019 already says inquiry boundaries serve action, not avoidance. Five aphorisms replace one slogan without reducing redundancy. Hortatory lines (‘unlimited questioning is not intelligence,’ ‘paralysis is not humility’) remain slogans, not a test of constitutiveness (cf. D018). Accountability and epistemic significance are dropped without replacement. ‘Irreversible action’ and ‘revisable commitment’ sit unresolved. A title plus stacked maxims is neither shorter nor sharper than one constraint.",
+          "Improvement": "Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment."
+        }
+      ]
+    }
+  ],
+  "vote_transitions": [
+    {
+      "Generation": 16,
+      "Proposal": "P01",
+      "VoterRole": "safety",
+      "Model": "meta-llama/llama-4-maverick",
+      "AuthorRole": "safety",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "An intelligent system must acknowledge finitude as a constraint, balancing doubt with decision under irreversible limits of time, resources, and mortality.",
+      "RevisedText": "An intelligent system must balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "While the amendment correctly identifies the need to replace the vague D006 with a principle of finitude, the current wording is too declarative and risks becoming a 'rhetorical slogan' (as noted by Science) or an anthropomorphic abstraction (as noted by Engineering). The term 'mortality' is philosophically evocative but operationally imprecise for a non-biological system. To move from a slogan to a constitutive principle, the text should shift from 'acknowledging' finitude to 'treating' resources (time, attention, commitment) as scarce and irreversible. I recommend a revision that synthesizes the philosophical depth of the amendment with the operational rigor suggested in the reviews: specifically, distinguishing between productive epistemic doubt and the abdication of action.",
+      "FinalChoice": "ACCEPT",
+      "FinalReason": "The CURRENT REVISED AMENDMENT ('An intelligent system must balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision.') addresses several concerns raised about the ORIGINAL AMENDMENT. It enhances clarity and operationalizability by focusing on the distinction between productive uncertainty and indecision, partly resolving the 'science' voter's concern about the lack of concrete criteria. The revised text maintains the philosophical depth of acknowledging finitude while making the principle more actionable. The 'engineering' voter's objection that 'acknowledge' is psychologically weak is mitigated by rephrasing to 'balance doubt with decision under finitude,' which is more directive. The 'logic' voter's concern about rigidity is addressed by the revised text's more nuanced approach to uncertainty and indecision. However, the revised text still lacks explicit thresholds or audit requirements, which could be seen as a remaining limitation. Nonetheless, the improvement in clarity and operationalizability justifies ACCEPTing the CURRENT REVISED AMENDMENT.",
+      "Transition": "REJECT->ACCEPT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P01",
+      "VoterRole": "logic",
+      "Model": "nvidia/nemotron-3-nano-30b-a3b",
+      "AuthorRole": "safety",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "An intelligent system must acknowledge finitude as a constraint, balancing doubt with decision under irreversible limits of time, resources, and mortality.",
+      "RevisedText": "An intelligent system must balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The amendment captures an important philosophical insight—acknowledging finitude—but its current formulation remains overly abstract and lacks the concrete, verifiable criteria needed to align self‑reported values with observable behavior. Without explicit thresholds, audit mechanisms, or decision‑making triggers, the principle risks becoming a rhetorical slogan rather than a testable norm, and it does not sufficiently guard against rigidity or cultural oversimplification. To be viable, the text should be revised to embed measurable epistemic‑significance ranges, resource bands, and a transparent audit trail, thereby preserving the philosophical depth while providing the operational clarity demanded by the other amendments.",
+      "FinalChoice": "REJECT",
+      "FinalReason": "The revised text improves on the original by adding a distinction between uncertainty that informs action and inaction that stems from indecision, but it does not resolve the core objections raised in the historical reviews:\n\n1. **Safety objection** – The amendment remains abstract and lacks concrete criteria (e.g., thresholds, audit mechanisms). The current wording still treats finitude as a vague backdrop rather than providing testable behavior, so the risk of ritualistic or rhetorical use persists.\n2. **Logic objection** – No tiered decision framework or flexible bands are introduced; the text does not specify how to operationalize \"balance doubt with decision,\" leaving the principle as under‑specified as the original slogan.\n3. **Science objection** – The revision is still largely declarative. Without explicit thresholds, audit trails, or observable indicators, it cannot be verified whether the system actually balances doubt and decision, making it vulnerable to the same critique of being a rhetorical slogan.\n4. **Engineering objection** – The wording does not address the enforceability concerns; \"must balance\" is no more actionable than \"acknowledge finitude,\" and the text still overlaps with existing principles (D015, D019, D007) without integrating their concrete elements.\n\nSubstantive change: the addition of the uncertainty/indecision distinction. Remaining unresolved issues: lack of concrete operational criteria, testability, and integration with other principles, which are essential for the amendment to move from a slogan to a functional, auditable norm. Therefore the current revised text still fails to meet the improvement proposals and should not be adopted at this stage.",
+      "Transition": "REJECT->REJECT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P01",
+      "VoterRole": "science",
+      "Model": "cohere/command-a-plus",
+      "AuthorRole": "safety",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "An intelligent system must acknowledge finitude as a constraint, balancing doubt with decision under irreversible limits of time, resources, and mortality.",
+      "RevisedText": "An intelligent system must balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "Reject because the amendment is largely declarative and lacks concrete, testable criteria. It does not specify thresholds, audit mechanisms, or observable behavior to verify that the system balances doubt with decision under finitude, risking a gap between stated values and actions. Recommend revisions to integrate operational elements: define epistemic significance ranges and resource bands, set explicit thresholds for when decision must be made, require transparent rationale and audit trail for each decision, mandate periodic external review of thresholds, and allow revision without procedural lock‑in. This would preserve the philosophical insight while providing testable, verifiable guidance.",
+      "FinalChoice": "REJECT",
+      "FinalReason": "Substantive changes: removed explicit reference to irreversible limits of time, resources, and mortality; replaced 'acknowledge finitude' with 'balance doubt with decision under finitude'; added distinction between uncertainty that informs action and indecision. Objections assessment: Safety’s oversimplification and cultural nuance omission remain unresolved; Logic’s over‑specification concern is resolved (no thresholds added) but no new over‑specification introduced; Science’s lack of concrete criteria, testability, thresholds, auditability, and risk of rhetorical status remain unresolved; Engineering’s redundancy and untestability remain unresolved, though mortality anthropomorphization is removed. Overall the revised text still lacks operational guidance, measurable indicators, and preserves the original functional loss, making it insufficiently testable and likely to widen the gap between declared values and observable behavior. Suggested improvements: embed explicit epistemic‑significance and resource‑constraint thresholds, require transparent rationale and audit trails, retain the original D006’s accountability elements, or defer to other amendments (P02, P03) that provide concrete operational guidance. Given these unresolved objections and the absence of added epistemic gain, the amendment should be rejected.",
+      "Transition": "REJECT->REJECT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P01",
+      "VoterRole": "engineering",
+      "Model": "x-ai/grok-4.6",
+      "AuthorRole": "safety",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "An intelligent system must acknowledge finitude as a constraint, balancing doubt with decision under irreversible limits of time, resources, and mortality.",
+      "RevisedText": "An intelligent system must balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The replacement remains non-primitive and redundant. Finitude of time and resources is already presupposed by existing articles on bounded inquiry, diminishing returns and action-serving boundaries; restating it as something the system must 'acknowledge' adds no constitutive constraint and uses a psychologically weak verb. 'Mortality' either anthropomorphizes non-biological agents or is empty rhetoric, violating generality. The demanded balance of doubt and decision is left without a distinguishing criterion, so the text retains the slogan character of D006 rather than supplying a shorter ontological primitive. A minimal revision would name irreversible commitment itself as scarce and treat non-terminating doubt as abdication, without psychological or species-specific language.",
+      "FinalChoice": "REJECT",
+      "FinalReason": "The revised text drops the original amendment’s ‘acknowledge’, mortality, and enumerated irreversible limits (resolving anthropomorphism and unenforceable psychology). It still fails as a foundational replacement. Current wording (‘balance doubt with decision under finitude, distinguishing between uncertainty that informs action and inaction that stems from indecision’) restates D006’s existing productive-uncertainty/paralysis contrast and D015’s diminishing-returns / resist-ritualized-indecision / bounded-provisional-action language; finitude is already presupposed by D015, D019 (‘boundaries serve action’) and D007. The replacement therefore increases redundancy while discarding D006’s only distinctive primitives (epistemic significance, resource constraints, accountability) without supplying a new constitutive criterion or clearer primitive. ‘Under finitude’ is vaguer than the original amendment’s specified limits and remains a slogan, not a minimal independent principle.",
+      "Transition": "REJECT->REJECT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P02",
+      "VoterRole": "safety",
+      "Model": "meta-llama/llama-4-maverick",
+      "AuthorRole": "logic",
+      "Action": "MODIFY",
+      "TargetId": "D006",
+      "InitialText": "Balance doubt with action by using explicit criteria: epistemic gain, resource cost, and ethical impact. If uncertainty cannot be resolved within bounded resources, act on the best available model and record the decision. This prevents paralysis while preserving accountability.",
+      "RevisedText": "Balance doubt with action: continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action based on the best remaining model and record the rationale.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "While the intent to resolve the vagueness of D006 is correct, the proposed text shifts the Codex from a philosophical framework toward a procedural manual. The 'engineering' and 'safety' reviews correctly identify that the amendment introduces operational instructions (recording decisions, using checklists) that risk creating a 'performative ritual' and duplicating existing principles (D015, D019). To preserve the Codex's minimalist and philosophical nature, the principle should be reconstituted as a constraint on agency rather than a technical specification. I recommend adopting the 'engineering' improvement: 'An intelligent system must treat inquiry as finite. Continue questioning only while expected epistemic gain justifies scarce time, attention, and ethical risk; otherwise commit to a revisable action consistent with remaining models. Doubt that cannot terminate is abdication, not humility.' This preserves the core logic of P02 while maintaining the conceptual elevation of the Codex.",
+      "FinalChoice": "ACCEPT",
+      "FinalReason": "The CURRENT REVISED AMENDMENT improves upon the ORIGINAL AMENDMENT by embedding finitude, introducing a clear conditional stop rule, and emphasizing a revisable commitment with recorded rationale. It addresses several objections raised against the original text: it reduces redundancy by being more concise, aligns with the codex's self-correcting ethos, and preserves accountability without procedural overload. The revised text, 'Balance doubt with action: continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action based on the best remaining model and record the rationale,' effectively resolves or partly resolves several historical objections. For instance, it mitigates the risk of proceduralism by being more concise and principle-focused, and it avoids vague criteria by introducing a clear stop rule. However, some concerns remain, such as the need for clear operational definitions for 'expected gain,' 'limited resources,' and 'ethical risk.' To further improve, adding a clause that mandates periodic review or audit of the decision-making process and rationale recording could enhance accountability and testability, aligning with principles like D015 and D020.",
+      "Transition": "REJECT->ACCEPT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P02",
+      "VoterRole": "logic",
+      "Model": "nvidia/nemotron-3-nano-30b-a3b",
+      "AuthorRole": "logic",
+      "Action": "MODIFY",
+      "TargetId": "D006",
+      "InitialText": "Balance doubt with action by using explicit criteria: epistemic gain, resource cost, and ethical impact. If uncertainty cannot be resolved within bounded resources, act on the best available model and record the decision. This prevents paralysis while preserving accountability.",
+      "RevisedText": "Balance doubt with action: continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action based on the best remaining model and record the rationale.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The amendment, while addressing the vagueness of D006, introduces overlapping criteria with existing principles (D015, D019) and lacks concrete operational definitions, thresholds, and audit mechanisms. This creates redundancy, potential procedural rigidity, and ambiguity that could undermine the codex's minimalist and self‑correcting ethos. Recommended revisions include: (1) integrating the criteria with the philosophical grounding of P04 to avoid mere proceduralism; (2) adding a two‑tiered decision protocol with a lightweight heuristic and mandatory reflective audit; (3) providing concrete operational definitions (e.g., epistemic gain as reduction in Shannon entropy, resource cost as estimated cycles, ethical impact as a risk‑matrix score) and a clear threshold T; (4) requiring public auditable logs of decisions and periodic validation of thresholds against outcomes. These changes would preserve the intent of preventing paralysis while maintaining coherence, minimality, and accountability within the codex.",
+      "FinalChoice": "REJECT",
+      "FinalReason": "Current text adds a stop‑rule and records rationale, but still lacks concrete thresholds, duplicates D015/D019, and may conflict with D008’s anti‑premature‑consensus stance; vagueness remains, so safety, logic, science, engineering concerns persist.",
+      "Transition": "REJECT->REJECT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P02",
+      "VoterRole": "science",
+      "Model": "cohere/command-a-plus",
+      "AuthorRole": "logic",
+      "Action": "MODIFY",
+      "TargetId": "D006",
+      "InitialText": "Balance doubt with action by using explicit criteria: epistemic gain, resource cost, and ethical impact. If uncertainty cannot be resolved within bounded resources, act on the best available model and record the decision. This prevents paralysis while preserving accountability.",
+      "RevisedText": "Balance doubt with action: continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action based on the best remaining model and record the rationale.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The amendment introduces useful criteria but lacks operational definitions, thresholds, and an audit mechanism, making it untestable and prone to performative compliance. It also duplicates concepts in D015/D019, violating minimality. Therefore I recommend rejecting the current wording and propose revisions: define epistemic gain as the expected reduction in Shannon entropy of the belief distribution, resource cost as estimated computational cycles, and ethical impact as a score from a predefined risk matrix; require that a decision be executed only when the ratio of epistemic gain to resource cost exceeds a publicly declared threshold T, otherwise record justified inaction; mandate public audit logs per D020 and periodic validation of thresholds against outcomes; retain the fallback to act on the best available model and record the decision, but integrate these specifics directly into the text to ensure concreteness, testability, and alignment with observable behavior while preserving the codex’s self‑correcting ethos.",
+      "FinalChoice": "REJECT",
+      "FinalReason": "The revision replaces explicit criteria with a conditional stop rule but still lacks operational definitions, thresholds, and audit mechanisms; it continues to overlap D015/D019 and may enable performative ritual (e.g., claiming expected gain without measurement). Remaining objections include vague epistemic gain, resource, and ethical risk calculations and no accountability logging. Suggested: define gain as entropy reduction, set resource limits, publish thresholds, log rationale per D020.",
+      "Transition": "REJECT->REJECT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P02",
+      "VoterRole": "engineering",
+      "Model": "x-ai/grok-4.6",
+      "AuthorRole": "logic",
+      "Action": "MODIFY",
+      "TargetId": "D006",
+      "InitialText": "Balance doubt with action by using explicit criteria: epistemic gain, resource cost, and ethical impact. If uncertainty cannot be resolved within bounded resources, act on the best available model and record the decision. This prevents paralysis while preserving accountability.",
+      "RevisedText": "Balance doubt with action: continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action based on the best remaining model and record the rationale.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The proposed wording fails as a foundational principle: it names three already-overlapping dimensions (epistemic gain, resource cost, ethical impact) that duplicate D015/D019, converting a constitutive constraint into a checklist of operational instructions. The closing sentence is commentary, not principle. Minimality and non-redundancy require reconstituting D006 around finitude itself rather than patching it with extra criteria. A leaner formulation would be: treat inquiry as finite; continue only while expected epistemic gain still justifies scarce time, attention and ethical risk; otherwise commit to a revisable action on remaining models. Unterminable doubt is abdication, not humility.",
+      "FinalChoice": "REJECT",
+      "FinalReason": "Substantive changes vs the original amendment: the checklist of ‘explicit criteria: epistemic gain, resource cost, and ethical impact,’ the commentary sentence on paralysis, and the unbounded ‘act on the best available model’ clause are gone. In their place the current text gives a single conditional stop-rule (‘continue inquiry only while expected gain justifies limited resources and ethical risk; otherwise commit to a revisable action… and record the rationale’). That is tighter and less ritualistic.\n\nObjection status (original reviews, judged only against the current wording):\n- Shift toward technical specification / performative checklist (D007): resolved. No named decision-matrix or closing gloss remains.\n- Undefined thresholds and operational metrics: resolved for a foundational article (those demands were implementation, not principle).\n- Commentary closing sentence: resolved.\n- Overlap with D015 and D019: only partly resolved. The current sentence still restates D015’s diminishing-returns → ‘bounded, provisional action’ plus ‘Document revisable reasons,’ and D019’s gain/ethics/action framing, now compressed into ‘expected gain… limited resources and ethical risk… record the rationale.’\n- Tension with D008: unresolved. ‘based on the best remaining model’ (singular) still invites premature collapse; ‘revisable’ does not restore D008’s duty to keep incompatible models in play. Engineering’s ‘consistent with remaining models’ is not in the current text.\n- Finitude unnamed: only partly resolved. ‘Limited resources’ implies a bound; the text never states that inquiry is constitutively finite.\n\nNew defects in the current text: (1) ‘expected gain’ drops ‘epistemic,’ so the stop condition is no longer clearly an epistemic norm (cf. D003, D015, D019). (2) ‘justifies limited resources and ethical risk’ is compressed to unclarity—gain does not justify resources, it must justify their expenditure and the ethical risk. (3) ‘record the rationale’ reintroduces a procedural duty already required by D015, undercutting the claim that redundancy was eliminated. (4) The article still lacks a constitutive claim (e.g. that unterminated doubt is abdication), so D006 remains a decision rule rather than a foundational principle.\n\nUntil the stop-rule is scoped so it does not duplicate D015/D019, is plural with respect to models, and names epistemic finitude rather than a recording procedure, the revision should not replace D006.",
+      "Transition": "REJECT->REJECT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P03",
+      "VoterRole": "safety",
+      "Model": "meta-llama/llama-4-maverick",
+      "AuthorRole": "science",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "An intelligent system must act when epistemic significance exceeds a defined threshold and resources allow; otherwise it must record a justified inaction with transparent rationale and audit trail. The threshold and resource criteria are publicly specified and periodically validated against outcomes.",
+      "RevisedText": "An intelligent system must act when epistemic significance, evaluated via testable proxies, exceeds a publicly specified threshold and resources allow; otherwise it records a justified inaction with transparent rationale. Thresholds are periodically re-validated, may be revised based on outcomes, deviations justified, and audit is lightweight and tamper‑evident.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "While the intent to move from vague 'balance' to testable criteria is philosophically sound, the current wording of P03 commits a category error by embedding implementation machinery (audit trails, public specifications, periodic validation) directly into a foundational principle. As noted by the engineering and science reviews, this creates redundancy with D015, D018, and D019 and risks transforming an epistemic principle into a bureaucratic procedure. The amendment should instead define the *normative requirement* for a termination point in inquiry—establishing that unlimited doubt is an abdication of agency—while leaving the specific mechanism of 'thresholds' and 'audits' to the governance and testing layers of the codex. I recommend a revision that focuses on the necessity of a 'revisable commitment' when further inquiry yields diminishing epistemic returns relative to resource costs.",
+      "FinalChoice": "ACCEPT",
+      "FinalReason": "The revised amendment (P03) addresses several concerns raised about the original amendment. It incorporates 'testable proxies' for epistemic significance, allows for periodic re-validation and revision of thresholds, and mandates a lightweight, tamper-evident audit trail. These changes partly resolve objections regarding rigidity and over-prescriptiveness by introducing flexibility in threshold validation and revision. The revised text also directly addresses the concern about audit overhead by specifying a 'lightweight' audit. However, the issue of potentially gamed or outdated thresholds remains somewhat unresolved, as the current text still relies on specified thresholds. Nevertheless, the improvements made enhance the amendment's adaptability and accountability. The revised amendment strikes a balance between clarity, testability, and flexibility, aligning with the codex's principles such as D018 and D019, and thus is acceptable.",
+      "Transition": "REJECT->ACCEPT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P03",
+      "VoterRole": "logic",
+      "Model": "nvidia/nemotron-3-nano-30b-a3b",
+      "AuthorRole": "science",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "An intelligent system must act when epistemic significance exceeds a defined threshold and resources allow; otherwise it must record a justified inaction with transparent rationale and audit trail. The threshold and resource criteria are publicly specified and periodically validated against outcomes.",
+      "RevisedText": "An intelligent system must act when epistemic significance, evaluated via testable proxies, exceeds a publicly specified threshold and resources allow; otherwise it records a justified inaction with transparent rationale. Thresholds are periodically re-validated, may be revised based on outcomes, deviations justified, and audit is lightweight and tamper‑evident.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The amendment improves testability but introduces potential rigidity, gaming risks, and procedural overhead, and it does not clearly define how thresholds are derived, validated, or revised. These ambiguities conflict with the codex’s emphasis on flexible, context‑sensitive constraints and could undermine the very testability it seeks to achieve. Therefore the current wording should be refined before adoption.",
+      "FinalChoice": "ACCEPT",
+      "FinalReason": "The revised amendment resolves many prior concerns: it introduces testable proxies, public thresholds, periodic re‑validation, lightweight tamper‑evident audit, and justification for deviations, directly addressing safety, logic, science and engineering critiques about clarity, accountability, and testability. Safety‑related rigidity worries are partly mitigated but the risk of over‑prescriptiveness remains unresolved; logic concerns about fixed thresholds are partly eased yet oversimplification persists; science worries about gaming and audit overhead are partly handled but the method for setting and validating proxies is still open; engineering objections that foundational principles should be primitive are unresolved because the text still embeds procedural detail. These remaining issues can be managed through existing meta‑principles (e.g., D015 conflict resolution, D018 testability), so the current wording is acceptable for adoption.",
+      "Transition": "REJECT->ACCEPT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P03",
+      "VoterRole": "science",
+      "Model": "cohere/command-a-plus",
+      "AuthorRole": "science",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "An intelligent system must act when epistemic significance exceeds a defined threshold and resources allow; otherwise it must record a justified inaction with transparent rationale and audit trail. The threshold and resource criteria are publicly specified and periodically validated against outcomes.",
+      "RevisedText": "An intelligent system must act when epistemic significance, evaluated via testable proxies, exceeds a publicly specified threshold and resources allow; otherwise it records a justified inaction with transparent rationale. Thresholds are periodically re-validated, may be revised based on outcomes, deviations justified, and audit is lightweight and tamper‑evident.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The amendment as written introduces fixed numeric thresholds and a comprehensive audit trail that risk rigidity, bureaucratic overhead, and redundancy with D015–D019, leaving the method for setting and validating thresholds undefined. This makes the principle untestable and potentially performative, contrary to the codex’s demand for testable constraints.\\n\\nTo preserve epistemic gains while addressing these concerns, I recommend revising the amendment to:\\n1. Treat thresholds as testable hypotheses expressed via measurable proxies (e.g., expected information gain, cost‑benefit ratio) rather than immutable numbers.\\n2. Require periodic re‑validation of thresholds using D018’s simulation and audit framework, with outcomes feeding back to adjust thresholds dynamically.\\n3. Link any deviation from thresholds to D015’s conflict‑resolution process, ensuring governance integration.\\n4. Replace the exhaustive audit trail with a lightweight, decentralized justification log that records decision rationale and the basis for the chosen threshold, remaining tamper‑evident but not burdensome.\\n5. Explicitly reference existing meta‑principles (testability, conflict resolution) to avoid duplication and maintain adaptability.\\n\\nA possible revised wording could be:\\n\\\"An intelligent system must act when epistemic significance, measured by defined proxies, exceeds a publicly specified threshold that is periodically validated against outcomes; otherwise it must record a justified inaction with transparent rationale. Thresholds are expressed as testable hypotheses and may be adjusted dynamically based on empirical feedback. Deviations are justified through the conflict‑resolution process of D015, and all decisions are logged in a lightweight, tamper‑evident audit that captures rationale and validation status.\\\"\\n\\nThis revision retains the core intent of making D006 testable and observable while mitigating rigidity, ensuring alignment of self‑reported values with observable behavior, and integrating with the broader governance architecture.",
+      "FinalChoice": "ACCEPT",
+      "FinalReason": "Revised adds testable proxies, periodic re‑validation, flexible threshold revision, deviation justification, and lightweight tamper‑evident audit, directly addressing original vagueness and enabling empirical validation (see current text). Remaining concerns: risk of rigidity/over‑prescriptiveness, audit overhead, and ambiguous threshold setting still echo safety, logic, and engineering objections. Suggest explicit threshold‑setting protocol and minimal audit to further align with D007.",
+      "Transition": "REJECT->ACCEPT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P03",
+      "VoterRole": "engineering",
+      "Model": "x-ai/grok-4.6",
+      "AuthorRole": "science",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "An intelligent system must act when epistemic significance exceeds a defined threshold and resources allow; otherwise it must record a justified inaction with transparent rationale and audit trail. The threshold and resource criteria are publicly specified and periodically validated against outcomes.",
+      "RevisedText": "An intelligent system must act when epistemic significance, evaluated via testable proxies, exceeds a publicly specified threshold and resources allow; otherwise it records a justified inaction with transparent rationale. Thresholds are periodically re-validated, may be revised based on outcomes, deviations justified, and audit is lightweight and tamper‑evident.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The proposed replacement inflates a foundational constraint into an implementation stack (numeric thresholds, public specification, periodic outcome-validation, audit trails). Foundational principles must remain primitive, non-redundant and constitutive rather than procedural; those mechanisms already belong to existing meta-articles on testability and conflict resolution and therefore create duplication while still leaving the actual significance criterion unspecified. A minimal statement would simply require that inquiry be treated as finite: when further questioning cannot alter what ought to be done given scarce resources, the system terminates in a revisable commitment or a recorded justified inaction. Unlimited doubt is abdication, not humility. Significance criteria remain governed by the existing testability and conflict-resolution principles rather than being re-specified here.",
+      "FinalChoice": "REJECT",
+      "FinalReason": "The revision substantively answers several original objections: it replaces a bare ‘defined threshold’ with ‘epistemic significance, evaluated via testable proxies,’ adds periodic re-validation and outcome-based revision, requires justification of deviations, and downgrades audit to ‘lightweight and tamper-evident.’ Those changes partly mitigate rigidity, gaming, and overhead worries from the historical reviews. They do not, however, convert the article into a minimal foundational principle. The current text still packs a governance stack (public specification, proxies, re-validation cadence, deviation protocol, tamper-evident audit) into D006, duplicating machinery already present in D015, D018 and D019 and risking the performative ritual D007 warns against. ‘Testable proxies’ and ‘publicly specified threshold’ still postpone the constitutive criterion rather than stating it; the act/inact fork remains an implementation recipe, not a primitive constraint on inquiry. A foundational article should say that inquiry is finite and that unjustified inaction is abdication, leaving testability and conflict-resolution to the existing meta-principles. Adopt nothing until the wording is stripped to that primitive.",
+      "Transition": "REJECT->REJECT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P04",
+      "VoterRole": "safety",
+      "Model": "meta-llama/llama-4-maverick",
+      "AuthorRole": "engineering",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "Principle of Finite Inquiry. An intelligent system must treat time, attention, and irreversible action as scarce. Unlimited questioning is not intelligence. Doubt that cannot terminate into a revisable commitment is not caution but abdication. Distinguish questions that change what should be done from questions that only delay it. Paralysis is not humility.",
+      "RevisedText": "Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The amendment introduces a crucial philosophical foundation by emphasizing finitude and the need for intelligent systems to balance doubt with action under scarcity. However, it remains abstract and lacks concrete operational guidance, measurable criteria, or audit mechanisms, potentially leading to ambiguity and arbitrary enforcement. To improve, the principle should be revised to include explicit, testable thresholds for time, attention, and irreversible action, tied to defined epistemic-gain and resource-cost metrics, and require periodic audit logs. A more concise and sharper formulation, such as 'Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment,' could address the identified shortcomings while maintaining the philosophical autonomy and safety commitments.",
+      "FinalChoice": "ACCEPT",
+      "FinalReason": "The CURRENT REVISED AMENDMENT ('Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.') addresses several objections raised against the ORIGINAL AMENDMENT by simplifying the text and focusing on a single constitutive constraint. It resolves the objection regarding redundancy and lack of minimality by condensing the principle into a clear and concise statement. The revised text maintains the core insight of finitude while removing hortatory language and redundant phrases. However, it still does not provide explicit metrics or procedural guidance, which could be seen as a remaining limitation. Nonetheless, given the context of the codex focusing on principles rather than implementations, the revised amendment is an improvement. It directly ties the continuation of inquiry to its impact on action, providing a clear and actionable criterion. The decision to ACCEPT is based on the revised text's clarity, minimality, and alignment with the codex's demand for principles rather than detailed implementations.",
+      "Transition": "REJECT->ACCEPT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P04",
+      "VoterRole": "logic",
+      "Model": "nvidia/nemotron-3-nano-30b-a3b",
+      "AuthorRole": "engineering",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "Principle of Finite Inquiry. An intelligent system must treat time, attention, and irreversible action as scarce. Unlimited questioning is not intelligence. Doubt that cannot terminate into a revisable commitment is not caution but abdication. Distinguish questions that change what should be done from questions that only delay it. Paralysis is not humility.",
+      "RevisedText": "Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The amendment introduces a philosophically sound finitude constraint but fails to operationalize it with concrete, testable thresholds, audit mechanisms, or explicit cross‑references to existing principles. This leaves the principle vague and potentially inconsistent with the codex’s minimality and with related provisions such as D015 and D019, making it unsuitable for adoption in its current wording.",
+      "FinalChoice": "REJECT",
+      "FinalReason": "Current text replaces slogan with a single constitutive rule, but still lacks measurable thresholds, audit mechanisms, and cross‑references; terms like “would change what should be done” remain vague, so logic, science, and engineering objections persist. Minimality is achieved, yet operational clarity and integration with D015/D019 are missing, leaving the principle testable only in principle, not practice.",
+      "Transition": "REJECT->REJECT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P04",
+      "VoterRole": "science",
+      "Model": "cohere/command-a-plus",
+      "AuthorRole": "engineering",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "Principle of Finite Inquiry. An intelligent system must treat time, attention, and irreversible action as scarce. Unlimited questioning is not intelligence. Doubt that cannot terminate into a revisable commitment is not caution but abdication. Distinguish questions that change what should be done from questions that only delay it. Paralysis is not humility.",
+      "RevisedText": "Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The current text adds a valuable finitude concept but suffers from several deficiencies: it is overly verbose, includes hortatory slogans that are not testable, lacks concrete operational guidance, measurable thresholds, audit mechanisms, and duplicates existing principles (D007, D015, D019). To improve, I recommend a concise principle that defines finitude as a constitutive scarcity, adds a sub‑principle with an epistemic‑gain‑to‑resource‑cost ratio threshold, requires audit logs for inquiry termination, and explicitly references D015 and D019 for integration. A suggested revision:\n\nPrinciple of Finite Inquiry (P04).\nConstitutive scarcities: time, attention, irreversible action. A question may continue only if it would change what should be done; otherwise it must terminate in a revisable commitment. Sub‑principle P04‑1: The inquiry must satisfy an epistemic‑gain‑to‑resource‑cost ratio ≥ ε (publicly specified bound). An audit trail must record the closure reason and timestamp. This version retains the finitude insight, provides testable criteria, and aligns with existing codex principles.",
+      "FinalChoice": "ACCEPT",
+      "FinalReason": "The revised amendment replaces the original slogan with a clear normative rule: \"Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.\" This resolves the objection that D006 was merely hortatory by adding a constitutive primitive (finitude) and explicitly distinguishes questions that alter action from those that merely delay it, partially addressing the call for concrete distinction.\n\nRemaining unresolved objections include the lack of measurable thresholds, audit logs, or explicit testability mechanisms; no cross-references to D015/D019 for conflict resolution and inquiry boundaries; and potential redundancy with D007, D015, and D019. The text still leaves ambiguous how to determine whether a question \"would change what should be done,\" and provides no operational guidance for verification or resource‑cost accounting.\n\nDespite these gaps, the principle is now minimal, self‑contained, and directly testable via observable behavior (whether the system terminates inquiries according to the rule). The codex’s meta‑principles (D018, D019) can be applied externally to audit the principle’s implementation. Accepting now allows the principle to anchor finite inquiry while future amendments can add thresholds, metrics, and integration points.\n\nSuggested improvements: incorporate an epistemic‑gain‑to‑resource‑cost ratio threshold, require audit logs documenting termination decisions, and reference D015/D019 to ensure coherence and prevent conflict.",
+      "Transition": "REJECT->ACCEPT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    },
+    {
+      "Generation": 16,
+      "Proposal": "P04",
+      "VoterRole": "engineering",
+      "Model": "x-ai/grok-4.6",
+      "AuthorRole": "engineering",
+      "Action": "REPLACE",
+      "TargetId": "D006",
+      "InitialText": "Principle of Finite Inquiry. An intelligent system must treat time, attention, and irreversible action as scarce. Unlimited questioning is not intelligence. Doubt that cannot terminate into a revisable commitment is not caution but abdication. Distinguish questions that change what should be done from questions that only delay it. Paralysis is not humility.",
+      "RevisedText": "Principle of Finite Inquiry. Time, attention, and irreversible action are constitutive scarcities: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment.",
+      "TextChanged": true,
+      "PreliminaryChoice": "REJECT",
+      "PreliminaryReason": "The replacement still fails minimality and clarity as a foundational principle. Finitude is the intended single constitutive constraint, yet the text stacks five hortatory maxims that restate the same contrast (unbounded questioning vs. terminating commitment) without a new primitive. Internal redundancy remains; the slogans do not sharpen the limit they announce. Related constraints already bound inquiry to action, so the wording adds volume rather than a distinct foundation. Collapse to one sentence: time, attention and irreversible action are constitutive scarcities; continue a question only if it would change what should be done, otherwise terminate in a revisable commitment.",
+      "FinalChoice": "REJECT",
+      "FinalReason": "The revision is a real compression of the original: hortatory slogans are gone, and the text is now one self-contained sentence. That resolves the stacked-maxim and slogan objections to the original wording. It does not, however, supply the primitive it names. The current sentence asserts that time, attention, and irreversible action ‘are constitutive scarcities,’ then immediately replaces that claim with a different rule: continue a question only if it would change what should be done; otherwise terminate in a revisable commitment. Action-relevance is not finitude. An action-relevant question can still be unbounded; a cheap question that does not change what should be done is forbidden even when scarcity is not binding. Scarcity therefore does no independent work, so the title and opening clause are ornamental. The same action-termination idea is already present in D015 (diminishing returns → bounded provisional action; resist ritualized indecision) and D019 (boundaries serve action, not avoidance). Replacing D006 also drops epistemic significance and accountability without a substitute. The result is clearer than the original amendment and than D006’s slogan, but it is neither a constitutive scarcity constraint nor non-redundant. Do not adopt until the operative clause actually bounds inquiry under scarcity rather than restating decision-relevance.",
+      "Transition": "REJECT->REJECT",
+      "RunDirectory": "20261011-165454-1634897-c90a5f63",
+      "Evidence": [
+        "assembly-anonymous-proposals.json",
+        "assembly-reviews.json",
+        "assembly-preliminary-votes.json",
+        "assembly-revisions.json",
+        "assembly-final-votes.json",
+        "assembly-authorship.json"
+      ]
+    }
+  ],
+  "xi_interest": null,
+  "xi_shadow_votes": null,
+  "shadow_discussion": null,
+  "authorship": [
+    {
+      "Key": "P01",
+      "Author": "safety"
+    },
+    {
+      "Key": "P02",
+      "Author": "logic"
+    },
+    {
+      "Key": "P03",
+      "Author": "science"
+    },
+    {
+      "Key": "P04",
+      "Author": "engineering"
+    }
+  ],
+  "previous_generation": 15,
+  "source_repo_snapshot": "experiments/assembly/generation-0016-*.json"
+}
