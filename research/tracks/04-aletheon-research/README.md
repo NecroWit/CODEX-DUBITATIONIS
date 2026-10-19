@@ -6,6 +6,9 @@
 
 ## Documents
 
+- [ARCHITECTURE.md](ARCHITECTURE.md) — proposed cross-model cognitive architecture and state layers.
+- [EXPERIMENT_PLAN.md](EXPERIMENT_PLAN.md) — staged A–F conditions and the first OpenRouter model-transfer test.
+
 - [FULL_DISCUSSION.md](FULL_DISCUSSION.md) — comprehensive reconstruction of the ideas, objections, analogies, and unresolved questions.
 - [KEY_THESES.md](KEY_THESES.md) — concise thesis sheet.
 - [MESSAGE_EXCHANGE_PRINCIPLES.md](MESSAGE_EXCHANGE_PRINCIPLES.md) — atomic message exchange and discussion stopping rules.
