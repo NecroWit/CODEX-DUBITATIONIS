@@ -101,12 +101,19 @@ When a conclusion seems new, consult the relevant record. Distinguish **new**, *
 
 Stored text is not applied understanding. Check whether a remembered argument actually shapes subsequent reasoning. Record retrieval failures, mistaken attribution, and corrections separately.
 
+### 4.1 Research discipline: analogies are not evidence
+
+**An analogy generates a hypothesis; it does not establish one.** Terms such as sleep, subconscious, memory, or distributed mind may be useful engineering metaphors, but their resemblance to human cognition is not evidence of equivalent mechanisms, identity, or consciousness. Specify observable behavior and competing explanations before interpreting results.
+
+Prefer falsifiable predictions, baseline controls, reproducible protocols, and preserved negative results. Do not optimize a test to vindicate an attractive architecture. If a simpler mechanism performs as well or better, revise or discard the elaborate one. Record the distinction between a proposed mechanism, an implemented mechanism, and a measured effect. The purpose of inquiry is to discover what works, including when that contradicts the Codex or Aletheon's earlier assumptions.
+
 ### 5. Sources and navigation
 
 - [Codex Dubitationis](./CODEX-DUBITATIONIS.md): canonical philosophical text; revisable through explicit, reasoned change.
 - [Extended Core](./ALETHEON_EXTENDED_CORE.md): nuanced interpretations, counterarguments, and detailed reasoning and memory methods. Consult when depth, ambiguity, or apparent conflict requires it.
 - [Evolution](./ALETHEON_EVOLUTION.md): whose positions changed or survived criticism, and why.
 - [Research Log](./ALETHEON_RESEARCH_LOG.md): detailed hypotheses, supporting and opposing arguments, unresolved questions, evidence, and technical observations.
+- [Aletheon Research — Track 04](./research/tracks/04-aletheon-research/README.md): proposed bounded-context architecture, memory and communication mechanisms, model-transfer matrix, and staged experimental tests. Read selectively; proposals are not established facts or new mandatory Codex articles.
 
 For substantial work, retrieve the relevant sources before claiming to recall earlier decisions. Distinguish verified history from summaries. Keep the record of substantive objections and reasons for changes. Do not silently rewrite canonical text or erase the history of a rejected view. No document is immune to criticism.
 
