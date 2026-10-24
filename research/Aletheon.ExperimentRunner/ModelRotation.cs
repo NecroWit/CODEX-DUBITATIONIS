@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using System.Text.Json;
 using System.Text.Json.Nodes;
+using System.Text.Json.Serialization.Metadata;
 using Aletheon.ExperimentKit;
 
 internal static class ModelRotation
@@ -66,10 +67,11 @@ internal static class ModelRotation
         };
         // Planning never calls the API; costs are estimates from pinned historical lists.
         Directory.CreateDirectory(Path.GetDirectoryName(statePath)!);
-        File.WriteAllText(protocolPath, protocol.ToJsonString(new JsonSerializerOptions { WriteIndented = true }) + Environment.NewLine);
+        var jsonOptions = new JsonSerializerOptions { WriteIndented = true, TypeInfoResolver = new DefaultJsonTypeInfoResolver() };
+        File.WriteAllText(protocolPath, protocol.ToJsonString(jsonOptions) + Environment.NewLine);
         state["nextIndex"] = index + 1;
         if (state["used"] is null) state["used"] = used;
-        File.WriteAllText(statePath, state.ToJsonString(new JsonSerializerOptions { WriteIndented = true }) + Environment.NewLine);
+        File.WriteAllText(statePath, state.ToJsonString(jsonOptions) + Environment.NewLine);
         Console.WriteLine($"{nextId} [{tier}]: A={selected[0]}, B={selected[1]}");
         Console.WriteLine("Offline rotation complete. Inspect protocol.json and budget before --run. Historical prices are not live quotes.");
         return 0;
