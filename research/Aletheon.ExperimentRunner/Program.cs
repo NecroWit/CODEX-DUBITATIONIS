@@ -79,6 +79,9 @@ var completionTokens = root.GetProperty("max_completion_tokens").GetInt32();
 var smokeTokens = root.GetProperty("smoke_completion_tokens").GetInt32();
 var totalUsd = root.GetProperty("total_budget_usd").GetDecimal();
 var perRequestUsd = root.GetProperty("per_request_budget_usd").GetDecimal();
+var modelCaps = root.TryGetProperty("model_request_budget_usd", out var capsJson)
+    ? capsJson.EnumerateObject().ToDictionary(x => x.Name, x => x.Value.GetDecimal())
+    : new Dictionary<string, decimal>();
 var limits = root.GetProperty("limits");
 var maxPromptChars = limits.GetProperty("max_prompt_characters").GetInt32();
 var reasoningWords = limits.GetProperty("reasoning_max_words").GetInt32();
@@ -96,12 +99,12 @@ ExperimentArtifacts.Save(Path.Combine(output, "manifest.json"), new {
     catalogSha256 = ExperimentArtifacts.Hash(catalogBytes),
     supplementalSources = supplementalBytes.Select(x => new { path = x.File, sha256 = ExperimentArtifacts.Hash(x.Bytes) }).ToArray(),
     maxCompletionTokens = smoke ? smokeTokens : completionTokens,
-    totalBudgetUsd = totalUsd, perRequestBudgetUsd = perRequestUsd,
+    totalBudgetUsd = totalUsd, perRequestBudgetUsd = perRequestUsd, modelRequestBudgetUsd = modelCaps,
     note = "Budget is approximate. Set OpenRouter key spending limit."
 });
 File.WriteAllBytes(Path.Combine(output, "protocol.json"), protocolBytes);
 using var transport = new OpenRouterTransport(key);
-var budget = new BudgetLedger(Path.Combine(output, "cost-ledger.jsonl"), totalUsd, perRequestUsd);
+var budget = new BudgetLedger(Path.Combine(output, "cost-ledger.jsonl"), totalUsd, perRequestUsd, modelCaps);
 var jobs = smoke ? new[] { (models[0], (Id: "SMOKE", Prompt: "Reply exactly OK.")) } :
     (from model in models from task in tasks select (model, task)).ToArray();
 Console.WriteLine($"{experimentId}: {jobs.Length} independent concurrent requests. Output: {output}");
