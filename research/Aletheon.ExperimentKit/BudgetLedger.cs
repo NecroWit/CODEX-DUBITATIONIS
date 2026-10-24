@@ -7,12 +7,15 @@ public sealed class BudgetLedger
     private readonly object gate = new();
     private readonly string file;
     private readonly decimal total, perRequest;
+    private readonly IReadOnlyDictionary<string, decimal> modelCaps;
     private decimal committed;
-    public BudgetLedger(string file, decimal totalUsd, decimal perRequestUsd)
+    public BudgetLedger(string file, decimal totalUsd, decimal perRequestUsd, IReadOnlyDictionary<string, decimal>? modelRequestCaps = null)
     {
         if (totalUsd <= 0 || perRequestUsd <= 0 || perRequestUsd > totalUsd)
             throw new ArgumentException("Invalid budget");
         this.file = file; total = totalUsd; perRequest = perRequestUsd;
+        modelCaps = modelRequestCaps ?? new Dictionary<string, decimal>();
+        if (modelCaps.Values.Any(cap => cap <= 0 || cap > perRequest)) throw new ArgumentException("Invalid model budget");
         Directory.CreateDirectory(Path.GetDirectoryName(file)!);
     }
     public decimal? Reserve(string label, ModelInfo model, string system, string prompt, int tokens)
@@ -26,9 +29,10 @@ public sealed class BudgetLedger
         var estimate = Math.Ceiling(estimatedCost * 1.20m * 100000m) / 100000m;
         lock (gate)
         {
-            if (estimate > perRequest || committed + estimate > total)
+            var cap = modelCaps.TryGetValue(model.Id, out var specific) ? specific : perRequest;
+            if (estimate > cap || committed + estimate > total)
             {
-                Log(new { label, model = model.Id, estimate, status = "blocked" });
+                Log(new { label, model = model.Id, estimate, cap, status = "blocked" });
                 return null;
             }
             committed += estimate;
