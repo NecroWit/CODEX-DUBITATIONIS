@@ -2,7 +2,7 @@
 
 Rider: open root `Aletheon.Research.sln`; select EXP-0.3 project.
 
-**No arguments / --check:** free, offline config validation. No API key required. **--smoke:** one paid request. **--run:** four paid requests (two models × two short tasks). Never automatically retries an entire experiment.
+**No arguments / --run:** four paid requests (two models × two short tasks). **--smoke:** one paid connectivity request. Both modes validate local configuration before sending requests. Never automatically retries an entire experiment.
 
 ```powershell
 dotnet run --project research/tracks/04-aletheon-research/experiments/EXP-0.3-calibration/Aletheon.ModelTransferResearch.Experiment01.csproj
