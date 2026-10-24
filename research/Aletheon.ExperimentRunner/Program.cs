@@ -10,10 +10,72 @@ var run = args.Contains("--run", StringComparer.OrdinalIgnoreCase);
 if (smoke && run) { Console.Error.WriteLine("Choose either --smoke or --run."); return 2; }
 if (args.Any(arg => arg != "--smoke" && arg != "--run"))
 { Console.Error.WriteLine("Unknown argument. Supported: --rotate (offline), --smoke, --run; no argument defaults to --run."); return 2; }
-// No arguments run the full experiment; --smoke checks connectivity.
-// The protocol selects the experiment. Runs never rotate it implicitly.
-// A new run directory is created for each invocation, whether or not
-// this experiment already has an output directory.
+// --smoke does not change the experiment sequence.
+if (!smoke)
+{
+    var runsRoot = Path.Combine(runner, "runs");
+    Directory.CreateDirectory(runsRoot);
+    var experiments = Directory.GetDirectories(runsRoot, "EXP-*")
+        .Select(path => new { Path = path, Name = Path.GetFileName(path) })
+        .Select(x => new { x.Path, x.Name, Match = System.Text.RegularExpressions.Regex.Match(x.Name, @"^EXP-1\.(\d+)$") })
+        .Where(x => x.Match.Success)
+        .OrderBy(x => int.Parse(x.Match.Groups[1].Value))
+        .ToArray();
+    if (experiments.Length == 0)
+    {
+        Console.WriteLine("No EXP-1.x output found. Preparing EXP-1.0 from the cheap tier (offline).");
+        ModelRotation.Prepare(repo, runner, kit, "EXP-1.0", "cheap", fresh: true);
+    }
+    else
+    {
+        var latest = experiments[^1];
+        var runDirs = Directory.GetDirectories(latest.Path)
+            .Where(dir => File.Exists(Path.Combine(dir, "manifest.json"))).ToArray();
+        bool Accepted(string dir)
+        {
+            try
+            {
+                foreach (var label in new[] { "A-H1", "A-H2", "B-H1", "B-H2" })
+                {
+                    var file = Path.Combine(dir, label + ".accepted.json");
+                    if (!File.Exists(file)) return false;
+                    using var result = JsonDocument.Parse(File.ReadAllText(file));
+                    if (!result.RootElement.TryGetProperty("accepted", out var ok) ||
+                        ok.ValueKind != JsonValueKind.True) return false;
+                }
+                return true;
+            }
+            catch (Exception) { return false; }
+        }
+        var successful = runDirs.Any(Accepted);
+        var currentPath = Path.Combine(runner, "protocol.json");
+        using var current = JsonDocument.Parse(File.ReadAllText(currentPath));
+        var currentId = current.RootElement.GetProperty("id").GetString();
+        if (currentId != latest.Name)
+        {
+            // Restore the actual protocol of the most recent archived run, not an
+            // unrelated template or manually selected model.
+            var archived = runDirs.OrderByDescending(dir => dir)
+                .Select(dir => Path.Combine(dir, "protocol.json")).FirstOrDefault(File.Exists);
+            if (archived is null)
+            {
+                Console.Error.WriteLine($"Cannot recover {latest.Name}: no archived protocol. No API calls sent.");
+                return 2;
+            }
+            File.Copy(archived, currentPath, overwrite: true);
+            Console.WriteLine($"Restored {latest.Name} protocol from archived output.");
+        }
+        if (successful)
+        {
+            var nextNumber = int.Parse(latest.Match.Groups[1].Value) + 1;
+            var nextTier = new[] { "cheap", "medium", "premium", "mixed" }[nextNumber % 4];
+            Console.WriteLine($"{latest.Name} accepted 4/4. Preparing EXP-1.{nextNumber} [{nextTier}] offline.");
+            ModelRotation.Prepare(repo, runner, kit, $"EXP-1.{nextNumber}", nextTier);
+        }
+        else
+            Console.WriteLine($"{latest.Name} has no accepted 4/4 run. Retrying with unchanged models.");
+    }
+}
 
 var coreBytes = File.ReadAllBytes(Path.Combine(repo, "ALETHEON_BASE_CORE.md"));
 var protocolBytes = File.ReadAllBytes(Path.Combine(runner, "protocol.json"));
