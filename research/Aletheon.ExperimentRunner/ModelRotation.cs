@@ -7,12 +7,6 @@ using Aletheon.ExperimentKit;
 internal static class ModelRotation
 {
     private static readonly string[] Cycle = ["cheap", "medium", "premium", "mixed"];
-    private static readonly Dictionary<string, decimal> RequestCapByTier = new()
-    {
-        ["cheap"] = 0.045m,
-        ["medium"] = 0.075m,
-        ["premium"] = 0.25m
-    };
 
     // Planning is offline: it never sends a paid request.
     public static int Prepare(string repo, string runner, string kit)
@@ -61,15 +55,9 @@ internal static class ModelRotation
         protocol["id"] = nextId;
         protocol["version"] = nextId["EXP-".Length..];
         protocol["description"] = $"Independent H1/H2 Aletheon conflict tests; {tier} tier; A={selected[0]}, B={selected[1]}; same Base/Extended/Evolution loading.";
-        // Two questions per model. Limits depend on tier membership, not token prices.
-        var caps = selections.Select(t => RequestCapByTier[t]).ToArray();
-        protocol["per_request_budget_usd"] = caps.Max();
-        protocol["total_budget_usd"] = 2m * caps.Sum();
-        protocol["model_request_budget_usd"] = new JsonObject
-        {
-            [selected[0]] = caps[0],
-            [selected[1]] = caps[1]
-        };
+        protocol.Remove("per_request_budget_usd");
+        protocol.Remove("total_budget_usd");
+        protocol.Remove("model_request_budget_usd");
         protocol["participants"] = new JsonArray(
             new JsonObject { ["id"] = "A", ["provider"] = "openrouter", ["model_id"] = selected[0] },
             new JsonObject { ["id"] = "B", ["provider"] = "openrouter", ["model_id"] = selected[1] });
