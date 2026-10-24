@@ -1,38 +1,35 @@
 #!/usr/bin/env python3
-"""EXP-001 — PyCharm entry point. Run this file using the green Run button.
+"""EXP-001 PyCharm entry point (Python 3.10+, no pip dependencies).
 
-Set OPENROUTER_API_KEY in PyCharm Run Configuration -> Environment variables.
-Choose MODE below. No third-party packages needed (Python 3.10+).
+Configure OPENROUTER_API_KEY in PyCharm Run Configuration.
+Change MODE to 'run' after a successful smoke test.
 """
-from pathlib import Path
 import os
+from pathlib import Path
 import subprocess
 import sys
 
 HERE = Path(__file__).resolve().parent
+MODE = "smoke"  # "smoke" or "run"
+MAX_TOKENS = 8000
+BUDGET_USD = "1.00"
+MAX_REQUEST_USD = "0.40"
 
-# Change only this setting to switch between trial and experiment.
-MODE = "smoke"  # "smoke" (one request) or "run" (four parallel requests)
-MAX_TOKENS = 2500
 
-
-def main() -> int:
+def main():
     if MODE not in ("smoke", "run"):
-        print("ERROR: MODE must be 'smoke' or 'run'")
+        print("Invalid MODE")
         return 2
-    if not os.environ.get("OPENROUTER_API_KEY"):
-        print("ERROR: Set OPENROUTER_API_KEY in PyCharm Run -> Edit Configurations.")
-        print("Do not put your key in source code or commit it to GitHub.")
+    if not os.getenv("OPENROUTER_API_KEY"):
+        print("Set OPENROUTER_API_KEY in PyCharm Run -> Edit Configurations")
         return 2
-    command = [
-        sys.executable,
-        str(HERE / "runner.py"),
-        "--smoke" if MODE == "smoke" else "--run",
-        "--max-tokens", str(MAX_TOKENS),
-    ]
+    args = [sys.executable, str(HERE / "runner.py"),
+            "--smoke" if MODE == "smoke" else "--run",
+            "--max-tokens", str(MAX_TOKENS),
+            "--budget-usd", BUDGET_USD,
+            "--max-request-usd", MAX_REQUEST_USD]
     print(f"EXP-001 | MODE={MODE} | Python={sys.version.split()[0]}", flush=True)
-    print("Core is loaded automatically from repository root.", flush=True)
-    return subprocess.call(command, cwd=str(HERE))
+    return subprocess.call(args, cwd=str(HERE))
 
 
 if __name__ == "__main__":
