@@ -25,7 +25,7 @@ EXP-0.4 runs **four independent requests** (A-H1, A-H2, B-H1, B-H2). Each gets t
 
 ## Model rotation (offline)
 
-After a fully accepted normal run (4/4), the runner **automatically prepares the next experiment offline**. The archived run keeps its original protocol. No extra paid requests are made. If a run is incomplete, no automatic rotation occurs. In Rider, use the normal run configuration (no arguments or `--run`).
+Before a normal paid run, if the current experiment ID already has an archived run folder containing `manifest.json`, the runner **automatically rotates offline first** and then executes the new experiment. This includes partial previous runs. If no prior run exists, it executes the current protocol. In Rider, use the normal run configuration (no arguments or `--run`). No additional API calls are made by rotation. To intentionally repeat a previous experiment, use a separate protocol/backup and inspect the run folders first.
 
 For manual offline rotation only (normally unnecessary), run:
 
