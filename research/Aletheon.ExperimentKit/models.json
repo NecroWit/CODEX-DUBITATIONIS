@@ -25,6 +25,16 @@
       "inputUsdPerMillionTokens": 0.08,
       "outputUsdPerMillionTokens": 0.28,
       "maxCompletionTokens": 16000
+    },
+    "openai/gpt-4.1-mini": {
+      "inputUsdPerMillionTokens": 0.4,
+      "outputUsdPerMillionTokens": 1.6,
+      "maxCompletionTokens": 16000
+    },
+    "mistralai/ministral-8b-2512": {
+      "inputUsdPerMillionTokens": 0.15,
+      "outputUsdPerMillionTokens": 0.15,
+      "maxCompletionTokens": 16000
     }
   }
 }
