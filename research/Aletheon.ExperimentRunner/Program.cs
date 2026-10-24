@@ -60,6 +60,7 @@ if (!smoke)
 var coreBytes = File.ReadAllBytes(Path.Combine(repo, "ALETHEON_BASE_CORE.md"));
 var protocolBytes = File.ReadAllBytes(Path.Combine(runner, "protocol.json"));
 var catalogBytes = File.ReadAllBytes(Path.Combine(kit, "models.json"));
+var tierConfigBytes = File.ReadAllBytes(Path.Combine(repo, "experiments", "agents.mixed.json"));
 var core = System.Text.Encoding.UTF8.GetString(coreBytes);
 var catalog = ModelCatalog.Load(Path.Combine(kit, "models.json"));
 using var protocol = JsonDocument.Parse(protocolBytes);
@@ -77,11 +78,25 @@ var tasks = root.GetProperty("tasks").EnumerateArray()
 if (models.Length != 2 || tasks.Length != 2 || tasks.Any(t => !t.Id.StartsWith("H", StringComparison.Ordinal))) throw new InvalidOperationException("Expected 2 API models and 2 philosophical questions.");
 var completionTokens = root.GetProperty("max_completion_tokens").GetInt32();
 var smokeTokens = root.GetProperty("smoke_completion_tokens").GetInt32();
-var totalUsd = root.GetProperty("total_budget_usd").GetDecimal();
-var perRequestUsd = root.GetProperty("per_request_budget_usd").GetDecimal();
-var modelCaps = root.TryGetProperty("model_request_budget_usd", out var capsJson)
-    ? capsJson.EnumerateObject().ToDictionary(x => x.Name, x => x.Value.GetDecimal())
-    : new Dictionary<string, decimal>();
+// The tier configuration is the sole budget authority. Protocol budget fields are legacy.
+using var tierConfig = JsonDocument.Parse(File.ReadAllText(Path.Combine(repo, "experiments", "agents.mixed.json")));
+var pools = tierConfig.RootElement.GetProperty("mixedTiers");
+var groupBudgets = tierConfig.RootElement.GetProperty("mixedTierBudgetsUsd");
+var resolvedModels = models.Select(m =>
+{
+    var groups = pools.EnumerateObject()
+        .Where(group => group.Value.EnumerateArray().Any(item => item.GetString() == m.Model))
+        .Select(group => group.Name).ToArray();
+    if (groups.Length != 1)
+        throw new InvalidOperationException($"Model {m.Model} belongs to {groups.Length} pricing groups; expected exactly one.");
+    var group = groups[0];
+    var cap = groupBudgets.GetProperty(group).GetDecimal();
+    if (cap <= 0) throw new InvalidOperationException("Invalid budget for group " + group);
+    return new { m.Id, m.Model, Group = group, Cap = cap };
+}).ToArray();
+var modelCaps = resolvedModels.ToDictionary(m => m.Model, m => m.Cap);
+var perRequestUsd = resolvedModels.Max(m => m.Cap);
+var totalUsd = resolvedModels.Sum(m => m.Cap) * tasks.Length;
 var limits = root.GetProperty("limits");
 var maxPromptChars = limits.GetProperty("max_prompt_characters").GetInt32();
 var reasoningWords = limits.GetProperty("reasoning_max_words").GetInt32();
@@ -97,12 +112,15 @@ ExperimentArtifacts.Save(Path.Combine(output, "manifest.json"), new {
     coreSha256 = ExperimentArtifacts.Hash(coreBytes),
     protocolSha256 = ExperimentArtifacts.Hash(protocolBytes),
     catalogSha256 = ExperimentArtifacts.Hash(catalogBytes),
+    tierConfigSha256 = ExperimentArtifacts.Hash(tierConfigBytes),
+    appliedModelBudgets = resolvedModels,
     supplementalSources = supplementalBytes.Select(x => new { path = x.File, sha256 = ExperimentArtifacts.Hash(x.Bytes) }).ToArray(),
     maxCompletionTokens = smoke ? smokeTokens : completionTokens,
     totalBudgetUsd = totalUsd, perRequestBudgetUsd = perRequestUsd, modelRequestBudgetUsd = modelCaps,
     note = "Budget is approximate. Set OpenRouter key spending limit."
 });
 File.WriteAllBytes(Path.Combine(output, "protocol.json"), protocolBytes);
+File.WriteAllBytes(Path.Combine(output, "agents.mixed.json"), tierConfigBytes);
 using var transport = new OpenRouterTransport(key);
 var budget = new BudgetLedger(Path.Combine(output, "cost-ledger.jsonl"), totalUsd, perRequestUsd, modelCaps);
 var jobs = smoke ? new[] { (models[0], (Id: "SMOKE", Prompt: "Reply exactly OK.")) } :
