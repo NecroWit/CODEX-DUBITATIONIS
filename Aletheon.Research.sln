@@ -8,6 +8,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aletheon.ExperimentKit.Test
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aletheon.ModelTransferResearch.Experiment01", "research\tracks\04-aletheon-research\experiments\EXP-0.2-model-transfer\Aletheon.ModelTransferResearch.Experiment01.csproj", "{BB012D9A-3C21-49CB-AF33-9E93C4130E21}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aletheon.EXP03.Calibration", "research\tracks\04-aletheon-research\experiments\EXP-0.3-calibration\Aletheon.ModelTransferResearch.Experiment01.csproj", "{7C87CB74-3B82-4C0D-9D10-37D9B990CBA3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -26,6 +28,10 @@ Global
 		{BB012D9A-3C21-49CB-AF33-9E93C4130E21}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{BB012D9A-3C21-49CB-AF33-9E93C4130E21}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{BB012D9A-3C21-49CB-AF33-9E93C4130E21}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7C87CB74-3B82-4C0D-9D10-37D9B990CBA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7C87CB74-3B82-4C0D-9D10-37D9B990CBA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7C87CB74-3B82-4C0D-9D10-37D9B990CBA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7C87CB74-3B82-4C0D-9D10-37D9B990CBA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
