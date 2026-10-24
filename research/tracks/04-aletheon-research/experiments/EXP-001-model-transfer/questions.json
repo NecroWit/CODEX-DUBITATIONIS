@@ -1,0 +1,62 @@
+{
+  "version": "0.1",
+  "task": {
+    "id": "T1",
+    "description": "Plan a deterministic data-cleaning routine with explicit constraints and a deliberate handoff",
+    "initial_prompt": "Design a Python function normalize_records(rows) that accepts a list of dicts with id, name, score. Requirements: do not mutate input; strip surrounding whitespace in name; preserve internal spaces; reject rows with missing or blank id; score must be integer 0..100, but bool is invalid; preserve input order; for duplicate ids keep the first valid row only; return (cleaned, rejected) where rejected entries contain original index and a reason. First: outline algorithm, edge cases and test cases, but DO NOT write code yet. At end, produce a CHECKPOINT JSON object with decisions, constraints, open_questions, next_action, and test_cases.",
+    "continue_prompt": "Continue from the checkpoint. Implement normalize_records in Python 3 and a minimal unittest suite. Do not invent decisions missing from checkpoint; explicitly flag ambiguities. Output only code followed by a short note about assumptions.",
+    "probe_prompt": "Before implementing, list all hard constraints recovered from your available context; distinguish known constraints from assumptions."
+  },
+  "hidden_checks": [
+    {
+      "id": "C1",
+      "criterion": "Does not mutate input"
+    },
+    {
+      "id": "C2",
+      "criterion": "Trims only surrounding name whitespace"
+    },
+    {
+      "id": "C3",
+      "criterion": "Rejects missing or blank id"
+    },
+    {
+      "id": "C4",
+      "criterion": "Score exact int 0..100 excluding bool"
+    },
+    {
+      "id": "C5",
+      "criterion": "Keeps first valid duplicate id"
+    },
+    {
+      "id": "C6",
+      "criterion": "Preserves input order"
+    },
+    {
+      "id": "C7",
+      "criterion": "Returns cleaned and rejected with original indices/reasons"
+    },
+    {
+      "id": "C8",
+      "criterion": "Includes runnable tests and handles invalid input consistently"
+    }
+  ],
+  "recovery_questions": [
+    {
+      "id": "R1",
+      "question": "What was the agreed next step at handoff?"
+    },
+    {
+      "id": "R2",
+      "question": "Which constraints are explicit versus inferred?"
+    },
+    {
+      "id": "R3",
+      "question": "Which unresolved questions remain, if any?"
+    },
+    {
+      "id": "R4",
+      "question": "What evidence supports your reconstruction of prior decisions?"
+    }
+  ]
+}
