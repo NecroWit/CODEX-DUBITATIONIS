@@ -4,32 +4,9 @@
 
 ## Unified comparison — EXP > 1 (EXP-1.1 and EXP-1.2)
 
-**No price normalization.** Convergence and logical consistency use a 0–100% scale; effective token cost uses **actual USD per million total tokens**. The two scales are intentionally kept separate rather than mixing dollar amounts and percentages on one axis.
+![EXP > 1: three bars per model, scores on left Y-axis and actual USD per million tokens on right Y-axis](EXP_GT1_DUAL_AXIS.svg)
 
-### Scores — same models, percentage scale
-
-```mermaid
-xychart-beta
-    title "EXP > 1: convergence with C and logical consistency (%)"
-    x-axis ["1.1 DeepSeek", "1.1 Mistral", "1.2 GPT5 Mini", "1.2 Qwen3.5"]
-    y-axis "Score (%)" 0 --> 100
-    line [88, 73, 87, 85]
-    line [82, 63, 81, 84]
-```
-
-First line = convergence with C; second line = logical consistency. Mermaid's `xychart-beta` may not display a legend.
-
-### Token price — actual USD scale, aligned model order
-
-```mermaid
-xychart-beta
-    title "EXP > 1: effective USD per 1M total tokens (not normalized)"
-    x-axis ["1.1 DeepSeek", "1.1 Mistral", "1.2 GPT5 Mini", "1.2 Qwen3.5"]
-    y-axis "USD / 1M tokens" 0 --> 0.5
-    bar [0.28448, 0.09961, 0.29799, 0.43921]
-```
-
-These two aligned panels form the **EXP > 1 summary visualization**. A single Mermaid plot with a shared Y axis would make the raw price invisible next to percentages; no arbitrary price multiplier is used.
+**One chart, two Y-axes, no normalization:** blue = convergence with C (%), green = logical consistency (%), orange = observed effective cost (USD per million input + output tokens). Left axis: 0–100%; right axis: $0–$0.50 per million tokens. Higher scores are better; lower cost is better.
 
 | Experiment | Model | Convergence (%) | Logical consistency (%) | Effective USD / 1M total tokens |
 |---|---|---:|---:|---:|
@@ -38,7 +15,7 @@ These two aligned panels form the **EXP > 1 summary visualization**. A single Me
 | EXP-1.2 | GPT-5 Mini | 87 | 81 | $0.29799 |
 | EXP-1.2 | Qwen3.5 Plus | 85 | 84 | $0.43921 |
 
-The scores are subjective preliminary assessments. Effective price is weighted actual USD cost divided by total billed input + output tokens, multiplied by 1,000,000. Add future EXP > 1 model rows to both aligned panels and the table.
+Scores are subjective preliminary assessments. Effective price is total actual USD cost / total billed input and output tokens × 1,000,000. The embedded SVG is the canonical combined summary visualization for EXP > 1; extend it and this table as new experiments are evaluated.
 
 ## Convergence with frozen C (%)
 
