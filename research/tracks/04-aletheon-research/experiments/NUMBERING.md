@@ -9,7 +9,7 @@
 
 ## Traceability
 
-Do not rename historical folders, run IDs, raw outputs or prior commit history merely to retrofit numbering. Existing `EXP-001-model-transfer` path is a **legacy path**, not evidence that EXP-001 succeeded. Cite both canonical and legacy IDs when necessary. Retain unsuccessful runs as scientific evidence. Any new run should record canonical experiment ID, legacy/source ID if any, protocol version, participant/model identifiers, prompts, limits, timestamps, completion statuses and costs.
+The source folder was renamed to `EXP-0.2-model-transfer` (formerly `EXP-001-model-transfer`). Preserve original run IDs, raw outputs and commit history. Locally untracked `runs/` files may remain in the old folder after pulling; retain them as historical artifacts. Cite both canonical and legacy IDs when necessary. Retain unsuccessful runs as scientific evidence. Any new run should record canonical experiment ID, legacy/source ID if any, protocol version, participant/model identifiers, prompts, limits, timestamps, completion statuses and costs.
 
 ## Success criteria
 
