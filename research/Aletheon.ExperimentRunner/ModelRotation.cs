@@ -30,8 +30,8 @@ internal static class ModelRotation
         var currentTier = fresh ? null : (string?)currentProtocol["rotation"]?["tier"];
         var currentPosition = Array.IndexOf(cycle, currentTier);
         // The protocol tier is the only persisted position. Missing, unknown, or
-        // final/penultimate position wraps to the first configured group.
-        var nextPosition = currentPosition < 0 || currentPosition + 1 >= cycle.Length - 1
+        // final position wraps to the first configured group.
+        var nextPosition = currentPosition < 0 || currentPosition + 1 >= cycle.Length
             ? 0 : currentPosition + 1;
         var tier = targetTier ?? cycle[nextPosition];
         if (!cycle.Contains(tier))
