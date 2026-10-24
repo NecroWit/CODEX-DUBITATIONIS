@@ -4,28 +4,41 @@
 
 ## Unified comparison — EXP > 1 (EXP-1.1 and EXP-1.2)
 
-One chart, four model/experiment pairs, three measures. **Convergence and logical consistency are percentages.** The token-price series uses a separate explicitly defined normalization: **USD per million total tokens divided by $0.50, multiplied by 100**. This permits a single 0–100 axis without pretending that dollars are percentages. **Lower token price is better; higher scores are better.** Exact unscaled USD values are in the table below.
+**No price normalization.** Convergence and logical consistency use a 0–100% scale; effective token cost uses **actual USD per million total tokens**. The two scales are intentionally kept separate rather than mixing dollar amounts and percentages on one axis.
+
+### Scores — same models, percentage scale
 
 ```mermaid
 xychart-beta
-    title "EXP > 1: convergence, logic and normalized token price"
+    title "EXP > 1: convergence with C and logical consistency (%)"
     x-axis ["1.1 DeepSeek", "1.1 Mistral", "1.2 GPT5 Mini", "1.2 Qwen3.5"]
-    y-axis "Scores (%) / price index (USD 0.50 = 100)" 0 --> 100
+    y-axis "Score (%)" 0 --> 100
     line [88, 73, 87, 85]
     line [82, 63, 81, 84]
-    bar [56.90, 19.92, 59.60, 87.84]
 ```
 
-**Series in drawing order:** first line = convergence with C (%); second line = logical consistency (%); bars = normalized effective token cost (price index). Mermaid's `xychart-beta` does not consistently display a legend, so series are specified here. Values are preliminary subjective scores and observed costs; this is not a statistically validated performance benchmark.
+First line = convergence with C; second line = logical consistency. Mermaid's `xychart-beta` may not display a legend.
 
-| Experiment | Model | Convergence (%) | Logic (%) | Effective USD / 1M tokens | Price index (0–100) |
-|---|---|---:|---:|---:|---:|
-| EXP-1.1 | DeepSeek V3.2 | 88 | 82 | $0.28448 | 56.90 |
-| EXP-1.1 | Mistral Small 3.2 | 73 | 63 | $0.09961 | 19.92 |
-| EXP-1.2 | GPT-5 Mini | 87 | 81 | $0.29799 | 59.60 |
-| EXP-1.2 | Qwen3.5 Plus | 85 | 84 | $0.43921 | 87.84 |
+### Token price — actual USD scale, aligned model order
 
-This chart is the **primary summary graphic for all EXP > 1 results**. Append future EXP-1.x entries to the same chart and table, preserving the normalization reference ($0.50 per million tokens) or explicitly revising it if costs exceed the axis.
+```mermaid
+xychart-beta
+    title "EXP > 1: effective USD per 1M total tokens (not normalized)"
+    x-axis ["1.1 DeepSeek", "1.1 Mistral", "1.2 GPT5 Mini", "1.2 Qwen3.5"]
+    y-axis "USD / 1M tokens" 0 --> 0.5
+    bar [0.28448, 0.09961, 0.29799, 0.43921]
+```
+
+These two aligned panels form the **EXP > 1 summary visualization**. A single Mermaid plot with a shared Y axis would make the raw price invisible next to percentages; no arbitrary price multiplier is used.
+
+| Experiment | Model | Convergence (%) | Logical consistency (%) | Effective USD / 1M total tokens |
+|---|---|---:|---:|---:|
+| EXP-1.1 | DeepSeek V3.2 | 88 | 82 | $0.28448 |
+| EXP-1.1 | Mistral Small 3.2 | 73 | 63 | $0.09961 |
+| EXP-1.2 | GPT-5 Mini | 87 | 81 | $0.29799 |
+| EXP-1.2 | Qwen3.5 Plus | 85 | 84 | $0.43921 |
+
+The scores are subjective preliminary assessments. Effective price is weighted actual USD cost divided by total billed input + output tokens, multiplied by 1,000,000. Add future EXP > 1 model rows to both aligned panels and the table.
 
 ## Convergence with frozen C (%)
 
