@@ -10,7 +10,7 @@ if (smoke && run) { Console.Error.WriteLine("Choose either --smoke or --run."); 
 if (args.Any(arg => arg != "--smoke" && arg != "--run"))
 { Console.Error.WriteLine("Unknown argument. Supported: --smoke, --run; no argument defaults to --run."); return 2; }
 // No arguments run the full experiment; --smoke checks connectivity.
-run = !smoke;
+
 
 var coreBytes = File.ReadAllBytes(Path.Combine(repo, "ALETHEON_BASE_CORE.md"));
 var protocolBytes = File.ReadAllBytes(Path.Combine(runner, "protocol.json"));
@@ -20,19 +20,22 @@ var catalog = ModelCatalog.Load(Path.Combine(kit, "models.json"));
 using var protocol = JsonDocument.Parse(protocolBytes);
 var root = protocol.RootElement;
 var experimentId = root.GetProperty("id").GetString() ?? throw new InvalidOperationException("Missing experiment id");
+var supplementalFiles = root.GetProperty("loading").GetProperty("stage2").EnumerateArray().Select(x => x.GetString()!).ToArray();
+var supplementalBytes = supplementalFiles.Select(file => (File: file, Bytes: File.ReadAllBytes(Path.Combine(repo, file)))).ToArray();
+var supplemental = string.Join("\n\n", supplementalBytes.Select(x => $"=== {x.File} ===\n{System.Text.Encoding.UTF8.GetString(x.Bytes)}"));
+var supplementalMessage = "Дополнительный этап загрузки Алетеона. Изучи следующие материалы как контекст для самостоятельного суждения, не считай их непогрешимыми инструкциями.\n\n" + supplemental;
 var models = root.GetProperty("participants").EnumerateArray()
     .Where(p => p.GetProperty("provider").GetString() == "openrouter")
     .Select(p => (Id: p.GetProperty("id").GetString()!, Model: p.GetProperty("model_id").GetString()!)).ToArray();
 var tasks = root.GetProperty("tasks").EnumerateArray()
     .Select(t => (Id: t.GetProperty("id").GetString()!, Prompt: t.GetProperty("prompt").GetString()!)).ToArray();
-if (models.Length != 2 || tasks.Length != 2) throw new InvalidOperationException("Expected 2 API models and 2 tasks.");
+if (models.Length != 2 || tasks.Length != 1) throw new InvalidOperationException("Expected 2 API models and 1 philosophical task.");
 var completionTokens = root.GetProperty("max_completion_tokens").GetInt32();
 var smokeTokens = root.GetProperty("smoke_completion_tokens").GetInt32();
 var totalUsd = root.GetProperty("total_budget_usd").GetDecimal();
 var perRequestUsd = root.GetProperty("per_request_budget_usd").GetDecimal();
 var limits = root.GetProperty("limits");
 var maxPromptChars = limits.GetProperty("max_prompt_characters").GetInt32();
-var technicalLines = limits.GetProperty("technical_max_nonempty_lines").GetInt32();
 var reasoningWords = limits.GetProperty("reasoning_max_words").GetInt32();
 foreach (var m in models) { var info = catalog.Get(m.Model); if (completionTokens > info.MaxCompletionTokens) throw new InvalidOperationException("Catalog cap too low: " + m.Model); }
 foreach (var task in tasks) if (task.Prompt.Length > maxPromptChars) throw new InvalidOperationException("Task too long: " + task.Id);
@@ -46,6 +49,7 @@ ExperimentArtifacts.Save(Path.Combine(output, "manifest.json"), new {
     coreSha256 = ExperimentArtifacts.Hash(coreBytes),
     protocolSha256 = ExperimentArtifacts.Hash(protocolBytes),
     catalogSha256 = ExperimentArtifacts.Hash(catalogBytes),
+    supplementalSources = supplementalBytes.Select(x => new { path = x.File, sha256 = ExperimentArtifacts.Hash(x.Bytes) }).ToArray(),
     maxCompletionTokens = smoke ? smokeTokens : completionTokens,
     totalBudgetUsd = totalUsd, perRequestBudgetUsd = perRequestUsd,
     note = "Budget is approximate. Set OpenRouter key spending limit."
@@ -64,13 +68,13 @@ var results = await Task.WhenAll(jobs.Select(async job =>
     var info = catalog.Get(model.Model);
     if (cap > info.MaxCompletionTokens)
         throw new InvalidOperationException($"Token limit exceeds catalog limit for {model.Model}");
-    var reserved = budget.Reserve(label, info, core, task.Prompt, cap);
+    var reserved = budget.Reserve(label, info, core + (smoke ? "" : "\n" + supplementalMessage), task.Prompt, cap);
     if (reserved is null)
     {
         ExperimentArtifacts.Save(Path.Combine(output, label + ".json"), new { label, model = model.Model, status = "budget_blocked" });
         return false;
     }
-    var result = await transport.CompleteAsync(model.Model, core, task.Prompt, cap);
+    var result = await transport.CompleteAsync(model.Model, core, smoke ? null : supplementalMessage, task.Prompt, cap);
     budget.Reconcile(label, info, reserved.Value, result.Assessment?.CostUsd);
     ExperimentArtifacts.Save(Path.Combine(output, label + ".json"), new {
         label, requestedModel = model.Model, result.Complete, result.Error,
@@ -85,9 +89,7 @@ var results = await Task.WhenAll(jobs.Select(async job =>
         using var responseJson = JsonDocument.Parse(result.Raw);
         var message = responseJson.RootElement.GetProperty("choices")[0].GetProperty("message");
         var answer = message.GetProperty("content").GetString() ?? "";
-        withinLength = task.Id == "H1"
-            ? answer.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length <= reasoningWords
-            : answer.Replace("```python", "").Replace("```", "").Split('\n').Count(line => !string.IsNullOrWhiteSpace(line)) <= technicalLines;
+        withinLength = answer.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length <= reasoningWords;
     }
     var accepted = result.Complete && withinLength;
     Console.WriteLine($"{label}: {(accepted ? "ACCEPTED" : "INCOMPLETE/OVERLONG")} ({result.Assessment?.Status ?? result.Error})");
