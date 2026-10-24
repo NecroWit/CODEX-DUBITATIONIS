@@ -1,0 +1,24 @@
+{
+  "status": "EXP-0.3 calibration; pricing estimates must be checked before paid run",
+  "participants": [
+    {
+      "id": "A",
+      "provider": "openrouter",
+      "model_id": "deepseek/deepseek-v3.2"
+    },
+    {
+      "id": "B",
+      "provider": "openrouter",
+      "model_id": "openai/gpt-4.1-nano"
+    }
+  ],
+  "tasks": [
+    "T1",
+    "H1"
+  ],
+  "requests_per_run": 4,
+  "repetitions": 1,
+  "temperature": 0,
+  "output_token_limit": 1600,
+  "estimated_total_budget_usd": 0.05
+}
