@@ -37,7 +37,7 @@ internal static class ModelRotation
             var chosen = available[RandomNumberGenerator.GetInt32(available.Length)];
             selected.Add(chosen);
             previous.Add(chosen);
-            used[poolName] = previous;
+            if (used[poolName] is null || !ReferenceEquals(used[poolName], previous)) used[poolName] = previous;
         }
         var protocol = JsonNode.Parse(File.ReadAllText(protocolPath))!.AsObject();
         var oldId = protocol["id"]!.GetValue<string>();
@@ -68,7 +68,7 @@ internal static class ModelRotation
         Directory.CreateDirectory(Path.GetDirectoryName(statePath)!);
         File.WriteAllText(protocolPath, protocol.ToJsonString(new JsonSerializerOptions { WriteIndented = true }) + Environment.NewLine);
         state["nextIndex"] = index + 1;
-        state["used"] = used;
+        if (state["used"] is null) state["used"] = used;
         File.WriteAllText(statePath, state.ToJsonString(new JsonSerializerOptions { WriteIndented = true }) + Environment.NewLine);
         Console.WriteLine($"{nextId} [{tier}]: A={selected[0]}, B={selected[1]}");
         Console.WriteLine("Offline rotation complete. Inspect protocol.json and budget before --run. Historical prices are not live quotes.");
