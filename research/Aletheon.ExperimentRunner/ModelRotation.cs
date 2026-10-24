@@ -6,7 +6,6 @@ using Aletheon.ExperimentKit;
 
 internal static class ModelRotation
 {
-    private static readonly string[] Cycle = ["cheap", "medium", "premium", "mixed"];
 
     // Planning is offline: it never sends a paid request.
     public static int Prepare(string repo, string runner, string kit, string? targetId = null, string? targetTier = null, bool fresh = false)
@@ -19,14 +18,24 @@ internal static class ModelRotation
         var catalog = ModelCatalog.Load(Path.Combine(kit, "models.json"));
         var state = !fresh && File.Exists(statePath) ? JsonNode.Parse(File.ReadAllText(statePath))!.AsObject() : new JsonObject();
         var currentProtocol = JsonNode.Parse(File.ReadAllText(protocolPath))!.AsObject();
-        var currentTier = (string?)currentProtocol["rotation"]?["tier"];
-        // protocol.json is the sole source of the current tier; the state file only
-        // records model usage. Ignore obsolete nextIndex from older installations.
-        var currentPosition = currentTier is null ? -1 : Array.IndexOf(Cycle, currentTier);
-        if (currentTier is not null && currentPosition < 0)
-            throw new InvalidOperationException("Unknown rotation tier: " + currentTier);
-        var tier = targetTier ?? Cycle[(currentPosition + 1) % Cycle.Length];
-        if (!Cycle.Contains(tier)) throw new InvalidOperationException("Unknown target tier: " + tier);
+        using var rotationConfig = JsonDocument.Parse(File.ReadAllText(Path.Combine(runner, "rotation.json")));
+        var cycle = rotationConfig.RootElement.GetProperty("rotation").EnumerateArray()
+            .Select(item => item.GetString() ?? throw new InvalidOperationException("Null rotation entry"))
+            .ToArray();
+        if (cycle.Length == 0 || cycle.Any(string.IsNullOrWhiteSpace))
+            throw new InvalidOperationException("Rotation must contain at least one non-empty group.");
+        foreach (var name in cycle)
+            if (name != "mixed" && !pools.TryGetProperty(name, out _))
+                throw new InvalidOperationException("Unknown rotation group: " + name);
+        var currentTier = fresh ? null : (string?)currentProtocol["rotation"]?["tier"];
+        var currentPosition = Array.IndexOf(cycle, currentTier);
+        // The protocol tier is the only persisted position. Missing, unknown, or
+        // final/penultimate position wraps to the first configured group.
+        var nextPosition = currentPosition < 0 || currentPosition + 1 >= cycle.Length - 1
+            ? 0 : currentPosition + 1;
+        var tier = targetTier ?? cycle[nextPosition];
+        if (!cycle.Contains(tier))
+            throw new InvalidOperationException("Unknown target tier: " + tier);
         state.Remove("nextIndex");
         var used = state["used"] as JsonObject ?? new JsonObject();
         var selected = new List<string>();
