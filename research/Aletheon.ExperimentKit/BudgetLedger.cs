@@ -17,10 +17,13 @@ public sealed class BudgetLedger
     }
     public decimal? Reserve(string label, ModelInfo model, string system, string prompt, int tokens)
     {
-        // Conservative character estimate from legacy C# BudgetManager; not an actual tokenizer.
-        var inputEstimate = system.Length + prompt.Length + 1024m;
-        var estimate = Math.Ceiling((inputEstimate * model.InputUsdPerMillionTokens +
-            tokens * model.OutputUsdPerMillionTokens) / 1_000_000m * 100000m) / 100000m;
+        // Approximate tokens, not characters: Cyrillic-heavy prompts are budgeted at
+        // two characters per token (conservative), plus 1024 tokens of overhead.
+        // Add a 20% safety margin. Provider usage remains authoritative on reconciliation.
+        var inputTokensEstimate = Math.Ceiling((system.Length + prompt.Length) / 2m) + 1024m;
+        var estimatedCost = (inputTokensEstimate * model.InputUsdPerMillionTokens +
+            tokens * model.OutputUsdPerMillionTokens) / 1_000_000m;
+        var estimate = Math.Ceiling(estimatedCost * 1.20m * 100000m) / 100000m;
         lock (gate)
         {
             if (estimate > perRequest || committed + estimate > total)
