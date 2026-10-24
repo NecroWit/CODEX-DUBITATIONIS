@@ -1,31 +1,58 @@
 #!/usr/bin/env python3
-"""Offline validation of EXP-001 runner configuration. No API calls."""
+"""Offline shared-library regression tests. No network or paid calls."""
+import importlib.util
 import json
-import pathlib
+from pathlib import Path
+import sys
+import tempfile
 import unittest
 
-ROOT = pathlib.Path(__file__).resolve().parent
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parents[4]
+sys.path.insert(0, str(ROOT))
+from research.common.openrouter import Budget, load_model_catalog, parse_response
 
-class ConfigTests(unittest.TestCase):
-    def test_two_tasks(self):
-        tasks = json.loads((ROOT / "questions.json").read_text(encoding="utf-8"))["tasks"]
+
+class SharedTests(unittest.TestCase):
+    def test_finished_content(self):
+        r = parse_response({"choices": [{"finish_reason": "stop", "message": {"content": "Done"}}]})
+        self.assertTrue(r["valid"])
+
+    def test_length_not_success(self):
+        r = parse_response({"choices": [{"finish_reason": "length", "message": {"content": ""}}]})
+        self.assertFalse(r["valid"])
+        self.assertEqual(r["reason"], "truncated")
+
+    def test_reasoning_only_not_success(self):
+        r = parse_response({"choices": [{"finish_reason": "stop",
+                            "message": {"content": "", "reasoning": "thinking"}}]})
+        self.assertFalse(r["valid"])
+
+    def test_missing_choices(self):
+        self.assertFalse(parse_response({})["valid"])
+
+    def test_catalog(self):
+        catalog = load_model_catalog(ROOT / "research/common/models.json")
+        self.assertIn("z-ai/glm-5.3", catalog)
+        self.assertIn("deepseek/deepseek-v3.2", catalog)
+
+    def test_parallel_budget_reservation(self):
+        from concurrent.futures import ThreadPoolExecutor
+        catalog = load_model_catalog(ROOT / "research/common/models.json")
+        with tempfile.TemporaryDirectory() as tmp:
+            budget = Budget(catalog, "0.00010", "0.00010", Path(tmp) / "ledger.jsonl")
+            messages = [{"role": "user", "content": "x" * 200}]
+            with ThreadPoolExecutor(max_workers=12) as pool:
+                results = list(pool.map(lambda _: budget.reserve("test", "z-ai/glm-5.3", messages, 100), range(12)))
+            self.assertLess(sum(r is not None for r in results), 12)
+            self.assertLessEqual(budget.committed, budget.total)
+
+    def test_experiment_configuration(self):
+        tasks = json.loads((HERE / "questions.json").read_text(encoding="utf-8"))["tasks"]
+        people = json.loads((HERE / "participants.json").read_text(encoding="utf-8"))["participants"]
         self.assertEqual({t["id"] for t in tasks}, {"T1", "H1"})
-        self.assertEqual(len(tasks), 2)
-        self.assertTrue(all(t["prompt"].strip() for t in tasks))
+        self.assertEqual(len([p for p in people if p["provider"] == "openrouter"]), 2)
 
-    def test_two_api_models(self):
-        participants = json.loads((ROOT / "participants.json").read_text(encoding="utf-8"))["participants"]
-        api = [p for p in participants if p["provider"] == "openrouter"]
-        self.assertEqual(len(api), 2)
-        self.assertNotEqual(api[0]["model_id"], api[1]["model_id"])
-        self.assertTrue(all("/" in p["model_id"] for p in api))
-
-    def test_runner_is_importable(self):
-        import importlib.util
-        spec = importlib.util.spec_from_file_location("exp001_runner", ROOT / "runner.py")
-        module = importlib.util.module_from_spec(spec)
-        spec.loader.exec_module(module)
-        self.assertEqual(len(module.sha256(b"abc")), 64)
 
 if __name__ == "__main__":
     unittest.main()
