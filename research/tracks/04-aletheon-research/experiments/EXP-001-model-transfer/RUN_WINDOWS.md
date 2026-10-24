@@ -1,5 +1,7 @@
 # EXP-001 — Rider / .NET 8
 
+**No arguments now defaults to the full paid experiment (`--run`).** Use `--smoke` explicitly for a quick check. A normal Rider Run starts the full experiment and can incur API charges.
+
 **Open the repository-root `Aletheon.Research.sln` in Rider, not the individual `.csproj`.** The solution already includes the experiment, the shared library and its offline tests. No manual Add Reference or Attach Project steps are needed. After Git Pull, use File → Open → `Aletheon.Research.sln` once; Rider restores and indexes the projects.
 
 Run from the repository root, or choose the experiment project in Rider:
