@@ -1,7 +1,7 @@
 {
-  "id": "EXP-0.6",
-  "version": "0.6",
-  "description": "Same H1/H2 and partial Aletheon context as EXP-0.5; new models",
+  "id": "EXP-0.7",
+  "version": "0.7",
+  "description": "Repeat EXP-0.6 H1/H2 and identical Aletheon loading with GPT-4.1 Mini and Nemotron 3 Nano; increased spending caps",
   "core": "ALETHEON_BASE_CORE.md",
   "participants": [
     {
@@ -12,7 +12,7 @@
     {
       "id": "B",
       "provider": "openrouter",
-      "model_id": "mistralai/ministral-8b-2512"
+      "model_id": "nvidia/nemotron-3-nano-30b-a3b"
     }
   ],
   "tasks": [
@@ -42,8 +42,8 @@
   ],
   "max_completion_tokens": 3200,
   "smoke_completion_tokens": 100,
-  "total_budget_usd": 0.05,
-  "per_request_budget_usd": 0.015,
+  "total_budget_usd": 0.12,
+  "per_request_budget_usd": 0.045,
   "limits": {
     "max_prompt_characters": 2500,
     "reasoning_max_words": 350
