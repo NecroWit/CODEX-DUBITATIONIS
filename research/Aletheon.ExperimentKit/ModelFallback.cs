@@ -16,6 +16,7 @@ public sealed record FallbackCompletion(string RequestedModel, CompletionResult 
 /// </summary>
 public static class ModelFallback
 {
+    private static readonly object LogGate = new();
     public static async Task<FallbackCompletion> CompleteAsync(
         OpenRouterTransport transport, BudgetLedger budget, ModelCatalog catalog,
         string label, string requestedModel, IEnumerable<string> standbyModels,
@@ -50,7 +51,7 @@ public static class ModelFallback
             if (i > 0 && substitutionLogPath is not null)
             {
                 Directory.CreateDirectory(Path.GetDirectoryName(substitutionLogPath)!);
-                File.AppendAllText(substitutionLogPath, JsonSerializer.Serialize(new {
+                lock (LogGate) File.AppendAllText(substitutionLogPath, JsonSerializer.Serialize(new {
                     label, requestedModel, replacementModel = model,
                     reason = attempts[i - 1].Error, result.Error, utc = DateTimeOffset.UtcNow
                 }) + Environment.NewLine);
