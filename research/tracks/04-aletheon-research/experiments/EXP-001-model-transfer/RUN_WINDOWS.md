@@ -1,6 +1,8 @@
-# EXP-001 — .NET 8 / C# only
+# EXP-001 — Rider / .NET 8
 
-Open `Aletheon.ModelTransferResearch.Experiment01.csproj` in Rider or Visual Studio, or run from repository root:
+**Open the repository-root `Aletheon.Research.sln` in Rider, not the individual `.csproj`.** The solution already includes the experiment, the shared library and its offline tests. No manual Add Reference or Attach Project steps are needed. After Git Pull, use File → Open → `Aletheon.Research.sln` once; Rider restores and indexes the projects.
+
+Run from the repository root, or choose the experiment project in Rider:
 
 ```powershell
 dotnet run --project research/tracks/04-aletheon-research/experiments/EXP-001-model-transfer/Aletheon.ModelTransferResearch.Experiment01.csproj -- --smoke
@@ -20,4 +22,4 @@ The old local run `20261024T164028Z-a86f4b17` is **excluded from the analytical 
 
 The ChatGPT control answers are frozen in `control/`. Do not regenerate or change them after viewing API outputs.
 
-In Rider, open the new `Aletheon.ModelTransferResearch.Experiment01.csproj` (or attach it to a solution); remove the obsolete `Exp001` run configuration. The project reference from this directory uses `../../../../` to reach `research/Aletheon.ExperimentKit`.
+The project reference from this directory uses `../../../../` to reach `research/Aletheon.ExperimentKit`.
