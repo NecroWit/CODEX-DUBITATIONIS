@@ -1,0 +1,31 @@
+{
+  "status": "provisional",
+  "reviewer": {
+    "id": "chatgpt-control",
+    "role": "human-supervised independent reviewer, not scored participant"
+  },
+  "participants": [
+    {
+      "id": "A",
+      "provider": "openrouter",
+      "model_id": "",
+      "note": "Choose first exact available model ID before run"
+    },
+    {
+      "id": "B",
+      "provider": "openrouter",
+      "model_id": "",
+      "note": "Choose a distinct model family for transfer"
+    }
+  ],
+  "conditions": [
+    "A0",
+    "A1",
+    "A2"
+  ],
+  "repetitions": 3,
+  "temperature": 0,
+  "output_token_limit": 1400,
+  "max_total_requests": 30,
+  "spending_limit_usd": null
+}
