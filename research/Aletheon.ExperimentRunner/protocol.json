@@ -42,8 +42,6 @@
   ],
   "max_completion_tokens": 3200,
   "smoke_completion_tokens": 100,
-  "total_budget_usd": 0.12,
-  "per_request_budget_usd": 0.045,
   "limits": {
     "max_prompt_characters": 2500,
     "reasoning_max_words": 350
