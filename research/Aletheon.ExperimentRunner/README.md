@@ -46,10 +46,9 @@ the experiment ID and model selection again. The planner never calls OpenRouter.
 until you explicitly run `--rotate`, which prepares EXP-1.0.
 
 
-## Derived research findings
+## Derived research reports
 
-The `derived/` directory contains `COMPARATIVE_ANALYSIS.md` (medium-length researcher analysis) and `SCORES_AND_EXPERIMENTS.md` (convergence and logical-consistency charts, comparison table, and one-line conclusions). These are researcher-authored, versioned interpretations; the runner does not automatically grade philosophical answers. Missing scores are not zeros.
-
+Rules for new analytical reports (observed token cost, logical consistency, convergence with Aletheon C, and short conclusion) are defined in [derived/REPORT_RULES.md](derived/REPORT_RULES.md). Prior comparative reports and their chart are preserved unchanged in [derived/Depricated/](derived/Depricated/). The runner currently archives raw results; it does not automatically assign semantic scores.
 
 ### Recovery after interrupted rotation (EXP-1.3 → EXP-1.4)
 
