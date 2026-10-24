@@ -10,6 +10,11 @@
       "inputUsdPerMillionTokens": 0.21,
       "outputUsdPerMillionTokens": 0.31,
       "maxCompletionTokens": 16000
+    },
+    "openai/gpt-4.1-nano": {
+      "inputUsdPerMillionTokens": 0.1,
+      "outputUsdPerMillionTokens": 0.4,
+      "maxCompletionTokens": 16000
     }
   }
 }
