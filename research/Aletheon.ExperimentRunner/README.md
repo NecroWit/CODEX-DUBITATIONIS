@@ -43,11 +43,7 @@ model IDs, tier and pinned input/output prices (USD per million tokens) are
 written to `protocol.json`, which is archived with every run.
 
 **Review and commit the new protocol before the next paid run.** Manually rotating again changes
-the experiment ID and model selection again. The planner deliberately does
-not call OpenRouter or change spending limits. Historical price snapshots
-are estimates, not live quotes; verify rates and available model IDs.
-Premium selections may exceed the existing per-request or total budget:
-in that case the runner blocks requests rather than silently increasing limits.
+the experiment ID and model selection again. The planner never calls OpenRouter. It **sets tier-specific USD spending ceilings** in the generated protocol (per request / total experiment): **cheap $0.045 / $0.12; medium $0.075 / $0.25; premium $0.25 / $0.90; mixed $0.25 / $0.60**. Mixed includes one premium model. These are maximum permitted estimates, **not targets or guaranteed costs**. The rotation also refreshes the protocol description to name the selected models instead of leaving stale descriptions. Historical price snapshots are not live quotes; verify model IDs, provider rates, and provider-side spending limits before any paid run. Existing locally generated protocols do not change until a new rotation; inspect their budgets manually.
 Questions and loading context remain unchanged. EXP-0.6 stays untouched
 until you explicitly run `--rotate`, which prepares EXP-1.0.
 
