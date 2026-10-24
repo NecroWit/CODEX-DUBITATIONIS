@@ -122,7 +122,15 @@ var resolvedModels = models.Select(m =>
     if (cap <= 0) throw new InvalidOperationException("Invalid budget for group " + group);
     return new { m.Id, m.Model, Group = group, Cap = cap };
 }).ToArray();
+// Standbys must stay in the same pricing tier and cannot be an assigned participant.
+var standbys = resolvedModels.ToDictionary(m => m.Id, m =>
+    pools.GetProperty(m.Group).EnumerateArray().Select(x => x.GetString()!)
+        .Where(id => id != m.Model && !models.Any(other => other.Model == id))
+        .Where(id => catalog.All.Any(info => info.Id == id && info.MaxCompletionTokens >= completionTokens))
+        .ToArray());
 var modelCaps = resolvedModels.ToDictionary(m => m.Model, m => m.Cap);
+foreach (var m in resolvedModels)
+    foreach (var standby in standbys[m.Id]) modelCaps[standby] = m.Cap;
 var perRequestUsd = resolvedModels.Max(m => m.Cap);
 var totalUsd = resolvedModels.Sum(m => m.Cap) * tasks.Length;
 var limits = root.GetProperty("limits");
@@ -159,19 +167,19 @@ var results = await Task.WhenAll(jobs.Select(async job =>
     var (model, task) = job;
     var label = model.Id + "-" + task.Id;
     var cap = smoke ? smokeTokens : completionTokens;
-    var info = catalog.Get(model.Model);
-    if (cap > info.MaxCompletionTokens)
-        throw new InvalidOperationException($"Token limit exceeds catalog limit for {model.Model}");
-    var reserved = budget.Reserve(label, info, core + (smoke ? "" : "\n" + supplementalMessage), task.Prompt, cap);
-    if (reserved is null)
-    {
-        ExperimentArtifacts.Save(Path.Combine(output, label + ".json"), new { label, model = model.Model, status = "budget_blocked" });
+    var fallback = await ModelFallback.CompleteAsync(
+        transport, budget, catalog, label, model.Model,
+        smoke ? Array.Empty<string>() : standbys[model.Id],
+        core, smoke ? null : supplementalMessage, task.Prompt, cap,
+        Path.Combine(output, "model-substitutions.jsonl"));
+    var result = fallback.Result;
+    ExperimentArtifacts.Save(Path.Combine(output, label + ".json"), new { label, model = model.Model, status = "budget_blocked" });
         return false;
     }
     var result = await transport.CompleteAsync(model.Model, core, smoke ? null : supplementalMessage, task.Prompt, cap);
     budget.Reconcile(label, info, reserved.Value, result.Assessment?.CostUsd);
     ExperimentArtifacts.Save(Path.Combine(output, label + ".json"), new {
-        label, requestedModel = model.Model, result.Complete, result.Error,
+        label, requestedModel = model.Model, actualModel = fallback.ActualModel, fallback.Substituted, fallback.Attempts, result.Complete, result.Error,
         result.HttpAttempts, result.Seconds, result.Assessment,
         result.Raw // unmodified provider JSON as a string; never parsed as a final answer
     });
@@ -187,9 +195,9 @@ var results = await Task.WhenAll(jobs.Select(async job =>
     }
     var accepted = result.Complete && withinLength;
     // Save acceptance separately so an interrupted run cannot be mistaken for 4/4.
-    ExperimentArtifacts.Save(Path.Combine(output, label + ".accepted.json"), new { label, accepted });
+    ExperimentArtifacts.Save(Path.Combine(output, label + ".accepted.json"), new { label, accepted, requestedModel = model.Model, actualModel = fallback.ActualModel });
     Console.WriteLine($"{label}: {(accepted ? "ACCEPTED" : "INCOMPLETE/OVERLONG")} ({result.Assessment?.Status ?? result.Error})");
     return accepted;
 }));
-Console.WriteLine($"Complete: {results.Count(x => x)}/{results.Length}. No model substitutions.");
+Console.WriteLine($"Complete: {results.Count(x => x)}/{results.Length}. Model substitutions recorded per response.");
 return results.All(x => x) ? 0 : 1;
