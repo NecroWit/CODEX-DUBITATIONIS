@@ -21,3 +21,30 @@ Each new run gets a unique timestamped folder containing `manifest.json`, a copy
 The 4/4 console status is a transport-and-length result, not a complete semantic validation. No paid API requests were made as part of this refactor.
 
 EXP-0.4 runs **four independent requests** (A-H1, A-H2, B-H1, B-H2). Each gets the same ordered Aletheon source context; no request sees another question or answer. H1 tests development versus historical continuity; H2 tests cognitive diversity versus preventing serious harm.
+
+
+## Model rotation (offline)
+
+After completing and archiving the current experiment, run:
+
+```powershell
+dotnet run --project research/Aletheon.ExperimentRunner/Aletheon.ExperimentRunner.csproj -- --rotate
+```
+
+This makes **no API calls**. It selects two distinct models using the original
+`experiments/agents.mixed.json:mixedTiers` lists in the repeating order
+**cheap → medium → premium → mixed** (mixed draws one cheap and one premium).
+Selections are random without replacement within each tier until the pool is
+exhausted. Local rotation history lives in `runs/rotation-state.json`;
+keep this file if you want continuity across pulls or machines. The selected
+model IDs, tier and pinned input/output prices (USD per million tokens) are
+written to `protocol.json`, which is archived with every run.
+
+**Review and commit the new protocol before --run.** Rotating again changes
+the experiment ID and model selection again. The planner deliberately does
+not call OpenRouter or change spending limits. Historical price snapshots
+are estimates, not live quotes; verify rates and available model IDs.
+Premium selections may exceed the existing per-request or total budget:
+in that case the runner blocks requests rather than silently increasing limits.
+Questions and loading context remain unchanged. EXP-0.6 stays untouched
+until you explicitly run `--rotate`, which prepares EXP-1.0.
