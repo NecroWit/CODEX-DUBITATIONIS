@@ -6,7 +6,11 @@ var repo = Path.GetFullPath(Path.Combine(experiment, "../../../../../"));
 var kit = Path.Combine(repo, "research", "Aletheon.ExperimentKit");
 var smoke = args.Contains("--smoke", StringComparer.OrdinalIgnoreCase);
 var run = args.Contains("--run", StringComparer.OrdinalIgnoreCase);
-if (smoke == run) { Console.Error.WriteLine("Use --smoke or --run"); return 2; }
+if (smoke && run) { Console.Error.WriteLine("Choose either --smoke or --run, not both."); return 2; }
+if (args.Any(arg => arg != "--smoke" && arg != "--run"))
+{ Console.Error.WriteLine("Unknown argument. Supported: --smoke, --run; no argument defaults to --run."); return 2; }
+// No arguments means a full experiment run. Use --smoke explicitly for a connectivity check.
+run = !smoke;
 var key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(key)) { Console.Error.WriteLine("Set OPENROUTER_API_KEY"); return 2; }
 var coreBytes = File.ReadAllBytes(Path.Combine(repo, "ALETHEON_BASE_CORE.md"));
