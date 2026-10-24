@@ -11,51 +11,9 @@ if (smoke && run) { Console.Error.WriteLine("Choose either --smoke or --run."); 
 if (args.Any(arg => arg != "--smoke" && arg != "--run"))
 { Console.Error.WriteLine("Unknown argument. Supported: --rotate (offline), --smoke, --run; no argument defaults to --run."); return 2; }
 // No arguments run the full experiment; --smoke checks connectivity.
-// Before a paid full run, do not silently repeat an experiment that already has results.
-if (!smoke)
-{
-    var currentPath = Path.Combine(runner, "protocol.json");
-    using var currentDocument = JsonDocument.Parse(File.ReadAllText(currentPath));
-    var currentId = currentDocument.RootElement.GetProperty("id").GetString()!;
-    var priorRunsPath = Path.Combine(runner, "runs", currentId);
-    // Rotate only after a fully accepted four-response run. A manifest is written
-    // before requests and must never be interpreted as evidence of completion.
-    var priorRuns = Directory.Exists(priorRunsPath)
-        ? Directory.GetDirectories(priorRunsPath).Where(dir => File.Exists(Path.Combine(dir, "manifest.json"))).ToArray()
-        : Array.Empty<string>();
-    bool IsSuccessfulRun(string dir)
-    {
-        try
-        {
-            foreach (var label in new[] { "A-H1", "A-H2", "B-H1", "B-H2" })
-            {
-                var path = Path.Combine(dir, label + ".accepted.json");
-                if (!File.Exists(path)) return false;
-                using var record = JsonDocument.Parse(File.ReadAllText(path));
-                var result = record.RootElement;
-                if (!result.TryGetProperty("accepted", out var accepted) || accepted.ValueKind != JsonValueKind.True)
-                    return false;
-            }
-            return true;
-        }
-        catch (Exception) { return false; }
-    }
-    if (priorRuns.Any(IsSuccessfulRun))
-    {
-        Console.WriteLine($"{currentId} has a successful archived run. Preparing next experiment before paid requests.");
-        try { ModelRotation.Prepare(repo, runner, kit); }
-        catch (Exception ex)
-        {
-            Console.Error.WriteLine("Offline rotation failed; no paid requests sent: " + ex.Message);
-            return 2;
-        }
-    }
-    else if (priorRuns.Length > 0)
-    {
-        Console.WriteLine($"{currentId} has {priorRuns.Length} incomplete/legacy run(s). Automatic rotation disabled; staying on current experiment.");
-    }
-}
-
+// The protocol selects the experiment. Runs never rotate it implicitly.
+// A new run directory is created for each invocation, whether or not
+// this experiment already has an output directory.
 
 var coreBytes = File.ReadAllBytes(Path.Combine(repo, "ALETHEON_BASE_CORE.md"));
 var protocolBytes = File.ReadAllBytes(Path.Combine(runner, "protocol.json"));
