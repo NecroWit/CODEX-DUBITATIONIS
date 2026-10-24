@@ -15,6 +15,16 @@
       "inputUsdPerMillionTokens": 0.1,
       "outputUsdPerMillionTokens": 0.4,
       "maxCompletionTokens": 16000
+    },
+    "z-ai/glm-4.5-air": {
+      "inputUsdPerMillionTokens": 0.13,
+      "outputUsdPerMillionTokens": 0.85,
+      "maxCompletionTokens": 16000
+    },
+    "qwen/qwen3-32b": {
+      "inputUsdPerMillionTokens": 0.08,
+      "outputUsdPerMillionTokens": 0.28,
+      "maxCompletionTokens": 16000
     }
   }
 }
