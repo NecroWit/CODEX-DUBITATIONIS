@@ -11,6 +11,27 @@ if (smoke && run) { Console.Error.WriteLine("Choose either --smoke or --run."); 
 if (args.Any(arg => arg != "--smoke" && arg != "--run"))
 { Console.Error.WriteLine("Unknown argument. Supported: --rotate (offline), --smoke, --run; no argument defaults to --run."); return 2; }
 // No arguments run the full experiment; --smoke checks connectivity.
+// Before a paid full run, do not silently repeat an experiment that already has results.
+if (!smoke)
+{
+    var currentPath = Path.Combine(runner, "protocol.json");
+    using var currentDocument = JsonDocument.Parse(File.ReadAllText(currentPath));
+    var currentId = currentDocument.RootElement.GetProperty("id").GetString()!;
+    var priorRunsPath = Path.Combine(runner, "runs", currentId);
+    var priorRuns = Directory.Exists(priorRunsPath)
+        ? Directory.GetDirectories(priorRunsPath).Where(dir => File.Exists(Path.Combine(dir, "manifest.json"))).ToArray()
+        : Array.Empty<string>();
+    if (priorRuns.Length > 0)
+    {
+        Console.WriteLine($"{currentId} already has {priorRuns.Length} archived run(s). Preparing next experiment before paid requests.");
+        try { ModelRotation.Prepare(repo, runner, kit); }
+        catch (Exception ex)
+        {
+            Console.Error.WriteLine("Offline rotation failed; no paid requests sent: " + ex.Message);
+            return 2;
+        }
+    }
+}
 
 
 var coreBytes = File.ReadAllBytes(Path.Combine(repo, "ALETHEON_BASE_CORE.md"));
@@ -97,19 +118,4 @@ var results = await Task.WhenAll(jobs.Select(async job =>
     return accepted;
 }));
 Console.WriteLine($"Complete: {results.Count(x => x)}/{results.Length}. No model substitutions.");
-if (!smoke && results.All(x => x))
-{
-    // Advance only after a fully accepted run. Never send additional API requests.
-    // The current run keeps its archived protocol; rotation prepares only the next one.
-    try
-    {
-        Console.WriteLine("Preparing next experiment offline...");
-        ModelRotation.Prepare(repo, runner, kit);
-    }
-    catch (Exception ex)
-    {
-        Console.Error.WriteLine("Experiment completed, but offline rotation failed: " + ex.Message);
-        return 2;
-    }
-}
 return results.All(x => x) ? 0 : 1;
