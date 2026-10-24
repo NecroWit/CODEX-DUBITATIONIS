@@ -12,7 +12,17 @@ xychart-beta
     bar [75, 88, 73, 84, 62, 88, 73]
 ```
 
-**Convergence series only** in the chart above. Logical-consistency scores are currently available **only** for EXP-1.1: DeepSeek V3.2 = 82, Mistral Small 3.2 = 63. Showing missing historical logic scores as zero would be misleading.
+**Logical consistency (only EXP-1.1 assessed):**
+
+```mermaid
+xychart-beta
+    title "EXP-1.1 — logical consistency"
+    x-axis ["DeepSeek V3.2", "Mistral Small 3.2"]
+    y-axis "Expert score" 0 --> 100
+    bar [82, 63]
+```
+
+Historical logical-consistency scores are missing, **not zero**. Separate plots avoid implying that older experiments received scores.
 
 | Experiment | Model | Convergence with C | Logical consistency | Average cost / answer |
 |---|---|---:|---:|---:|
