@@ -2,7 +2,7 @@ using System.Text.Json;
 using Aletheon.ExperimentKit;
 
 var experiment = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
-var repo = Path.GetFullPath(Path.Combine(experiment, "../../../../"));
+var repo = Path.GetFullPath(Path.Combine(experiment, "../../../../../"));
 var kit = Path.Combine(repo, "research", "Aletheon.ExperimentKit");
 var smoke = args.Contains("--smoke", StringComparer.OrdinalIgnoreCase);
 var run = args.Contains("--run", StringComparer.OrdinalIgnoreCase);
