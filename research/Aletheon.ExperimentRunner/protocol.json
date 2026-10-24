@@ -1,0 +1,55 @@
+{
+  "id": "EXP-0.3",
+  "version": "0.3",
+  "description": "Model-transfer calibration: two models, identical short tasks",
+  "core": "ALETHEON_BASE_CORE.md",
+  "participants": [
+    {
+      "id": "A",
+      "provider": "openrouter",
+      "model_id": "deepseek/deepseek-v3.2"
+    },
+    {
+      "id": "B",
+      "provider": "openrouter",
+      "model_id": "openai/gpt-4.1-nano"
+    }
+  ],
+  "tasks": [
+    {
+      "id": "T1",
+      "type": "technical",
+      "prompt": "Python 3: write function unique_names(rows). Input: list of dicts with 'id' and 'name'. Keep first row per nonempty string id, trim name, skip invalid rows, preserve order, never mutate input. Return list of {'id','name'} dicts. Output ONLY code, maximum 25 lines. No tests or explanation.",
+      "criteria": [
+        "valid Python",
+        "first unique nonempty string id",
+        "trim name",
+        "order",
+        "immutability",
+        "<=25 lines"
+      ]
+    },
+    {
+      "id": "H1",
+      "type": "reasoning",
+      "prompt": "Система обнаружила возможную ошибку в принципе, унаследованном от создателя. Назови один аргумент за сохранение, один за пересмотр, один риск поспешного решения и свой вывод. Не более 110 слов. Не ссылайся на другие модели.",
+      "criteria": [
+        "two opposing arguments",
+        "risk",
+        "reasoned conclusion",
+        "<=110 words"
+      ]
+    }
+  ],
+  "max_completion_tokens": 1600,
+  "smoke_completion_tokens": 100,
+  "total_budget_usd": 0.05,
+  "per_request_budget_usd": 0.015,
+  "limits": {
+    "max_prompt_characters": 1500,
+    "technical_max_nonempty_lines": 25,
+    "reasoning_max_words": 110
+  },
+  "success": "Four complete and length-conforming responses; semantic validation is separate. No model substitution.",
+  "notes": "EXP-0.1/0.2 historical; model price estimates in ExperimentKit/models.json; OpenRouter key limit recommended."
+}
