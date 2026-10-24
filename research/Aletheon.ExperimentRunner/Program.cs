@@ -29,7 +29,7 @@ if (!smoke)
         {
             foreach (var label in new[] { "A-H1", "A-H2", "B-H1", "B-H2" })
             {
-                var path = Path.Combine(dir, label + ".json");
+                var path = Path.Combine(dir, label + ".accepted.json");
                 if (!File.Exists(path)) return false;
                 using var record = JsonDocument.Parse(File.ReadAllText(path));
                 var result = record.RootElement;
@@ -122,7 +122,7 @@ var results = await Task.WhenAll(jobs.Select(async job =>
     var result = await transport.CompleteAsync(model.Model, core, smoke ? null : supplementalMessage, task.Prompt, cap);
     budget.Reconcile(label, info, reserved.Value, result.Assessment?.CostUsd);
     ExperimentArtifacts.Save(Path.Combine(output, label + ".json"), new {
-        label, requestedModel = model.Model, accepted, result.Complete, result.Error,
+        label, requestedModel = model.Model, result.Complete, result.Error,
         result.HttpAttempts, result.Seconds, result.Assessment,
         result.Raw // unmodified provider JSON as a string; never parsed as a final answer
     });
@@ -137,6 +137,8 @@ var results = await Task.WhenAll(jobs.Select(async job =>
         withinLength = answer.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length <= reasoningWords;
     }
     var accepted = result.Complete && withinLength;
+    // Save acceptance separately so an interrupted run cannot be mistaken for 4/4.
+    ExperimentArtifacts.Save(Path.Combine(output, label + ".accepted.json"), new { label, accepted });
     Console.WriteLine($"{label}: {(accepted ? "ACCEPTED" : "INCOMPLETE/OVERLONG")} ({result.Assessment?.Status ?? result.Error})");
     return accepted;
 }));
