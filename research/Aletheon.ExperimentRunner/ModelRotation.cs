@@ -43,7 +43,7 @@ internal static class ModelRotation
         var oldId = protocol["id"]!.GetValue<string>();
         var match = System.Text.RegularExpressions.Regex.Match(oldId, @"^EXP-(\d+)\.(\d+)$");
         if (!match.Success) throw new InvalidOperationException("Cannot increment experiment ID: " + oldId);
-        var nextId = oldId == "EXP-0.6" ? "EXP-1.0" : "EXP-" + match.Groups[1].Value + "." + (int.Parse(match.Groups[2].Value) + 1);
+        var nextId = (oldId == "EXP-0.6" || oldId == "EXP-0.7") ? "EXP-1.0" : "EXP-" + match.Groups[1].Value + "." + (int.Parse(match.Groups[2].Value) + 1);
         protocol["id"] = nextId;
         protocol["version"] = nextId["EXP-".Length..];
         protocol["participants"] = new JsonArray(
