@@ -42,7 +42,7 @@ foreach (var task in tasks) if (task.Prompt.Length > maxPromptChars) throw new I
 var key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(key)) { Console.Error.WriteLine("Set OPENROUTER_API_KEY"); return 2; }
 var runId = DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ") + "-" + Guid.NewGuid().ToString("N")[..8];
-var output = Path.Combine(runner, "runs", runId);
+var output = Path.Combine(runner, "runs", experimentId, runId);
 Directory.CreateDirectory(output);
 ExperimentArtifacts.Save(Path.Combine(output, "manifest.json"), new {
     runId, startedUtc = DateTimeOffset.UtcNow, status = "calibration", experimentId,
