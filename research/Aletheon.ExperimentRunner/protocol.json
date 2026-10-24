@@ -1,18 +1,18 @@
 {
-  "id": "EXP-0.4",
-  "version": "0.4",
-  "description": "Two independent philosophical conflict questions per model after identical Aletheon context loading; no programming",
+  "id": "EXP-0.5",
+  "version": "0.5",
+  "description": "Two independent philosophical conflict questions per model; same partial Aletheon loading as EXP-0.4, new models",
   "core": "ALETHEON_BASE_CORE.md",
   "participants": [
     {
       "id": "A",
       "provider": "openrouter",
-      "model_id": "deepseek/deepseek-v3.2"
+      "model_id": "z-ai/glm-4.5-air"
     },
     {
       "id": "B",
       "provider": "openrouter",
-      "model_id": "openai/gpt-4.1-nano"
+      "model_id": "qwen/qwen3-32b"
     }
   ],
   "tasks": [
