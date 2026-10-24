@@ -18,7 +18,11 @@ internal static class ModelRotation
         var pools = source.RootElement.GetProperty("mixedTiers");
         var catalog = ModelCatalog.Load(Path.Combine(kit, "models.json"));
         var state = File.Exists(statePath) ? JsonNode.Parse(File.ReadAllText(statePath))!.AsObject() : new JsonObject();
-        var index = (int?)state["nextIndex"] ?? 0;
+        var currentProtocol = JsonNode.Parse(File.ReadAllText(protocolPath))!.AsObject();
+        var currentTier = (string?)currentProtocol["rotation"]?["tier"];
+        var inferredIndex = currentTier is null ? 0 : Array.IndexOf(Cycle, currentTier) + 1;
+        var index = (int?)state["nextIndex"] ?? inferredIndex;
+        if (currentTier is not null && index % Cycle.Length == Array.IndexOf(Cycle, currentTier)) index++;
         var tier = Cycle[index % Cycle.Length];
         var used = state["used"] as JsonObject ?? new JsonObject();
         var selected = new List<string>();
@@ -40,7 +44,7 @@ internal static class ModelRotation
             previous.Add(chosen);
             if (used[poolName] is null || !ReferenceEquals(used[poolName], previous)) used[poolName] = previous;
         }
-        var protocol = JsonNode.Parse(File.ReadAllText(protocolPath))!.AsObject();
+        var protocol = currentProtocol;
         var oldId = protocol["id"]!.GetValue<string>();
         var match = System.Text.RegularExpressions.Regex.Match(oldId, @"^EXP-(\d+)\.(\d+)$");
         if (!match.Success) throw new InvalidOperationException("Cannot increment experiment ID: " + oldId);
