@@ -1,16 +1,21 @@
-# EXP-001: PyCharm run guide (Python 3.10+)
+# EXP-001 — .NET 8 / C# only
 
-1. Open the repository project in PyCharm, pull the latest GitHub changes.
-2. Open `research/tracks/04-aletheon-research/experiments/EXP-001-model-transfer/main.py`.
-3. Run `test_runner.py` first (right-click -> Run). Tests are offline and do not cost money.
-4. In Run -> Edit Configurations for `main`, add environment variable `OPENROUTER_API_KEY`. Never commit the key.
-5. In `main.py`, start with `MODE = "smoke"`; click Run.
-6. Once smoke succeeds, change to `MODE = "run"`; click Run to send four independent concurrent requests.
+Open `Exp001.csproj` in Rider or Visual Studio, or run from repository root:
 
-Default `MAX_TOKENS=8000` includes reasoning tokens. The shared parser marks `finish_reason=length` and empty final content as INCOMPLETE, not success. It **does not automatically rerun or replace a model**: this would contaminate the comparison. A repeated run costs money and is a new trial.
+```powershell
+dotnet run --project research/tracks/04-aletheon-research/experiments/EXP-001-model-transfer/Exp001.csproj -- --smoke
+```
 
-Shared library: `research/common/openrouter.py`, model price estimates: `research/common/models.json`. Budget values `BUDGET_USD` and `MAX_REQUEST_USD` in main.py are local *estimates* only. Set a provider-side key spending cap. Review/update model price estimates before running. The GLM-5.3 catalog price is a conservative placeholder, not a verified current tariff.
+After a successful smoke test, run four concurrent independent requests:
 
-Each run saves `manifest.json`, `cost-ledger.jsonl`, and `A-T1.json`, `A-H1.json`, `B-T1.json`, `B-H1.json` in its own timestamped folder under `runs/`. Failed and incomplete replies remain in the archive for diagnosis. The control C answers were frozen in `control/` before viewing A/B outputs.
+```powershell
+dotnet run --project research/tracks/04-aletheon-research/experiments/EXP-001-model-transfer/Exp001.csproj -- --run
+```
 
-No third-party Python dependencies. Earlier .NET experiments remain unchanged.
+Set `OPENROUTER_API_KEY` in IDE environment variables or PowerShell before launch. Do not commit it. Install .NET 8 SDK. No Python or NuGet dependencies.
+
+Shared infrastructure: `research/Aletheon.ExperimentKit`. All model IDs and conservative **manually pinned** price estimates live in `research/Aletheon.ExperimentKit/models.json`. Check actual OpenRouter pricing and configure an OpenRouter key spending limit before a paid run. Reasoning tokens count toward the 12,000-token output cap; complete means `finish_reason=stop` and nonempty `message.content`. If incomplete, the runner archives the raw response and fails rather than silently substituting models or hiding failures.
+
+The old local run `20261024T164028Z-a86f4b17` is **excluded from the analytical sample**, not physically deleted from your computer or Git history. Preserve it as a failed pilot, or manually move it to an archive folder. The runner always creates a new timestamped output directory.
+
+The ChatGPT control answers are frozen in `control/`. Do not regenerate or change them after viewing API outputs.
