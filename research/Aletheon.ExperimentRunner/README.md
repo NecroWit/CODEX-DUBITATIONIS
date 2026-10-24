@@ -37,8 +37,7 @@ This makes **no API calls**. It selects two distinct models using the original
 `experiments/agents.mixed.json:mixedTiers` lists in the repeating order
 **cheap → medium → premium → mixed** (mixed draws one cheap and one premium).
 Selections are random without replacement within each tier until the pool is
-exhausted. Local rotation history lives in `runs/rotation-state.json`;
-keep this file if you want continuity across pulls or machines. The selected
+exhausted. Model-use history lives in `runs/rotation-state.json` (`used` only); the next tier is derived from `protocol.json:rotation.tier`. Legacy `nextIndex` is ignored and removed during the next offline rotation. Keep the history file if you want to avoid reselecting models across pulls or machines. The selected
 model IDs, tier and pinned input/output prices (USD per million tokens) are
 written to `protocol.json`, which is archived with every run.
 
@@ -54,4 +53,4 @@ The `derived/` directory contains `COMPARATIVE_ANALYSIS.md` (medium-length resea
 
 ### Recovery after interrupted rotation (EXP-1.3 → EXP-1.4)
 
-Deleting `runs/EXP-1.3` or `runs/EXP-1.4` does **not** restore `protocol.json` or `runs/rotation-state.json`. Before deleting anything, back up the local `runs/EXP-1.3/<run-id>/protocol.json`. To retry EXP-1.3, restore that snapshot as the runner's `protocol.json`, apply the group-based limits (or regenerate the protocol offline), and update the description to match the actual participants. In `runs/rotation-state.json`, set `nextIndex` to **3** (the next tier after premium is mixed); preserve `used` unless deliberately rebuilding the rotation history. Check the resulting protocol in Rider before running. Archived runs lacking `*.accepted.json` are treated as unverified, not as successful.
+Deleting `runs/EXP-1.3` or `runs/EXP-1.4` does **not** restore `protocol.json` or `runs/rotation-state.json`. Before deleting anything, back up the local `runs/EXP-1.3/<run-id>/protocol.json`. To retry EXP-1.3, restore that snapshot as the runner's `protocol.json`, apply the group-based limits (or regenerate the protocol offline), and update the description to match the actual participants. Do not edit a numeric rotation index: it no longer exists. The next tier is derived from the restored protocol’s `rotation.tier`; preserve `used` unless deliberately rebuilding model-selection history. Check the resulting protocol in Rider before running. Archived runs lacking `*.accepted.json` are treated as unverified, not as successful.
