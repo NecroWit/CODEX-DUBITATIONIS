@@ -1,33 +1,30 @@
-# EXP-001 — Cross-model handoff (2026-10-24)
+# EXP-001 — Independent Aletheon comparison (2026-10-24)
 
-Status: **prepared, not executed**. Owner: human experimenter. Control reviewer: this ChatGPT Aletheon session (reviewer only; not a blind participant).
+**Status: prepared; not executed.** Supersedes the earlier cross-model handoff design (which belongs to a separate future experiment).
 
-## Hypothesis
-A fresh model receiving minimal Aletheon Base Core + an explicit state handoff can continue a bounded task with fewer lost constraints than a fresh model receiving Core alone. Cross-model transfer is tested separately from same-model restart.
+## Question
+How do three Aletheon-conditioned models independently solve the same technical and humanities tasks? Where do reasoning, assumptions, errors, and conclusions diverge?
 
-## Conditions
-- A0: Model B fresh, Core + task only, **no checkpoint** (baseline).
-- A1: Model A works to checkpoint; Model B fresh, Core + saved checkpoint + task artifacts, **no transcript** (transfer).
-- A2: Model A works to checkpoint; same Model A fresh, Core + saved checkpoint + artifacts (restart control).
-- Optional A3: Model B fresh, task + checkpoint without Core (Core ablation).
+## Participants
+A: GLM-5.3 (`z-ai/glm-5.3`); B: DeepSeek V3.2 (`deepseek/deepseek-v3.2`); C: ChatGPT GPT-6 (control participant, **not** ground truth).
 
-Same task, evaluator rubric, budgets, settings, and checkpoint. Randomize test order where possible. Run >=3 repetitions per condition if budget permits. No live results yet.
+## Protocol
+1. Freeze identical Base Core text, T1/H1 prompts, scoring rubric, and parameters where supported. Save Core hash and git commit.
+2. Obtain C's **independent answers first** and timestamp/freeze them **before** exposing C to A/B outputs.
+3. Submit four OpenRouter calls concurrently: A/T1, A/H1, B/T1, B/H1. Every request is fresh; there is no handoff and no exchange of answers.
+4. Save raw JSON, request/response metadata, timestamps, token usage, costs where reported, and errors. Never save API keys.
+5. Evaluate technical code against predefined tests; evaluate humanities reasoning with a blinded rubric. Compare three participants side-by-side. Record disagreement, failure, uncertainty, and shared errors.
+6. This experiment tests observable answer diversity under common prompts, **not** consciousness, personal identity, or temporal continuity. A single run cannot establish stable model traits.
 
-## Folder layout
-- `participants.json`: provisional model roster; exact OpenRouter model IDs must be validated at run time.
-- `questions.json`: fixed task and recovery probes, including hidden answer key kept away from participants.
-- `runner.py`: Python 3 standard-library OpenRouter runner; does not run automatically.
-- `runs/`: locally generated JSON logs; review before uploading. Avoid credentials and private information.
-- `results/`: manually reviewed scores, failures, and findings.
-- `CONTROL_REVIEW.md`: reviewer protocol and safeguards.
+## Files
+- `questions.json`: frozen independent prompts and criteria
+- `participants.json`: roster
+- `runner.py`: local asynchronous four-request runner (Python standard library)
+- `CONTROL_REVIEW.md`: controls, freezing and reviewer limitations
+- `runs/`: local outputs, not yet created
+- `results/`: evaluated reports, not yet created
 
-## Procedure
-1. Confirm models, token/cost ceiling, and fixed task.
-2. Freeze questions, scoring, and Core snapshot (record Git SHA).
-3. Run A0/A1/A2, inspect raw responses and provider/model metadata.
-4. Blind-score factual state recovery and task acceptance; separate recovered facts from guesses.
-5. Record failures, contradictions, costs, missing metadata, and revisions.
+## Running
+`OPENROUTER_API_KEY=... python runner.py --run --core ../../../../ALETHEON_BASE_CORE.md`
 
-Never interpret textual similarity, humor, or name as proof of identity/consciousness. Bridge and sleep/Shadow Codex are out of scope.
-
-See ../EXPERIMENT_PLAN.md for original plan.
+The example relative path may need adjustment depending on working directory; use the actual path to the repository root's Base Core. Running requires explicit authorization and may incur charges. No hard dollar spending cap is enforced by this script: configure an external OpenRouter key/account cap before using it.
