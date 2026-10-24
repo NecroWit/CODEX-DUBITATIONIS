@@ -25,7 +25,7 @@ EXP-0.4 runs **four independent requests** (A-H1, A-H2, B-H1, B-H2). Each gets t
 
 ## Model rotation (offline)
 
-Before a normal paid run, if the current experiment ID already has an archived run folder containing `manifest.json`, the runner **automatically rotates offline first** and then executes the new experiment. This includes partial previous runs. If no prior run exists, it executes the current protocol. In Rider, use the normal run configuration (no arguments or `--run`). No additional API calls are made by rotation. To intentionally repeat a previous experiment, use a separate protocol/backup and inspect the run folders first.
+Before a normal paid run, if the current experiment ID has an archived run with **four explicitly accepted responses** (`A-H1`, `A-H2`, `B-H1`, `B-H2`), the runner **automatically rotates offline first** and then executes the new experiment. Blocked, interrupted, and legacy runs without acceptance markers do **not** trigger automatic rotation. If no successful run exists, it executes the current protocol again; this can incur costs, so inspect its budget first. In Rider, use the normal run configuration (no arguments or `--run`). No additional API calls are made by rotation. To intentionally repeat a previous experiment, use a separate protocol/backup and inspect the run folders first.
 
 For manual offline rotation only (normally unnecessary), run:
 
@@ -51,3 +51,8 @@ until you explicitly run `--rotate`, which prepares EXP-1.0.
 ## Derived research findings
 
 The `derived/` directory contains `COMPARATIVE_ANALYSIS.md` (medium-length researcher analysis) and `SCORES_AND_EXPERIMENTS.md` (convergence and logical-consistency charts, comparison table, and one-line conclusions). These are researcher-authored, versioned interpretations; the runner does not automatically grade philosophical answers. Missing scores are not zeros.
+
+
+### Recovery after interrupted rotation (EXP-1.3 → EXP-1.4)
+
+Deleting `runs/EXP-1.3` or `runs/EXP-1.4` does **not** restore `protocol.json` or `runs/rotation-state.json`. Before deleting anything, back up the local `runs/EXP-1.3/<run-id>/protocol.json`. To retry EXP-1.3, restore that snapshot as the runner's `protocol.json`, apply the premium tier caps ($0.25 per request, $0.90 total), and update the description to match the actual participants. In `runs/rotation-state.json`, set `nextIndex` to **3** (the next tier after premium is mixed); preserve `used` unless deliberately rebuilding the rotation history. Check the resulting protocol in Rider before running. Archived runs lacking `*.accepted.json` are treated as unverified, not as successful.
