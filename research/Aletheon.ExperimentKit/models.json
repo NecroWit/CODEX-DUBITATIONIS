@@ -1,0 +1,15 @@
+{
+  "source": "Manually pinned experimental estimates; verify with OpenRouter before runs; not live pricing",
+  "models": {
+    "z-ai/glm-5.3": {
+      "inputUsdPerMillionTokens": 1.5,
+      "outputUsdPerMillionTokens": 5,
+      "maxCompletionTokens": 16000
+    },
+    "deepseek/deepseek-v3.2": {
+      "inputUsdPerMillionTokens": 0.21,
+      "outputUsdPerMillionTokens": 0.31,
+      "maxCompletionTokens": 16000
+    }
+  }
+}
