@@ -18,18 +18,41 @@ if (!smoke)
     using var currentDocument = JsonDocument.Parse(File.ReadAllText(currentPath));
     var currentId = currentDocument.RootElement.GetProperty("id").GetString()!;
     var priorRunsPath = Path.Combine(runner, "runs", currentId);
+    // Rotate only after a fully accepted four-response run. A manifest is written
+    // before requests and must never be interpreted as evidence of completion.
     var priorRuns = Directory.Exists(priorRunsPath)
         ? Directory.GetDirectories(priorRunsPath).Where(dir => File.Exists(Path.Combine(dir, "manifest.json"))).ToArray()
         : Array.Empty<string>();
-    if (priorRuns.Length > 0)
+    bool IsSuccessfulRun(string dir)
     {
-        Console.WriteLine($"{currentId} already has {priorRuns.Length} archived run(s). Preparing next experiment before paid requests.");
+        try
+        {
+            foreach (var label in new[] { "A-H1", "A-H2", "B-H1", "B-H2" })
+            {
+                var path = Path.Combine(dir, label + ".json");
+                if (!File.Exists(path)) return false;
+                using var record = JsonDocument.Parse(File.ReadAllText(path));
+                var result = record.RootElement;
+                if (!result.TryGetProperty("accepted", out var accepted) || accepted.ValueKind != JsonValueKind.True)
+                    return false;
+            }
+            return true;
+        }
+        catch (Exception) { return false; }
+    }
+    if (priorRuns.Any(IsSuccessfulRun))
+    {
+        Console.WriteLine($"{currentId} has a successful archived run. Preparing next experiment before paid requests.");
         try { ModelRotation.Prepare(repo, runner, kit); }
         catch (Exception ex)
         {
             Console.Error.WriteLine("Offline rotation failed; no paid requests sent: " + ex.Message);
             return 2;
         }
+    }
+    else if (priorRuns.Length > 0)
+    {
+        Console.WriteLine($"{currentId} has {priorRuns.Length} incomplete/legacy run(s). Automatic rotation disabled; staying on current experiment.");
     }
 }
 
@@ -99,7 +122,7 @@ var results = await Task.WhenAll(jobs.Select(async job =>
     var result = await transport.CompleteAsync(model.Model, core, smoke ? null : supplementalMessage, task.Prompt, cap);
     budget.Reconcile(label, info, reserved.Value, result.Assessment?.CostUsd);
     ExperimentArtifacts.Save(Path.Combine(output, label + ".json"), new {
-        label, requestedModel = model.Model, result.Complete, result.Error,
+        label, requestedModel = model.Model, accepted, result.Complete, result.Error,
         result.HttpAttempts, result.Seconds, result.Assessment,
         result.Raw // unmodified provider JSON as a string; never parsed as a final answer
     });
