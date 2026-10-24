@@ -23,8 +23,8 @@ if (!smoke)
         .ToArray();
     if (experiments.Length == 0)
     {
-        Console.WriteLine("No EXP-1.x output found. Preparing EXP-1.0 from the cheap tier (offline).");
-        ModelRotation.Prepare(repo, runner, kit, "EXP-1.0", "cheap", fresh: true);
+        Console.WriteLine("No EXP-1.x output found. Preparing EXP-1.0 from the first configured rotation group (offline).");
+        ModelRotation.Prepare(repo, runner, kit, "EXP-1.0", fresh: true);
     }
     else
     {
@@ -68,9 +68,8 @@ if (!smoke)
         if (successful)
         {
             var nextNumber = int.Parse(latest.Match.Groups[1].Value) + 1;
-            var nextTier = new[] { "cheap", "medium", "premium", "mixed" }[nextNumber % 4];
-            Console.WriteLine($"{latest.Name} accepted 4/4. Preparing EXP-1.{nextNumber} [{nextTier}] offline.");
-            ModelRotation.Prepare(repo, runner, kit, $"EXP-1.{nextNumber}", nextTier);
+            Console.WriteLine($"{latest.Name} accepted 4/4. Preparing EXP-1.{nextNumber} using rotation.json (offline).");
+            ModelRotation.Prepare(repo, runner, kit, $"EXP-1.{nextNumber}");
         }
         else
             Console.WriteLine($"{latest.Name} has no accepted 4/4 run. Retrying with unchanged models.");
