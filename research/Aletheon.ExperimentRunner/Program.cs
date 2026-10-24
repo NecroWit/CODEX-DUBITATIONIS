@@ -4,11 +4,12 @@ using Aletheon.ExperimentKit;
 var runner = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../"));
 var repo = Path.GetFullPath(Path.Combine(runner, "../.."));
 var kit = Path.Combine(repo, "research", "Aletheon.ExperimentKit");
+if (args.Length == 1 && args[0] == "--rotate") return ModelRotation.Prepare(repo, runner, kit);
 var smoke = args.Contains("--smoke", StringComparer.OrdinalIgnoreCase);
 var run = args.Contains("--run", StringComparer.OrdinalIgnoreCase);
 if (smoke && run) { Console.Error.WriteLine("Choose either --smoke or --run."); return 2; }
 if (args.Any(arg => arg != "--smoke" && arg != "--run"))
-{ Console.Error.WriteLine("Unknown argument. Supported: --smoke, --run; no argument defaults to --run."); return 2; }
+{ Console.Error.WriteLine("Unknown argument. Supported: --rotate (offline), --smoke, --run; no argument defaults to --run."); return 2; }
 // No arguments run the full experiment; --smoke checks connectivity.
 
 
