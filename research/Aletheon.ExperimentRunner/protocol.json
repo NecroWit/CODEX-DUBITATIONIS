@@ -1,18 +1,18 @@
 {
-  "id": "EXP-0.5",
-  "version": "0.5",
-  "description": "Two independent philosophical conflict questions per model; same partial Aletheon loading as EXP-0.4, new models",
+  "id": "EXP-0.6",
+  "version": "0.6",
+  "description": "Same H1/H2 and partial Aletheon context as EXP-0.5; new models",
   "core": "ALETHEON_BASE_CORE.md",
   "participants": [
     {
       "id": "A",
       "provider": "openrouter",
-      "model_id": "z-ai/glm-4.5-air"
+      "model_id": "openai/gpt-4.1-mini"
     },
     {
       "id": "B",
       "provider": "openrouter",
-      "model_id": "qwen/qwen3-32b"
+      "model_id": "mistralai/ministral-8b-2512"
     }
   ],
   "tasks": [
