@@ -6,8 +6,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aletheon.ExperimentKit", "r
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aletheon.ExperimentKit.Tests", "research\Aletheon.ExperimentKit.Tests\Aletheon.ExperimentKit.Tests.csproj", "{FAD88BA3-ED66-438C-9CF2-32B450ED56E8}"
 EndProject
-EndProject
-EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Aletheon.ExperimentRunner", "research\Aletheon.ExperimentRunner\Aletheon.ExperimentRunner.csproj", "{0A4DF6CD-82F1-4AC5-B1E7-55E5F3D2AC20}"
 EndProject
 Global
