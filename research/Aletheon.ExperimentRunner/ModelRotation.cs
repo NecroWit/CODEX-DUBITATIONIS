@@ -9,7 +9,7 @@ internal static class ModelRotation
     private static readonly string[] Cycle = ["cheap", "medium", "premium", "mixed"];
 
     // Planning is offline: it never sends a paid request.
-    public static int Prepare(string repo, string runner, string kit)
+    public static int Prepare(string repo, string runner, string kit, string? targetId = null, string? targetTier = null, bool fresh = false)
     {
         var protocolPath = Path.Combine(runner, "protocol.json");
         var statePath = Path.Combine(runner, "runs", "rotation-state.json");
@@ -17,7 +17,7 @@ internal static class ModelRotation
         using var source = JsonDocument.Parse(File.ReadAllText(sourcePath));
         var pools = source.RootElement.GetProperty("mixedTiers");
         var catalog = ModelCatalog.Load(Path.Combine(kit, "models.json"));
-        var state = File.Exists(statePath) ? JsonNode.Parse(File.ReadAllText(statePath))!.AsObject() : new JsonObject();
+        var state = !fresh && File.Exists(statePath) ? JsonNode.Parse(File.ReadAllText(statePath))!.AsObject() : new JsonObject();
         var currentProtocol = JsonNode.Parse(File.ReadAllText(protocolPath))!.AsObject();
         var currentTier = (string?)currentProtocol["rotation"]?["tier"];
         // protocol.json is the sole source of the current tier; the state file only
@@ -25,7 +25,8 @@ internal static class ModelRotation
         var currentPosition = currentTier is null ? -1 : Array.IndexOf(Cycle, currentTier);
         if (currentTier is not null && currentPosition < 0)
             throw new InvalidOperationException("Unknown rotation tier: " + currentTier);
-        var tier = Cycle[(currentPosition + 1) % Cycle.Length];
+        var tier = targetTier ?? Cycle[(currentPosition + 1) % Cycle.Length];
+        if (!Cycle.Contains(tier)) throw new InvalidOperationException("Unknown target tier: " + tier);
         state.Remove("nextIndex");
         var used = state["used"] as JsonObject ?? new JsonObject();
         var selected = new List<string>();
@@ -51,7 +52,7 @@ internal static class ModelRotation
         var oldId = protocol["id"]!.GetValue<string>();
         var match = System.Text.RegularExpressions.Regex.Match(oldId, @"^EXP-(\d+)\.(\d+)$");
         if (!match.Success) throw new InvalidOperationException("Cannot increment experiment ID: " + oldId);
-        var nextId = (oldId == "EXP-0.6" || oldId == "EXP-0.7") ? "EXP-1.0" : "EXP-" + match.Groups[1].Value + "." + (int.Parse(match.Groups[2].Value) + 1);
+        var nextId = targetId ?? ((oldId == "EXP-0.6" || oldId == "EXP-0.7") ? "EXP-1.0" : "EXP-" + match.Groups[1].Value + "." + (int.Parse(match.Groups[2].Value) + 1));
         protocol["id"] = nextId;
         protocol["version"] = nextId["EXP-".Length..];
         protocol["description"] = $"Independent H1/H2 Aletheon conflict tests; {tier} tier; A={selected[0]}, B={selected[1]}; same Base/Extended/Evolution loading.";
