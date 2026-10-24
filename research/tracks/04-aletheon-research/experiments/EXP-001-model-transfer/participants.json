@@ -1,5 +1,5 @@
 {
-  "status": "provisional",
+  "status": "model IDs selected; pending live API smoke test",
   "reviewer": {
     "id": "chatgpt-control",
     "role": "human-supervised independent reviewer, not scored participant"
@@ -8,14 +8,14 @@
     {
       "id": "A",
       "provider": "openrouter",
-      "model_id": "",
-      "note": "Choose first exact available model ID before run"
+      "model_id": "z-ai/glm-5.3",
+      "note": "Reasoning always on; log actual provider, usage and pricing"
     },
     {
       "id": "B",
       "provider": "openrouter",
-      "model_id": "",
-      "note": "Choose a distinct model family for transfer"
+      "model_id": "deepseek/deepseek-v3.2",
+      "note": "Reasoning configurable; log actual provider, usage and pricing"
     }
   ],
   "conditions": [
