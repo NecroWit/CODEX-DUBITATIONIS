@@ -25,11 +25,17 @@ public sealed class OpenRouterTransport : IDisposable
     }
     public async Task<CompletionResult> CompleteAsync(string model, string system, string user,
         int maxTokens, CancellationToken cancellation = default)
+        => await CompleteAsync(model, system, null, user, maxTokens, cancellation);
+
+    public async Task<CompletionResult> CompleteAsync(string model, string system, string? additionalContext, string user,
+        int maxTokens, CancellationToken cancellation = default)
     {
+        var messages = new List<object> { new { role = "system", content = system } };
+        if (!string.IsNullOrWhiteSpace(additionalContext))
+            messages.Add(new { role = "user", content = additionalContext });
+        messages.Add(new { role = "user", content = user });
         var request = JsonSerializer.Serialize(new {
-            model, temperature = 0, max_completion_tokens = maxTokens,
-            messages = new[] { new { role = "system", content = system },
-                               new { role = "user", content = user } }
+            model, temperature = 0, max_completion_tokens = maxTokens, messages
         });
         var clock = Stopwatch.StartNew();
         for (var attempt = 1; attempt <= 2; attempt++)
