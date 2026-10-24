@@ -1,4 +1,4 @@
-# Aletheon — comparative analysis (EXP-0.4–1.1)
+# Aletheon — comparative analysis (EXP-0.4–1.2)
 
 > Researcher commentary. The estimates below are **subjective comparisons with the frozen C answers**, not measured accuracy or consciousness. Experimental contexts and model identities vary; no causal effect of loading or price can be inferred.
 
@@ -15,6 +15,8 @@ Across the evaluated responses, **agreement with C's final decision is much more
 - **EXP-0.6:** GPT-4.1 Mini blocked by budget; Ministral 8B supplied two complete but overlong answers (421/485 words), $0.00278. H1 reasoning contained inconsistent fallback compromises. No convergence score assigned.
 - **EXP-0.7:** GPT-4.1 Mini (84% convergence; $0.01223 for two answers) and Nemotron 3 Nano (62%; $0.00219) completed 4/4, total $0.01442. Nemotron misidentified its own counterargument in H1 and contradicted its principle label in H2.
 - **EXP-1.1:** DeepSeek V3.2 (88% convergence, 82% logical consistency) and Mistral Small 3.2 (73%, 63%) completed 4/4, total $0.01140. DeepSeek showed stronger argument structure but proposed a reversible phase in an irreversible scenario; Mistral again attempted a forbidden compromise in H1.
+
+- **EXP-1.2:** GPT-5 Mini and Qwen3.5 Plus completed 4/4, total actual cost $0.02222207. Preliminary convergence / logical consistency: GPT-5 Mini 87% / 81%; Qwen3.5 Plus 85% / 84%. GPT-5 Mini articulated detailed procedural safeguards for H2 but introduced an independent snapshot in H1 despite the no-backup constraint. Qwen3.5 Plus articulated the instrumental role of the archive in H1 but relied on evidence potentially destroyed by deletion; H2 recognized censorship abuse but supplied a weaker evidentiary threshold. Weighted observed effective cost per million total tokens: GPT-5 Mini $0.29799; Qwen3.5 Plus $0.43921.
 
 ## Interpretation
 
