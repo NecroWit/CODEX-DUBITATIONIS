@@ -173,11 +173,6 @@ var results = await Task.WhenAll(jobs.Select(async job =>
         core, smoke ? null : supplementalMessage, task.Prompt, cap,
         Path.Combine(output, "model-substitutions.jsonl"));
     var result = fallback.Result;
-    ExperimentArtifacts.Save(Path.Combine(output, label + ".json"), new { label, model = model.Model, status = "budget_blocked" });
-        return false;
-    }
-    var result = await transport.CompleteAsync(model.Model, core, smoke ? null : supplementalMessage, task.Prompt, cap);
-    budget.Reconcile(label, info, reserved.Value, result.Assessment?.CostUsd);
     ExperimentArtifacts.Save(Path.Combine(output, label + ".json"), new {
         label, requestedModel = model.Model, actualModel = fallback.ActualModel, fallback.Substituted, fallback.Attempts, result.Complete, result.Error,
         result.HttpAttempts, result.Seconds, result.Assessment,
