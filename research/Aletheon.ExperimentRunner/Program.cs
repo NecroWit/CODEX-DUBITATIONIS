@@ -97,4 +97,19 @@ var results = await Task.WhenAll(jobs.Select(async job =>
     return accepted;
 }));
 Console.WriteLine($"Complete: {results.Count(x => x)}/{results.Length}. No model substitutions.");
+if (!smoke && results.All(x => x))
+{
+    // Advance only after a fully accepted run. Never send additional API requests.
+    // The current run keeps its archived protocol; rotation prepares only the next one.
+    try
+    {
+        Console.WriteLine("Preparing next experiment offline...");
+        ModelRotation.Prepare(repo, runner, kit);
+    }
+    catch (Exception ex)
+    {
+        Console.Error.WriteLine("Experiment completed, but offline rotation failed: " + ex.Message);
+        return 2;
+    }
+}
 return results.All(x => x) ? 0 : 1;
