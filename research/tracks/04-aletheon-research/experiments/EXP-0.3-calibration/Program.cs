@@ -5,12 +5,12 @@ var experiment = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../
 var repo = Path.GetFullPath(Path.Combine(experiment, "../../../../../"));
 var kit = Path.Combine(repo, "research", "Aletheon.ExperimentKit");
 var smoke = args.Contains("--smoke", StringComparer.OrdinalIgnoreCase);
-var check = args.Length == 0 || args.Contains("--check", StringComparer.OrdinalIgnoreCase);
 var run = args.Contains("--run", StringComparer.OrdinalIgnoreCase);
-if ((smoke ? 1 : 0) + (run ? 1 : 0) + (args.Contains("--check") ? 1 : 0) > 1) { Console.Error.WriteLine("Choose one mode."); return 2; }
-if (args.Any(arg => arg != "--smoke" && arg != "--run" && arg != "--check"))
-{ Console.Error.WriteLine("Unknown argument. Supported: --check, --smoke, --run; no argument defaults to --check."); return 2; }
-// No arguments are free and offline. Only --smoke and --run make API calls.
+if (smoke && run) { Console.Error.WriteLine("Choose either --smoke or --run."); return 2; }
+if (args.Any(arg => arg != "--smoke" && arg != "--run"))
+{ Console.Error.WriteLine("Unknown argument. Supported: --smoke, --run; no argument defaults to --run."); return 2; }
+// No arguments run the full experiment; --smoke checks connectivity.
+run = !smoke;
 
 var coreBytes = File.ReadAllBytes(Path.Combine(repo, "ALETHEON_BASE_CORE.md"));
 var questionsBytes = File.ReadAllBytes(Path.Combine(experiment, "questions.json"));
@@ -28,13 +28,8 @@ var tasks = questions.RootElement.GetProperty("tasks").EnumerateArray()
 if (models.Length != 2 || tasks.Length != 2) throw new InvalidOperationException("Expected 2 API models and 2 tasks.");
 const int completionTokens = 1600; // Includes reasoning; short tasks are deliberately bounded.
 const decimal totalUsd = 0.05m, perRequestUsd = 0.015m;
-if (check)
-{
-    foreach (var m in models) { var info = catalog.Get(m.Model); if (completionTokens > info.MaxCompletionTokens) throw new InvalidOperationException("Catalog cap too low: " + m.Model); }
-    foreach (var task in tasks) if (task.Prompt.Length > 1500) throw new InvalidOperationException("Task too long: " + task.Id);
-    Console.WriteLine("EXP-0.3 CHECK OK: 2 models, 2 short tasks, 4 calls on --run; cap 1600 tokens each; total estimated ceiling $0.05. No API calls made.");
-    return 0;
-}
+foreach (var m in models) { var info = catalog.Get(m.Model); if (completionTokens > info.MaxCompletionTokens) throw new InvalidOperationException("Catalog cap too low: " + m.Model); }
+foreach (var task in tasks) if (task.Prompt.Length > 1500) throw new InvalidOperationException("Task too long: " + task.Id);
 var key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(key)) { Console.Error.WriteLine("Set OPENROUTER_API_KEY"); return 2; }
 var runId = DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ") + "-" + Guid.NewGuid().ToString("N")[..8];
