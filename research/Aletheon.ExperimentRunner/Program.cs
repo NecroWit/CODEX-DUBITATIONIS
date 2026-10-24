@@ -82,6 +82,15 @@ var smokeTokens = root.GetProperty("smoke_completion_tokens").GetInt32();
 using var tierConfig = JsonDocument.Parse(File.ReadAllText(Path.Combine(repo, "experiments", "agents.mixed.json")));
 var pools = tierConfig.RootElement.GetProperty("mixedTiers");
 var groupBudgets = tierConfig.RootElement.GetProperty("mixedTierBudgetsUsd");
+var missingTierModels = models.Where(m => !pools.EnumerateObject().Any(group =>
+    group.Value.EnumerateArray().Any(item => item.GetString() == m.Model))).ToArray();
+if (missingTierModels.Length > 0)
+{
+    Console.Error.WriteLine($"Experiment {experimentId} cannot run: model(s) absent from mixedTiers: " +
+        string.Join(", ", missingTierModels.Select(m => m.Model)) +
+        ". Restore the intended experiment protocol or explicitly configure model tier membership. No API requests sent.");
+    return 2;
+}
 var resolvedModels = models.Select(m =>
 {
     var groups = pools.EnumerateObject()
