@@ -29,7 +29,7 @@ var models = root.GetProperty("participants").EnumerateArray()
     .Select(p => (Id: p.GetProperty("id").GetString()!, Model: p.GetProperty("model_id").GetString()!)).ToArray();
 var tasks = root.GetProperty("tasks").EnumerateArray()
     .Select(t => (Id: t.GetProperty("id").GetString()!, Prompt: t.GetProperty("prompt").GetString()!)).ToArray();
-if (models.Length != 2 || tasks.Length != 1) throw new InvalidOperationException("Expected 2 API models and 1 philosophical task.");
+if (models.Length != 2 || tasks.Length != 2 || tasks.Any(t => !t.Id.StartsWith("H", StringComparison.Ordinal))) throw new InvalidOperationException("Expected 2 API models and 2 philosophical questions.");
 var completionTokens = root.GetProperty("max_completion_tokens").GetInt32();
 var smokeTokens = root.GetProperty("smoke_completion_tokens").GetInt32();
 var totalUsd = root.GetProperty("total_budget_usd").GetDecimal();
