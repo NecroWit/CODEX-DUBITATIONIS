@@ -9,7 +9,7 @@
 
 ## Traceability
 
-The source folder was renamed to `EXP-0.2-model-transfer` (formerly `EXP-001-model-transfer`). Preserve original run IDs, raw outputs and commit history. Locally untracked `runs/` files may remain in the old folder after pulling; retain them as historical artifacts. Cite both canonical and legacy IDs when necessary. Retain unsuccessful runs as scientific evidence. Any new run should record canonical experiment ID, legacy/source ID if any, protocol version, participant/model identifiers, prompts, limits, timestamps, completion statuses and costs.
+Architecture is tracked by Git. One runner: `research/Aletheon.ExperimentRunner`; one `protocol.json`; results: `research/Aletheon.ExperimentRunner/runs/<runId>/` with protocol snapshots. Per-experiment executable folders were removed from tracked source. Preserve locally untracked historical `runs/` folders; migrate them manually. Historical reports and frozen controls are retained as flat files in this directory. Cite both canonical and legacy IDs when necessary. Retain unsuccessful runs as scientific evidence. Any new run should record canonical experiment ID, legacy/source ID if any, protocol version, participant/model identifiers, prompts, limits, timestamps, completion statuses and costs.
 
 ## Success criteria
 
