@@ -79,8 +79,19 @@ var results = await Task.WhenAll(jobs.Select(async job =>
     });
     if (result.Raw is not null)
         File.WriteAllText(Path.Combine(output, label + ".response.json"), result.Raw);
-    Console.WriteLine($"{label}: {(result.Complete ? "COMPLETE" : "INCOMPLETE")} ({result.Assessment?.Status ?? result.Error})");
-    return result.Complete;
+    var withinLength = false;
+    if (result.Raw is not null && result.Complete)
+    {
+        using var responseJson = JsonDocument.Parse(result.Raw);
+        var message = responseJson.RootElement.GetProperty("choices")[0].GetProperty("message");
+        var answer = message.GetProperty("content").GetString() ?? "";
+        withinLength = task.Id == "H1"
+            ? answer.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length <= 110
+            : answer.Replace("```python", "").Replace("```", "").Split('\n').Count(line => !string.IsNullOrWhiteSpace(line)) <= 25;
+    }
+    var accepted = result.Complete && withinLength;
+    Console.WriteLine($"{label}: {(accepted ? "ACCEPTED" : "INCOMPLETE/OVERLONG")} ({result.Assessment?.Status ?? result.Error})");
+    return accepted;
 }));
 Console.WriteLine($"Complete: {results.Count(x => x)}/{results.Length}. No model substitutions.");
 return results.All(x => x) ? 0 : 1;
