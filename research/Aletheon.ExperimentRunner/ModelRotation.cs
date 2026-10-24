@@ -64,6 +64,9 @@ internal static class ModelRotation
         var nextId = targetId ?? ((oldId == "EXP-0.6" || oldId == "EXP-0.7") ? "EXP-1.0" : "EXP-" + match.Groups[1].Value + "." + (int.Parse(match.Groups[2].Value) + 1));
         protocol["id"] = nextId;
         protocol["version"] = nextId["EXP-".Length..];
+        // Reasoning models can consume the entire 3200-token cap before producing an answer.
+        // New experiment protocols allow room for both reasoning and the <=350-word final response.
+        protocol["max_completion_tokens"] = 6400;
         protocol["description"] = $"Independent H1/H2 Aletheon conflict tests; {tier} tier; A={selected[0]}, B={selected[1]}; same Base/Extended/Evolution loading.";
         protocol.Remove("per_request_budget_usd");
         protocol.Remove("total_budget_usd");
