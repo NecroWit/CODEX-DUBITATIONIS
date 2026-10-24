@@ -1,31 +1,30 @@
 {
-  "status": "model IDs selected; pending live API smoke test",
-  "reviewer": {
-    "id": "chatgpt-control",
-    "role": "human-supervised independent reviewer, not scored participant"
-  },
+  "status": "selected, pending API smoke test",
   "participants": [
     {
       "id": "A",
       "provider": "openrouter",
-      "model_id": "z-ai/glm-5.3",
-      "note": "Reasoning always on; log actual provider, usage and pricing"
+      "model_id": "z-ai/glm-5.3"
     },
     {
       "id": "B",
       "provider": "openrouter",
-      "model_id": "deepseek/deepseek-v3.2",
-      "note": "Reasoning configurable; log actual provider, usage and pricing"
+      "model_id": "deepseek/deepseek-v3.2"
+    },
+    {
+      "id": "C",
+      "provider": "chatgpt",
+      "model_id": "GPT-6",
+      "role": "independent control participant; outputs must be frozen before viewing A/B"
     }
   ],
-  "conditions": [
-    "A0",
-    "A1",
-    "A2"
+  "tasks": [
+    "T1",
+    "H1"
   ],
-  "repetitions": 3,
+  "requests_per_run": 4,
+  "repetitions": 1,
   "temperature": 0,
-  "output_token_limit": 1400,
-  "max_total_requests": 30,
+  "output_token_limit": 2500,
   "spending_limit_usd": null
 }
