@@ -85,7 +85,7 @@ def main() -> int:
     mode = ap.add_mutually_exclusive_group(required=True)
     mode.add_argument("--run", action="store_true", help="Send four parallel API requests")
     mode.add_argument("--smoke", action="store_true", help="Send one small API request")
-    ap.add_argument("--core", type=Path, default=HERE.parents[3] / "ALETHEON_BASE_CORE.md")
+    ap.add_argument("--core", type=Path, default=HERE.parents[4] / "ALETHEON_BASE_CORE.md")
     ap.add_argument("--max-tokens", type=int, default=2500)
     ap.add_argument("--timeout", type=int, default=240)
     ap.add_argument("--output-dir", type=Path, default=HERE / "runs")
