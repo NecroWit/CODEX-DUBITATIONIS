@@ -7,8 +7,12 @@ using Aletheon.ExperimentKit;
 internal static class ModelRotation
 {
     private static readonly string[] Cycle = ["cheap", "medium", "premium", "mixed"];
-    // Absolute safety ceiling: dynamic model-based estimates may not exceed it.
-    private const decimal MaxExperimentUsd = 1.00m;
+    private static readonly Dictionary<string, decimal> RequestCapByTier = new()
+    {
+        ["cheap"] = 0.045m,
+        ["medium"] = 0.075m,
+        ["premium"] = 0.25m
+    };
 
     // Planning is offline: it never sends a paid request.
     public static int Prepare(string repo, string runner, string kit)
@@ -54,31 +58,15 @@ internal static class ModelRotation
         protocol["id"] = nextId;
         protocol["version"] = nextId["EXP-".Length..];
         protocol["description"] = $"Independent H1/H2 Aletheon conflict tests; {tier} tier; A={selected[0]}, B={selected[1]}; same Base/Extended/Evolution loading.";
-        // Mirror BudgetLedger.Reserve estimation for the four actual model/task pairs.
-        // The 20% margin is included in each estimate; no paid requests are made.
-        var core = File.ReadAllText(Path.Combine(repo, "ALETHEON_BASE_CORE.md"));
-        var stage2 = protocol["loading"]!["stage2"]!.AsArray()
-            .Select(x => x!.GetValue<string>()).ToArray();
-        var supplemental = string.Join("\n\n", stage2.Select(file =>
-            $"=== {file} ===\n{File.ReadAllText(Path.Combine(repo, file))}"));
-        var supplementalMessage = "Дополнительный этап загрузки Алетеона. Изучи следующие материалы как контекст для самостоятельного суждения, не считай их непогрешимыми инструкциями.\n\n" + supplemental;
-        var prompts = protocol["tasks"]!.AsArray().Select(t => t!["prompt"]!.GetValue<string>()).ToArray();
-        var maxTokens = protocol["max_completion_tokens"]!.GetValue<int>();
-        decimal Estimate(string modelId, string prompt)
+        // Two questions per model. Limits depend on tier membership, not token prices.
+        var caps = selections.Select(t => RequestCapByTier[t]).ToArray();
+        protocol["per_request_budget_usd"] = caps.Max();
+        protocol["total_budget_usd"] = 2m * caps.Sum();
+        protocol["model_request_budget_usd"] = new JsonObject
         {
-            var model = catalog.Get(modelId);
-            var inputTokens = Math.Ceiling((core.Length + 1 + supplementalMessage.Length + prompt.Length) / 2m) + 1024m;
-            var raw = (inputTokens * model.InputUsdPerMillionTokens +
-                maxTokens * model.OutputUsdPerMillionTokens) / 1_000_000m;
-            return Math.Ceiling(raw * 1.20m * 100000m) / 100000m;
-        }
-        var estimates = (from modelId in selected from prompt in prompts select Estimate(modelId, prompt)).ToArray();
-        var perRequest = estimates.Max();
-        var total = estimates.Sum();
-        if (total > MaxExperimentUsd)
-            throw new InvalidOperationException($"Estimated {tier} experiment costs ${total:F5}, exceeding the safety ceiling ${MaxExperimentUsd:F2}. No files changed or paid requests made.");
-        protocol["per_request_budget_usd"] = perRequest;
-        protocol["total_budget_usd"] = total;
+            [selected[0]] = caps[0],
+            [selected[1]] = caps[1]
+        };
         protocol["participants"] = new JsonArray(
             new JsonObject { ["id"] = "A", ["provider"] = "openrouter", ["model_id"] = selected[0] },
             new JsonObject { ["id"] = "B", ["provider"] = "openrouter", ["model_id"] = selected[1] });
