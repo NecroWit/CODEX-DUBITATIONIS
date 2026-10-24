@@ -1,0 +1,30 @@
+{
+  "status": "selected, pending API smoke test",
+  "participants": [
+    {
+      "id": "A",
+      "provider": "openrouter",
+      "model_id": "z-ai/glm-5.3"
+    },
+    {
+      "id": "B",
+      "provider": "openrouter",
+      "model_id": "deepseek/deepseek-v3.2"
+    },
+    {
+      "id": "C",
+      "provider": "chatgpt",
+      "model_id": "GPT-6",
+      "role": "independent control participant; outputs must be frozen before viewing A/B"
+    }
+  ],
+  "tasks": [
+    "T1",
+    "H1"
+  ],
+  "requests_per_run": 4,
+  "repetitions": 1,
+  "temperature": 0,
+  "output_token_limit": 2500,
+  "spending_limit_usd": null
+}
