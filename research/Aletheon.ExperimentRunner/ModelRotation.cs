@@ -26,10 +26,13 @@ internal static class ModelRotation
         var state = File.Exists(statePath) ? JsonNode.Parse(File.ReadAllText(statePath))!.AsObject() : new JsonObject();
         var currentProtocol = JsonNode.Parse(File.ReadAllText(protocolPath))!.AsObject();
         var currentTier = (string?)currentProtocol["rotation"]?["tier"];
-        var inferredIndex = currentTier is null ? 0 : Array.IndexOf(Cycle, currentTier) + 1;
-        var index = (int?)state["nextIndex"] ?? inferredIndex;
-        if (currentTier is not null && index % Cycle.Length == Array.IndexOf(Cycle, currentTier)) index++;
-        var tier = Cycle[index % Cycle.Length];
+        // protocol.json is the sole source of the current tier; the state file only
+        // records model usage. Ignore obsolete nextIndex from older installations.
+        var currentPosition = currentTier is null ? -1 : Array.IndexOf(Cycle, currentTier);
+        if (currentTier is not null && currentPosition < 0)
+            throw new InvalidOperationException("Unknown rotation tier: " + currentTier);
+        var tier = Cycle[(currentPosition + 1) % Cycle.Length];
+        state.Remove("nextIndex");
         var used = state["used"] as JsonObject ?? new JsonObject();
         var selected = new List<string>();
         var selections = tier == "mixed" ? new[] { "cheap", "premium" } : new[] { tier, tier };
@@ -89,7 +92,6 @@ internal static class ModelRotation
         Directory.CreateDirectory(Path.GetDirectoryName(statePath)!);
         var jsonOptions = new JsonSerializerOptions { WriteIndented = true, TypeInfoResolver = new DefaultJsonTypeInfoResolver() };
         File.WriteAllText(protocolPath, protocol.ToJsonString(jsonOptions) + Environment.NewLine);
-        state["nextIndex"] = index + 1;
         if (state["used"] is null) state["used"] = used;
         File.WriteAllText(statePath, state.ToJsonString(jsonOptions) + Environment.NewLine);
         Console.WriteLine($"{nextId} [{tier}]: A={selected[0]}, B={selected[1]}");
