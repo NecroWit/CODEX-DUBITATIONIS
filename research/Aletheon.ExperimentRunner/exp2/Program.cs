@@ -3,7 +3,9 @@ using System.Text;
 using System.Text.Json;
 using Aletheon.ExperimentKit;
 
-var repo = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../"));
+var dir = new DirectoryInfo(AppContext.BaseDirectory);
+while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "ALETHEON_BASE_CORE.md"))) dir = dir.Parent;
+var repo = dir?.FullName ?? throw new DirectoryNotFoundException("Repository root not found.");
 var protocolPath = Path.Combine(repo, "research/Aletheon.ExperimentRunner/exp2/EXP-2.0.protocol.json");
 if (!File.Exists(protocolPath)) throw new FileNotFoundException("EXP-2.0 protocol", protocolPath);
 using var protocol = JsonDocument.Parse(File.ReadAllText(protocolPath));
