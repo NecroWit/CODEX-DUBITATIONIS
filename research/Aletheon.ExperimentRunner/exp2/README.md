@@ -21,3 +21,7 @@ Use `--prepare` to inspect the latest local EXP-2 run and prepare the next proto
 Rotation uses `rotation.json` and the model pools from `experiments/agents.mixed.json`. Tier budgets in `mixedTierBudgetsUsd` are authoritative for each model/request, with four requests per model. Prices are historical estimates; set an OpenRouter spending limit.
 
 **Verification limitation:** The GitHub refactor was inspected statically, but no .NET SDK is available in the assistant execution environment, so neither compilation nor offline CLI execution has been verified. Run `dotnet build research/Aletheon.Exp2.sln`, then `--prepare` and `--smoke` locally before allowing paid requests.
+
+## Restart from EXP-2.0
+
+After pulling the latest code, run `Aletheon.Exp2 --reset` once. This is offline: it moves existing local `runs/EXP-2.*` directories into `runs/exp2-archive/`, archives the local EXP-2 rotation state, and restores `exp2/protocol.json` from the original `EXP-2.0.protocol.json`. It does not affect EXP-1. Then build and run `--smoke` before any paid `--run`.
