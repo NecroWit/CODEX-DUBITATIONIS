@@ -50,8 +50,7 @@ if(!argsSet.SetEquals(new[]{"--run"})) {
 }
 var key=Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if(string.IsNullOrWhiteSpace(key)) { Console.Error.WriteLine("OPENROUTER_API_KEY missing."); return 2; }
-Console.WriteLine("8 paid requests; no fallback. Set provider-side spending limit. Type RUN EXP-2.0:");
-if(Console.ReadLine() != "RUN EXP-2.0") { Console.WriteLine("Cancelled."); return 2; }
+Console.WriteLine("EXP-2.0: starting 8 paid requests; no fallback. Check provider-side spending limit.");
 var runId=DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8];
 var output=Path.Combine(repo,"research/Aletheon.ExperimentRunner/runs/EXP-2.0",runId);
 Directory.CreateDirectory(output);
