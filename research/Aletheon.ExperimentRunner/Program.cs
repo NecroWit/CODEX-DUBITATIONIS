@@ -29,7 +29,7 @@ if (!smoke)
         var currentPath = Path.Combine(runner, "protocol.json");
         using var current = JsonDocument.Parse(File.ReadAllText(currentPath));
         var currentId = current.RootElement.GetProperty("id").GetString();
-        if (currentId != latest.Id)
+        if (currentId != latest.Id && currentId != ExperimentSequence.NextId(latest, 1))
         {
             // Restore the actual protocol of the most recent archived run, not an
             // unrelated template or manually selected model.
@@ -37,7 +37,7 @@ if (!smoke)
             File.Copy(archived, currentPath, overwrite: true);
             Console.WriteLine($"Restored {latest.Id} protocol from archived output.");
         }
-        if (successful)
+        if (successful && currentId != ExperimentSequence.NextId(latest, 1))
         {
             var nextNumber = latest.Number + 1;
             Console.WriteLine($"{latest.Id} accepted 4/4. Preparing EXP-1.{nextNumber} using rotation.json (offline).");
