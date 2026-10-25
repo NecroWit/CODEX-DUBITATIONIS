@@ -113,10 +113,19 @@ Save("manifest.json",new { experiment=experimentId,runId,startedUtc=DateTimeOffs
     models,sourceHashes,protocolSha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(protocolPath))).ToLowerInvariant(),
     requests=8, note="Source loading is not proof of actual inspection; semantic evaluation manual." });
 File.Copy(protocolPath,Path.Combine(output,"protocol.json"));
-var limits=cfg.GetProperty("budget_usd_max").GetDecimal();
-var cap=limits/8m;
-var modelCaps=models.ToDictionary(m=>m.Model,_=>cap);
-var budget=new BudgetLedger(Path.Combine(output,"cost-ledger.jsonl"),limits,cap,modelCaps);
+using var tierConfig = JsonDocument.Parse(File.ReadAllText(Path.Combine(repo, "experiments", "agents.mixed.json")));
+var tierPools = tierConfig.RootElement.GetProperty("mixedTiers");
+var tierBudgets = tierConfig.RootElement.GetProperty("mixedTierBudgetsUsd");
+var modelCaps = models.ToDictionary(m => m.Model, m =>
+{
+    var groups = tierPools.EnumerateObject().Where(g => g.Value.EnumerateArray()
+        .Any(x => x.GetString() == m.Model)).Select(g => g.Name).ToArray();
+    if (groups.Length != 1) throw new InvalidOperationException($"Model {m.Model} must belong to exactly one pricing tier.");
+    return tierBudgets.GetProperty(groups[0]).GetDecimal();
+});
+var cap = modelCaps.Values.Max();
+var limits = modelCaps.Values.Sum() * 4m;
+var budget = new BudgetLedger(Path.Combine(output,"cost-ledger.jsonl"),limits,cap,modelCaps);
 using var transport=new OpenRouterTransport(key);
 var failures=0;
 foreach(var model in models) {
