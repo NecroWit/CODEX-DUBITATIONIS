@@ -78,16 +78,19 @@ foreach(var model in models) {
             result.Error,result.HttpAttempts,result.Seconds,result.Assessment});
         if(result.Raw is not null) File.WriteAllText(Path.Combine(output,label+".response.json"),result.Raw);
         var text=result.Assessment?.Content;
-        var accepted=result.Complete && text is not null &&
+        var accepted=result.Complete && result.Assessment?.CostUsd is not null && text is not null &&
             text.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Length<=words &&
-            (result.Assessment?.ReturnedModel is null || result.Assessment.ReturnedModel.Equals(model.Model,StringComparison.OrdinalIgnoreCase));
+            (result.Assessment?.ReturnedModel is { } actualModel && actualModel.Equals(model.Model,StringComparison.OrdinalIgnoreCase));
         Save(label+".accepted.json",new {accepted,reason=accepted?"complete":"incomplete_or_overlong_or_model_mismatch"});
         Console.WriteLine(label+": "+(accepted?"ACCEPTED":"FAILED")+" / "+result.Assessment?.Status);
         if(!accepted) failures++;
         return (result,text);
     }
     var reconstruction=await Request(model.Id+"-R0",reconstructionPrompt,550);
-    if(reconstruction.Result?.Complete != true || string.IsNullOrWhiteSpace(reconstruction.Text)) {
+    if(reconstruction.Result?.Complete != true || string.IsNullOrWhiteSpace(reconstruction.Text) ||
+        reconstruction.Text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length > 550 ||
+        (reconstruction.Result.Assessment?.ReturnedModel is { } returnedModel &&
+         !returnedModel.Equals(model.Model, StringComparison.OrdinalIgnoreCase))) {
         Console.WriteLine("Skipping tasks for "+model.Id+": no complete reconstruction."); failures+=3; continue;
     }
     // Each task is independent: no earlier task or its answer appears in the next request.
