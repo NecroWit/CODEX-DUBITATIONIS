@@ -1,4 +1,3 @@
-using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
 using Aletheon.ExperimentKit;
@@ -88,7 +87,7 @@ foreach(var m in models) if(catalog.Get(m.Model).MaxCompletionTokens < maxTokens
     throw new InvalidOperationException($"Model cap too low: {m.Model}");
 var maxInput = cfg.GetProperty("max_total_input_chars").GetInt32();
 if(context.Length > maxInput) throw new InvalidOperationException($"Source context exceeds limit: {context.Length}/{maxInput}");
-var sourceHashes = sourceTexts.ToDictionary(s=>s.Path,s=>Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(s.Text))).ToLowerInvariant());
+var sourceHashes = sourceTexts.ToDictionary(s=>s.Path,s=>ExperimentArtifacts.Hash(Encoding.UTF8.GetBytes(s.Text)));
 // Match the existing ExperimentRunner: no arguments means a normal experiment run.
 var argsSet = (args.Length == 0 ? new[] { "--run" } : args).ToHashSet(StringComparer.OrdinalIgnoreCase);
 if (argsSet.SetEquals(new[]{"--smoke"})) {
@@ -107,10 +106,9 @@ Console.WriteLine(experimentId + ": starting 8 paid requests; no fallback. Check
 var runId=DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8];
 var output=Path.Combine(runsRoot,experimentId,runId);
 Directory.CreateDirectory(output);
-var jsonOptions=new JsonSerializerOptions { WriteIndented=true };
-void Save(string name,object value)=>File.WriteAllText(Path.Combine(output,name),JsonSerializer.Serialize(value,jsonOptions));
+void Save(string name,object value)=>ExperimentArtifacts.Save(Path.Combine(output,name),value);
 Save("manifest.json",new { experiment=experimentId,runId,startedUtc=DateTimeOffset.UtcNow,
-    models,sourceHashes,protocolSha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(protocolPath))).ToLowerInvariant(),
+    models,sourceHashes,protocolSha256=ExperimentArtifacts.Hash(File.ReadAllBytes(protocolPath)),
     requests=8, note="Source loading is not proof of actual inspection; semantic evaluation manual." });
 File.Copy(protocolPath,Path.Combine(output,"protocol.json"));
 using var tierConfig = JsonDocument.Parse(File.ReadAllText(Path.Combine(repo, "experiments", "agents.mixed.json")));
