@@ -74,7 +74,12 @@ public static class ModelRotation
         if (!exp2) protocol["participants"] = new JsonArray(
             new JsonObject { ["id"] = "A", ["provider"] = "openrouter", ["model_id"] = selected[0] },
             new JsonObject { ["id"] = "B", ["provider"] = "openrouter", ["model_id"] = selected[1] });
-        if (exp2)\n        {\n            protocol["participants"]![0]!["model_id"] = selected[0];\n            protocol["participants"]![1]!["model_id"] = selected[1];\n        }\n        protocol["rotation"] = new JsonObject
+        if (exp2)
+        {
+            protocol["participants"]![0]!["model_id"] = selected[0];
+            protocol["participants"]![1]!["model_id"] = selected[1];
+        }
+        protocol["rotation"] = new JsonObject
         {
             ["tier"] = tier,
             ["source"] = "experiments/agents.mixed.json:mixedTiers",
@@ -89,7 +94,12 @@ public static class ModelRotation
                 });
             }))
         };
-        if (exp2)\n        {\n            var budgets = source.RootElement.GetProperty("mixedTierBudgetsUsd");\n            protocol["budget_usd_max"] = selections.Sum(name => budgets.GetProperty(name).GetDecimal()) * 4m;\n        }\n        // Planning never calls the API; costs are estimates from pinned historical lists.
+        if (exp2)
+        {
+            var budgets = source.RootElement.GetProperty("mixedTierBudgetsUsd");
+            protocol["budget_usd_max"] = selections.Sum(name => budgets.GetProperty(name).GetDecimal()) * 4m;
+        }
+        // Planning never calls the API; costs are estimates from pinned historical lists.
         Directory.CreateDirectory(Path.GetDirectoryName(statePath)!);
         var jsonOptions = new JsonSerializerOptions { WriteIndented = true, TypeInfoResolver = new DefaultJsonTypeInfoResolver() };
         File.WriteAllText(protocolPath, protocol.ToJsonString(jsonOptions) + Environment.NewLine);
