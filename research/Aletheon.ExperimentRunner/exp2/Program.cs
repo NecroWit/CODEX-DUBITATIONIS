@@ -14,6 +14,12 @@ var expDir = Path.Combine(repo, "research", "Aletheon.ExperimentRunner", "exp2")
 var runsRoot = Path.Combine(repo, "research", "Aletheon.ExperimentRunner", "runs");
 var protocolPath = Path.Combine(expDir, "protocol.json");
 var smokeOnly = args.Length == 1 && args[0].Equals("--smoke", StringComparison.OrdinalIgnoreCase);
+var prepareOnly = args.Length == 1 && args[0].Equals("--prepare", StringComparison.OrdinalIgnoreCase);
+if (args.Length > 1 || (args.Length == 1 && !new[] { "--smoke", "--prepare", "--run" }.Contains(args[0], StringComparer.OrdinalIgnoreCase)))
+{
+    Console.Error.WriteLine("Usage: --prepare (offline), --smoke (offline), --run (paid). No arguments means --run.");
+    return 2;
+}
 if (!smokeOnly)
 {
     Directory.CreateDirectory(runsRoot);
@@ -26,9 +32,8 @@ if (!smokeOnly)
     }
     else
     {
-        var accepted = latest.Accepted;
         var archived = ExperimentSequence.RequireArchivedProtocol(latest);
-        if (!accepted)
+        if (!latest.Accepted)
         {
             File.Copy(archived, protocolPath, true);
             Console.WriteLine($"{latest.Id} incomplete; retrying unchanged protocol.");
@@ -36,43 +41,31 @@ if (!smokeOnly)
         else
         {
             var next = ExperimentSequence.NextId(latest, 2);
-            if (!File.Exists(protocolPath) || JsonDocument.Parse(File.ReadAllText(protocolPath)).RootElement.GetProperty("id").GetString() != next)
+            string? currentId = null;
+            if (File.Exists(protocolPath))
             {
-                var tiers = JsonDocument.Parse(File.ReadAllText(Path.Combine(repo, "experiments", "agents.mixed.json"))).RootElement.GetProperty("mixedTiers");
-                var rotation = JsonDocument.Parse(File.ReadAllText(Path.Combine(repo, "research", "Aletheon.ExperimentRunner", "rotation.json")))
-                    .RootElement.GetProperty("rotation").EnumerateArray().Select(x => x.GetString()!).ToArray();
-                using var previous = JsonDocument.Parse(File.ReadAllText(archived));
-                var previousModels = previous.RootElement.GetProperty("participants").EnumerateArray()
-                    .Select(x => x.GetProperty("model_id").GetString()!).ToArray();
-                var prevTier = rotation.FirstOrDefault(t => tiers.TryGetProperty(t, out var group) &&
-                    previousModels.All(m => group.EnumerateArray().Any(x => x.GetString() == m)));
-                // Mixed groups are heterogeneous; infer the tier from the previous experiment number.
-                var nextTier = rotation[(latest.Number + 1) % rotation.Length];
-                var used = Directory.GetDirectories(runsRoot, "EXP-2.*").SelectMany(dir => Directory.GetDirectories(dir))
-                    .Select(path => Path.Combine(path, "protocol.json")).Where(File.Exists)
-                    .SelectMany(path => {
-                        using var d = JsonDocument.Parse(File.ReadAllText(path));
-                        return d.RootElement.GetProperty("participants").EnumerateArray()
-                            .Select(x => x.GetProperty("model_id").GetString()!).ToArray();
-                    }).ToHashSet(StringComparer.OrdinalIgnoreCase);
-                string[] Pool(string tier) => tiers.GetProperty(tier).EnumerateArray().Select(x => x.GetString()!).ToArray();
-                var pool = nextTier == "mixed"
-                    ? new[] { Pool("cheap").FirstOrDefault(m => !used.Contains(m)), Pool("premium").FirstOrDefault(m => !used.Contains(m)) }
-                    : Pool(nextTier).Where(m => !used.Contains(m)).Take(2).Cast<string?>().ToArray();
-                if (pool.Length != 2 || pool.Any(string.IsNullOrWhiteSpace) || pool[0] == pool[1])
-                    throw new InvalidOperationException($"Not enough unused models for {nextTier}. No API requests sent.");
-                var node = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(archived))!;
-                node["id"] = next;
-                node["participants"]![0]!["model_id"] = pool[0];
-                node["participants"]![1]!["model_id"] = pool[1];
-                File.WriteAllText(protocolPath, node.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
-                Console.WriteLine($"{latest.Id} accepted 8/8. Prepared {next} ({nextTier}) offline.");
+                using var active = JsonDocument.Parse(File.ReadAllText(protocolPath));
+                currentId = active.RootElement.GetProperty("id").GetString();
+            }
+            if (currentId != next)
+            {
+                File.Copy(archived, protocolPath, true);
+                ModelRotation.Prepare(repo, Path.Combine(repo, "research", "Aletheon.ExperimentRunner"),
+                    Path.Combine(repo, "research", "Aletheon.ExperimentKit"), targetId: next,
+                    protocolOverride: protocolPath,
+                    stateOverride: Path.Combine(runsRoot, "exp2-rotation-state.json"), exp2: true);
+                Console.WriteLine($"{latest.Id} accepted 8/8; prepared {next} offline.");
             }
         }
     }
 }
 else if (!File.Exists(protocolPath))
     File.Copy(Path.Combine(expDir, "EXP-2.0.protocol.json"), protocolPath);
+if (prepareOnly)
+{
+    Console.WriteLine("Preparation complete. No API requests sent.");
+    return 0;
+}
 using var protocol = JsonDocument.Parse(File.ReadAllText(protocolPath));
 var cfg = protocol.RootElement;
 var experimentId = cfg.GetProperty("id").GetString() ?? throw new InvalidOperationException("Missing experiment ID");
