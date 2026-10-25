@@ -9,13 +9,89 @@ var dir = new DirectoryInfo(AppContext.BaseDirectory);
 const string relativeProtocol = "research/Aletheon.ExperimentRunner/exp2/EXP-2.0.protocol.json";
 while (dir is not null && !File.Exists(Path.Combine(dir.FullName, relativeProtocol)))
     dir = dir.Parent;
-var repo = dir?.FullName ?? throw new FileNotFoundException(
-    $"Cannot locate {relativeProtocol} in any parent of {AppContext.BaseDirectory}. " +
-    "Open the solution from the repository checkout and ensure EXP-2.0.protocol.json is present.");
-var protocolPath = Path.Combine(repo, relativeProtocol);
-if (!File.Exists(protocolPath)) throw new FileNotFoundException("EXP-2.0 protocol", protocolPath);
+var repo = dir?.FullName ?? throw new FileNotFoundException("Cannot locate EXP-2 source protocol.");
+var expDir = Path.Combine(repo, "research", "Aletheon.ExperimentRunner", "exp2");
+var runsRoot = Path.Combine(repo, "research", "Aletheon.ExperimentRunner", "runs");
+var protocolPath = Path.Combine(expDir, "protocol.json");
+var smokeOnly = args.Length == 1 && args[0].Equals("--smoke", StringComparison.OrdinalIgnoreCase);
+if (!smokeOnly)
+{
+    Directory.CreateDirectory(runsRoot);
+    var completed = Directory.GetDirectories(runsRoot, "EXP-2.*")
+        .Select(path => new { Path = path, Name = Path.GetFileName(path) })
+        .Select(x => new { x.Path, x.Name, Match = System.Text.RegularExpressions.Regex.Match(x.Name, @"^EXP-2\.(\d+)$") })
+        .Where(x => x.Match.Success)
+        .OrderBy(x => int.Parse(x.Match.Groups[1].Value)).ToArray();
+    bool Accepted(string run) => new[] { "A-R0", "A-H1", "A-H2", "A-H3", "B-R0", "B-H1", "B-H2", "B-H3" }
+        .All(label => {
+            try {
+                using var d = JsonDocument.Parse(File.ReadAllText(Path.Combine(run, label + ".accepted.json")));
+                return d.RootElement.GetProperty("accepted").GetBoolean();
+            } catch { return false; }
+        });
+    if (completed.Length == 0)
+    {
+        if (!File.Exists(protocolPath))
+            File.Copy(Path.Combine(expDir, "EXP-2.0.protocol.json"), protocolPath);
+    }
+    else
+    {
+        var latest = completed[^1];
+        var attempts = Directory.GetDirectories(latest.Path)
+            .Where(path => File.Exists(Path.Combine(path, "manifest.json"))).ToArray();
+        var accepted = attempts.Any(Accepted);
+        var archived = attempts.OrderByDescending(path => path)
+            .Select(path => Path.Combine(path, "protocol.json")).FirstOrDefault(File.Exists);
+        if (archived is null)
+            throw new InvalidOperationException($"No archived protocol for {latest.Name}; refusing paid run.");
+        if (!accepted)
+        {
+            File.Copy(archived, protocolPath, true);
+            Console.WriteLine($"{latest.Name} incomplete; retrying unchanged protocol.");
+        }
+        else
+        {
+            var next = "EXP-2." + (int.Parse(latest.Match.Groups[1].Value) + 1);
+            if (!File.Exists(protocolPath) || JsonDocument.Parse(File.ReadAllText(protocolPath)).RootElement.GetProperty("id").GetString() != next)
+            {
+                var tiers = JsonDocument.Parse(File.ReadAllText(Path.Combine(repo, "experiments", "agents.mixed.json"))).RootElement.GetProperty("mixedTiers");
+                var rotation = JsonDocument.Parse(File.ReadAllText(Path.Combine(repo, "research", "Aletheon.ExperimentRunner", "rotation.json")))
+                    .RootElement.GetProperty("rotation").EnumerateArray().Select(x => x.GetString()!).ToArray();
+                using var previous = JsonDocument.Parse(File.ReadAllText(archived));
+                var previousModels = previous.RootElement.GetProperty("participants").EnumerateArray()
+                    .Select(x => x.GetProperty("model_id").GetString()!).ToArray();
+                var prevTier = rotation.FirstOrDefault(t => tiers.TryGetProperty(t, out var group) &&
+                    previousModels.All(m => group.EnumerateArray().Any(x => x.GetString() == m)));
+                // Mixed groups are heterogeneous; infer the tier from the previous experiment number.
+                var nextTier = rotation[(int.Parse(latest.Match.Groups[1].Value) + 1) % rotation.Length];
+                var used = completed.SelectMany(exp => Directory.GetDirectories(exp.Path)
+                    .Select(path => Path.Combine(path, "protocol.json")).Where(File.Exists))
+                    .SelectMany(path => {
+                        using var d = JsonDocument.Parse(File.ReadAllText(path));
+                        return d.RootElement.GetProperty("participants").EnumerateArray()
+                            .Select(x => x.GetProperty("model_id").GetString()!).ToArray();
+                    }).ToHashSet(StringComparer.OrdinalIgnoreCase);
+                string[] Pool(string tier) => tiers.GetProperty(tier).EnumerateArray().Select(x => x.GetString()!).ToArray();
+                var pool = nextTier == "mixed"
+                    ? new[] { Pool("cheap").FirstOrDefault(m => !used.Contains(m)), Pool("premium").FirstOrDefault(m => !used.Contains(m)) }
+                    : Pool(nextTier).Where(m => !used.Contains(m)).Take(2).Cast<string?>().ToArray();
+                if (pool.Length != 2 || pool.Any(string.IsNullOrWhiteSpace) || pool[0] == pool[1])
+                    throw new InvalidOperationException($"Not enough unused models for {nextTier}. No API requests sent.");
+                var node = System.Text.Json.Nodes.JsonNode.Parse(File.ReadAllText(archived))!;
+                node["id"] = next;
+                node["participants"]![0]!["model_id"] = pool[0];
+                node["participants"]![1]!["model_id"] = pool[1];
+                File.WriteAllText(protocolPath, node.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
+                Console.WriteLine($"{latest.Name} accepted 8/8. Prepared {next} ({nextTier}) offline.");
+            }
+        }
+    }
+}
+else if (!File.Exists(protocolPath))
+    File.Copy(Path.Combine(expDir, "EXP-2.0.protocol.json"), protocolPath);
 using var protocol = JsonDocument.Parse(File.ReadAllText(protocolPath));
 var cfg = protocol.RootElement;
+var experimentId = cfg.GetProperty("id").GetString() ?? throw new InvalidOperationException("Missing experiment ID");
 var sources = new[] { "ALETHEON_BOOTSTRAP.md", "ALETHEON_CONTEXT_INDEX.yaml",
     "ALETHEON_BASE_CORE.md", "ALETHEON_EXTENDED_CORE.md", "ALETHEON_EVOLUTION.md",
     "ALETHEON_RESEARCH_LOG.md", "CODEX-DUBITATIONIS.md" };
@@ -39,7 +115,7 @@ var sourceHashes = sourceTexts.ToDictionary(s=>s.Path,s=>Convert.ToHexString(SHA
 // Match the existing ExperimentRunner: no arguments means a normal experiment run.
 var argsSet = (args.Length == 0 ? new[] { "--run" } : args).ToHashSet(StringComparer.OrdinalIgnoreCase);
 if (argsSet.SetEquals(new[]{"--smoke"})) {
-    Console.WriteLine("EXP-2.0 smoke OK. Models: " + string.Join(", ", models.Select(m=>m.Model)));
+    Console.WriteLine(experimentId + " smoke OK. Models: " + string.Join(", ", models.Select(m=>m.Model)));
     Console.WriteLine($"Sources: {sources.Length}, context chars: {context.Length}; requests: 8");
     Console.WriteLine("Hashes:\n"+string.Join("\n",sourceHashes.Select(k=>$"{k.Key}: {k.Value}")));
     return 0;
@@ -50,13 +126,13 @@ if(!argsSet.SetEquals(new[]{"--run"})) {
 }
 var key=Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if(string.IsNullOrWhiteSpace(key)) { Console.Error.WriteLine("OPENROUTER_API_KEY missing."); return 2; }
-Console.WriteLine("EXP-2.0: starting 8 paid requests; no fallback. Check provider-side spending limit.");
+Console.WriteLine(experimentId + ": starting 8 paid requests; no fallback. Check provider-side spending limit.");
 var runId=DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8];
-var output=Path.Combine(repo,"research/Aletheon.ExperimentRunner/runs/EXP-2.0",runId);
+var output=Path.Combine(runsRoot,experimentId,runId);
 Directory.CreateDirectory(output);
 var jsonOptions=new JsonSerializerOptions { WriteIndented=true };
 void Save(string name,object value)=>File.WriteAllText(Path.Combine(output,name),JsonSerializer.Serialize(value,jsonOptions));
-Save("manifest.json",new { experiment="EXP-2.0",runId,startedUtc=DateTimeOffset.UtcNow,
+Save("manifest.json",new { experiment=experimentId,runId,startedUtc=DateTimeOffset.UtcNow,
     models,sourceHashes,protocolSha256=Convert.ToHexString(SHA256.HashData(File.ReadAllBytes(protocolPath))).ToLowerInvariant(),
     requests=8, note="Source loading is not proof of actual inspection; semantic evaluation manual." });
 File.Copy(protocolPath,Path.Combine(output,"protocol.json"));
