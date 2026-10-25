@@ -45,11 +45,11 @@ public static class ModelRotation
             var options = pools.GetProperty(poolName).EnumerateArray().Select(x => x.GetString()!).Distinct().ToArray();
             var previous = used[poolName] as JsonArray ?? new JsonArray();
             var seen = previous.Select(x => x!.GetValue<string>()).ToHashSet();
-            var available = options.Where(x => !seen.Contains(x) && !selected.Contains(x)).ToArray();
+            var available = options.Where(x => !seen.Contains(x) && !selected.Contains(x) && catalog.Get(x).MaxCompletionTokens >= 6400).ToArray();
             if (available.Length == 0)
             {
                 previous = new JsonArray();
-                available = options.Where(x => !selected.Contains(x)).ToArray();
+                available = options.Where(x => !selected.Contains(x) && catalog.Get(x).MaxCompletionTokens >= 6400).ToArray();
             }
             if (available.Length == 0) throw new InvalidOperationException("No models available in " + poolName);
             var chosen = available[RandomNumberGenerator.GetInt32(available.Length)];
