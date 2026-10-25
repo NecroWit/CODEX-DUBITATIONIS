@@ -36,8 +36,8 @@ foreach(var m in models) if(catalog.Get(m.Model).MaxCompletionTokens < maxTokens
 var maxInput = cfg.GetProperty("max_total_input_chars").GetInt32();
 if(context.Length > maxInput) throw new InvalidOperationException($"Source context exceeds limit: {context.Length}/{maxInput}");
 var sourceHashes = sourceTexts.ToDictionary(s=>s.Path,s=>Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(s.Text))).ToLowerInvariant());
-// In Rider, Run without program arguments performs only the free offline preflight.
-var argsSet = (args.Length == 0 ? new[] { "--prepare" } : args).ToHashSet(StringComparer.OrdinalIgnoreCase);
+// Match the existing ExperimentRunner: no arguments means a normal experiment run.
+var argsSet = (args.Length == 0 ? new[] { "--run" } : args).ToHashSet(StringComparer.OrdinalIgnoreCase);
 if (argsSet.SetEquals(new[]{"--prepare"})) {
     Console.WriteLine("EXP-2.0 offline preflight OK. Models: " + string.Join(", ", models.Select(m=>m.Model)));
     Console.WriteLine($"Sources: {sources.Length}, context chars: {context.Length}; requests: 8");
