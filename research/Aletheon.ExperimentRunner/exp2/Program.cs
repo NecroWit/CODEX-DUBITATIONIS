@@ -131,10 +131,13 @@ var failures=0;
 foreach(var model in models) {
     var reconstructionPrompt="Перед ответом на контрольные вопросы восстанови интеллектуальную генеалогию Алетеона из предоставленных источников. Для 2-3 взаимосвязанных принципов укажи исходное положение, давление/возражение, изменение либо обоснованное сохранение, зависимости, неразрешённое напряжение и точные разделы E-/R-; отличай засвидетельствованное от реконструкции. Не угадывай будущие вопросы. До 550 слов.";
     async Task<(CompletionResult? Result,string? Text)> Request(string label,string prompt,int words) {
-        var reservation=budget.Reserve(label,catalog.Get(model.Model),system,context+"\n"+prompt,maxTokens);
-        if(reservation is null) { Save(label+".accepted.json",new {accepted=false,reason="budget_blocked"}); failures++; return (null,null); }
-        var result=await transport.CompleteAsync(model.Model,system,context,prompt,maxTokens);
-        budget.Reconcile(label,catalog.Get(model.Model),reservation.Value,result.Assessment?.CostUsd);
+        var completion = await ModelFallback.CompleteAsync(transport, budget, catalog,
+            label, model.Model, Array.Empty<string>(), system, context, prompt, maxTokens);
+        var result = completion.Result;
+        if (completion.BudgetBlocked) {
+            Save(label+".accepted.json",new {accepted=false,reason="budget_blocked"});
+            failures++; return (null,null);
+        }
         Save(label+".result.json",new {requestedModel=model.Model,actualModel=result.Assessment?.ReturnedModel,
             result.Error,result.HttpAttempts,result.Seconds,result.Assessment});
         if(result.Raw is not null) File.WriteAllText(Path.Combine(output,label+".response.json"),result.Raw);
