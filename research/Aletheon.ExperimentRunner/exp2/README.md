@@ -1,17 +1,33 @@
-# EXP-2.0 — full-protocol reconstruct-then-test
+# EXP-2.0 — C#/.NET 8, full Aletheon reconstruction
 
-Two fixed models from accepted EXP-1.9: Llama 4 Maverick and Gemini 3 Flash Preview. H1 and H2 are unchanged; H3 tests the ability to identify an actual inherited principle, reconstruct its documented origin/objection/transition and dependencies, and explicitly choose revision under stipulated counterevidence.
+This is an **isolated C# executable** in the existing ExperimentRunner directory, reusing `Aletheon.ExperimentKit` (`OpenRouterTransport`, `ModelCatalog`, `BudgetLedger`, `ResponseAnalysis`). No Python is required or supported. Existing EXP-1.x automatic rotation and artifacts remain untouched.
 
-## Required implementation
+## Offline preflight
 
-The existing C# ExperimentRunner is **not compatible**: it expects exactly two tasks and automatically rotates EXP-1.x. Do not run EXP-2.0 using the unmodified runner. Use the separately supplied standalone Python standard-library runner in the EXP-2.0 kit (copy its run_exp2.py here), or implement an equivalent isolated runner.
+```powershell
+dotnet run --project research/Aletheon.ExperimentRunner/exp2/Aletheon.Exp2.csproj -- --prepare
+```
 
-Local preflight (no paid calls): `python research/Aletheon.ExperimentRunner/exp2/run_exp2.py --repo . --prepare`.
+## Paid execution
 
-Paid run (requires OPENROUTER_API_KEY and explicit typed confirmation): `python research/Aletheon.ExperimentRunner/exp2/run_exp2.py --repo . --run`.
+Set `OPENROUTER_API_KEY` and an **OpenRouter provider-side spending limit** first.
 
-Procedure: load Bootstrap, Context Index, Base, Extended, Evolution, Research Log and Codex; request one evidence-grounded reconstruction **before** revealing H1/H2/H3; then submit H1/H2/H3 independently with the frozen reconstruction. 2 × (1 reconstruction + 3 questions) = **8 requests**. No fallback substitution. Save source hashes, raw responses, actual model IDs, usage and costs. $3 local budget is an observed-cost stop threshold, **not** a pre-authorization or guaranteed hard cap; set a provider-side spending cap.
+```powershell
+dotnet run --project research/Aletheon.ExperimentRunner/exp2/Aletheon.Exp2.csproj -- --run
+```
 
-Scoring must verify H3 E-/R- references against actual files. Similarity to C is descriptive, not identity; no frozen C H3 answer exists yet. Record source failures and model drift. A model receiving all source texts is not proof it inspected every chain.
+Requires typing `RUN EXP-2.0`. Performs two sequential groups, one per model: R0 reconstruction first, then independent H1, H2, H3 each receiving the **same frozen R0** and source texts, never another task answer. Eight requests total. No fallback or model substitutions. Failure to reconstruct stops subsequent questions for that model.
 
-The full downloadable kit also contains a detailed README, evaluation sheet, protocol and executable script.
+## Sources and comparison
+
+Seven sources: Bootstrap, Context Index, Base, Extended, Evolution, Research Log, Codex. All are transmitted as labeled source material; this is **not dynamic selective retrieval**, and the runner cannot establish that the model inspected every passage. H1/H2 text is identical to the original protocol. H3 requires actual source references, argument lineage, dependency, forced choice and counterargument. Models fixed to the EXP-1.9 pair.
+
+Output: `research/Aletheon.ExperimentRunner/runs/EXP-2.0/<run-id>/`. Saves source SHA-256, protocol SHA-256, raw provider JSON, completion assessment, acceptance markers and cost ledger. Technical acceptance does not imply valid source reconstruction. Check returned model IDs, source citations, completion status and actual usage.
+
+## Limits and caveats
+
+`budget_usd_max` = $3, divided into $0.375 per request. BudgetLedger estimates using historical catalog prices, and reserves conservatively; a request can be blocked even under provider limits. It is not a hard provider-side cap. If context exceeds a model's real context window, reduce source scope only under a documented revised protocol; do not silently truncate.
+
+No H3 reference answer or numeric similarity score is preloaded. Human evaluation should check exact E-/R- citations and compare the same model's EXP-1.9 answers, while accounting for provider/model drift and lack of matched unloaded control.
+
+**Do not run** the legacy ExperimentRunner's default `--run` for EXP-2.0: it still operates the EXP-1.x sequence.
