@@ -1,6 +1,6 @@
 {
   "id": "EXP-2.0",
-  "design": "full-protocol reconstruct-then-test; two models x one reconstruction + three independent tasks",
+  "design": "C#/.NET 8 isolated runner reusing Aletheon.ExperimentKit; 2 models x (R0 + H1/H2/H3)",
   "participants": [
     {
       "id": "A",
@@ -50,5 +50,5 @@
   "max_total_input_chars": 1000000,
   "model_fallback": false,
   "comparison": "matched EXP-1.9 models, H1/H2 identical, H3 new",
-  "notes": "No answer keys in loaded context; manual audit of cited lineage and actual cost required."
+  "notes": "No Python. H1/H2 unchanged. H3 source-grounded. Run only exp2/Aletheon.Exp2.csproj. No answer keys loaded. Manual semantic audit required."
 }
