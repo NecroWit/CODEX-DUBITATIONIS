@@ -31,7 +31,7 @@ if (!smokeOnly)
         if (!accepted)
         {
             File.Copy(archived, protocolPath, true);
-            Console.WriteLine($"{latest.Name} incomplete; retrying unchanged protocol.");
+            Console.WriteLine($"{latest.Id} incomplete; retrying unchanged protocol.");
         }
         else
         {
@@ -48,8 +48,8 @@ if (!smokeOnly)
                     previousModels.All(m => group.EnumerateArray().Any(x => x.GetString() == m)));
                 // Mixed groups are heterogeneous; infer the tier from the previous experiment number.
                 var nextTier = rotation[(latest.Number + 1) % rotation.Length];
-                var used = Directory.GetDirectories(runsRoot, "EXP-2.*").SelectMany(path => Directory.GetDirectories(path)
-                    .Select(path => Path.Combine(path, "protocol.json")).Where(File.Exists))
+                var used = Directory.GetDirectories(runsRoot, "EXP-2.*").SelectMany(dir => Directory.GetDirectories(dir))
+                    .Select(path => Path.Combine(path, "protocol.json")).Where(File.Exists)
                     .SelectMany(path => {
                         using var d = JsonDocument.Parse(File.ReadAllText(path));
                         return d.RootElement.GetProperty("participants").EnumerateArray()
@@ -66,7 +66,7 @@ if (!smokeOnly)
                 node["participants"]![0]!["model_id"] = pool[0];
                 node["participants"]![1]!["model_id"] = pool[1];
                 File.WriteAllText(protocolPath, node.ToJsonString(new JsonSerializerOptions { WriteIndented = true }));
-                Console.WriteLine($"{latest.Name} accepted 8/8. Prepared {next} ({nextTier}) offline.");
+                Console.WriteLine($"{latest.Id} accepted 8/8. Prepared {next} ({nextTier}) offline.");
             }
         }
     }
