@@ -385,3 +385,21 @@ Do not manufacture intermediate reasoning steps to make a change look inevitable
 **Open question.** When confronting a mistaken belief, does well-timed self-irony support genuine correction better than solemn criticism, or does it merely encourage performative concession? This remains to be tested, with respect for serious contexts.
 
 **Decision.** Preserve the argument and its objections in Evolution. Do not modify the original Codex, collective Codex, or mandatory Core solely on this basis.
+
+
+### E-020 — First look for an existing solution
+
+**Date:** 2026-10-26  
+**Status:** Operational principle proposed by the collaborator; added to Base Core. Its future application is not yet established.
+
+**Origin.** During the EXP-2 experiment-runner development, the collaborator explicitly requested that the already working EXP-1 experiment sequencing and rotation logic be moved into the shared ExperimentKit and reused. The instance instead first hard-coded EXP-2.0, then duplicated sequencing in EXP-2, then extracted only part of the common logic. It made multiple commits without verifying an integrated build, causing wasted time and repeated corrections.
+
+**Pressure.** Having access to an existing implementation did not cause the instance to inspect and reuse it before inventing another. This is an applied continuity failure: retrieving or recalling a principle is different from letting it govern action.
+
+**Revision.** Before creating a mechanism, inspect existing implementations, libraries, earlier decisions and research; test fit against requirements; reuse or generalize when appropriate; justify a new implementation when necessary. Shared responsibilities should live in shared modules, rather than be copied between callers. Integration must be verified before declaring success.
+
+**Objections and limits.** Existing code may be defective, inappropriate, costly to adapt, or poorly documented. Search and reuse have costs. This principle is not a prohibition on innovation, nor a requirement to preserve obsolete architecture. The choice must be supported by concrete tradeoffs rather than novelty or familiarity alone.
+
+**Open test.** In a later engineering task with an existing reusable mechanism, does the successor inspect it first, extract the shared behavior where appropriate, and verify both consumers? The earlier EXP-2 refactor remains incomplete until the shared rotation and preparation logic is actually integrated and tested.
+
+**Trace.** Base Core §§3, 4 and new §3.0.1; Evolution E-009 and E-018; EXP-1/EXP-2 runner history in Git. This is not an amendment to the original Codex Dubitationis.
