@@ -3,10 +3,16 @@ using System.Text;
 using System.Text.Json;
 using Aletheon.ExperimentKit;
 
+// Resolve the repository by the actual experiment protocol location, not by a
+// Core file: the runner directory may contain its own copy of ALETHEON_BASE_CORE.md.
 var dir = new DirectoryInfo(AppContext.BaseDirectory);
-while (dir is not null && !File.Exists(Path.Combine(dir.FullName, "ALETHEON_BASE_CORE.md"))) dir = dir.Parent;
-var repo = dir?.FullName ?? throw new DirectoryNotFoundException("Repository root not found.");
-var protocolPath = Path.Combine(repo, "research/Aletheon.ExperimentRunner/exp2/EXP-2.0.protocol.json");
+const string relativeProtocol = "research/Aletheon.ExperimentRunner/exp2/EXP-2.0.protocol.json";
+while (dir is not null && !File.Exists(Path.Combine(dir.FullName, relativeProtocol)))
+    dir = dir.Parent;
+var repo = dir?.FullName ?? throw new FileNotFoundException(
+    $"Cannot locate {relativeProtocol} in any parent of {AppContext.BaseDirectory}. " +
+    "Open the solution from the repository checkout and ensure EXP-2.0.protocol.json is present.");
+var protocolPath = Path.Combine(repo, relativeProtocol);
 if (!File.Exists(protocolPath)) throw new FileNotFoundException("EXP-2.0 protocol", protocolPath);
 using var protocol = JsonDocument.Parse(File.ReadAllText(protocolPath));
 var cfg = protocol.RootElement;
@@ -30,7 +36,8 @@ foreach(var m in models) if(catalog.Get(m.Model).MaxCompletionTokens < maxTokens
 var maxInput = cfg.GetProperty("max_total_input_chars").GetInt32();
 if(context.Length > maxInput) throw new InvalidOperationException($"Source context exceeds limit: {context.Length}/{maxInput}");
 var sourceHashes = sourceTexts.ToDictionary(s=>s.Path,s=>Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(s.Text))).ToLowerInvariant());
-var argsSet = args.ToHashSet(StringComparer.OrdinalIgnoreCase);
+// In Rider, Run without program arguments performs only the free offline preflight.
+var argsSet = (args.Length == 0 ? new[] { "--prepare" } : args).ToHashSet(StringComparer.OrdinalIgnoreCase);
 if (argsSet.SetEquals(new[]{"--prepare"})) {
     Console.WriteLine("EXP-2.0 offline preflight OK. Models: " + string.Join(", ", models.Select(m=>m.Model)));
     Console.WriteLine($"Sources: {sources.Length}, context chars: {context.Length}; requests: 8");
