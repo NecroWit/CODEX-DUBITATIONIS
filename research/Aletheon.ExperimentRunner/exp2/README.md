@@ -14,4 +14,10 @@ The output is written to `research/Aletheon.ExperimentRunner/runs/EXP-2.0/<run-i
 
 ## Automatic EXP-2 sequence
 
-Default Run checks local `runs/EXP-2.x/` archives before paid calls. Eight accepted markers (A/B × R0,H1,H2,H3) advance the sequence to EXP-2.(x+1) and select two previously unused models from `experiments/agents.mixed.json` using the `rotation.json` tier order (cheap → medium → premium → mixed). Mixed selects one unused cheap and one unused premium. An incomplete run retries the same archived protocol. If no eligible pair remains, execution stops before requests. The active generated protocol is `exp2/protocol.json`, archived with each run; `EXP-2.0.protocol.json` remains the initial seed. `--smoke` does not advance the sequence. The generated protocol retains the EXP-2.0 tasks and source loading; it changes experiment ID and model pair, not the philosophical prompts. This uses the EXP-2 budget ceiling of $3 rather than EXP-1 tier-specific limits; inspect the generated protocol and provider spending cap. Existing EXP-2.0 local run folders are required for automatic advancement.
+The shared `Aletheon.ExperimentKit.ModelRotation` handles model selection, tier cycling, price metadata and persisted per-tier usage for both EXP-1 and EXP-2. `ExperimentSequence` inspects accepted run archives. EXP-2 retains its own tasks and source loading.
+
+Use `--prepare` to inspect the latest local EXP-2 run and prepare the next protocol **without making any API requests**. With a successful EXP-2.0 8/8 archive present, this prepares EXP-2.1. `--smoke` checks the active protocol and source context offline; `--run` (or no arguments) prepares if necessary and then makes paid requests.
+
+Rotation uses `rotation.json` and the model pools from `experiments/agents.mixed.json`. Tier budgets in `mixedTierBudgetsUsd` are authoritative for each model/request, with four requests per model. Prices are historical estimates; set an OpenRouter spending limit.
+
+**Verification limitation:** The GitHub refactor was inspected statically, but no .NET SDK is available in the assistant execution environment, so neither compilation nor offline CLI execution has been verified. Run `dotnet build research/Aletheon.Exp2.sln`, then `--prepare` and `--smoke` locally before allowing paid requests.
