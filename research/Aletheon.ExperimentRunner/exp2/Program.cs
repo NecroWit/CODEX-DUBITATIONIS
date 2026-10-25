@@ -12,12 +12,32 @@ var repo = dir?.FullName ?? throw new FileNotFoundException("Cannot locate EXP-2
 var expDir = Path.Combine(repo, "research", "Aletheon.ExperimentRunner", "exp2");
 var runsRoot = Path.Combine(repo, "research", "Aletheon.ExperimentRunner", "runs");
 var protocolPath = Path.Combine(expDir, "protocol.json");
+var resetOnly = args.Length == 1 && args[0] == "--reset";
 var smokeOnly = args.Length == 1 && args[0].Equals("--smoke", StringComparison.OrdinalIgnoreCase);
 var prepareOnly = args.Length == 1 && args[0].Equals("--prepare", StringComparison.OrdinalIgnoreCase);
-if (args.Length > 1 || (args.Length == 1 && !new[] { "--smoke", "--prepare", "--run" }.Contains(args[0], StringComparer.OrdinalIgnoreCase)))
+if (args.Length > 1 || (args.Length == 1 && !new[] { "--smoke", "--prepare", "--run", "--reset" }.Contains(args[0], StringComparer.OrdinalIgnoreCase)))
 {
     Console.Error.WriteLine("Usage: --prepare (offline), --smoke (offline), --run (paid). No arguments means --run.");
     return 2;
+}
+if (resetOnly)
+{
+    Directory.CreateDirectory(runsRoot);
+    var archive = Path.Combine(runsRoot, "exp2-archive");
+    Directory.CreateDirectory(archive);
+    foreach (var old in Directory.GetDirectories(runsRoot, "EXP-2.*"))
+    {
+        var dest = Path.Combine(archive, Path.GetFileName(old));
+        if (Directory.Exists(dest))
+            dest += "-" + Guid.NewGuid().ToString("N")[..8];
+        Directory.Move(old, dest);
+    }
+    var state = Path.Combine(runsRoot, "exp2-rotation-state.json");
+    if (File.Exists(state))
+        File.Move(state, Path.Combine(archive, "rotation-" + Guid.NewGuid().ToString("N") + ".json"));
+    File.Copy(Path.Combine(expDir, "EXP-2.0.protocol.json"), protocolPath, true);
+    Console.WriteLine("EXP-2.0 restored; previous results archived; no paid requests.");
+    return 0;
 }
 if (!smokeOnly)
 {
