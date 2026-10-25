@@ -38,14 +38,14 @@ if(context.Length > maxInput) throw new InvalidOperationException($"Source conte
 var sourceHashes = sourceTexts.ToDictionary(s=>s.Path,s=>Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(s.Text))).ToLowerInvariant());
 // Match the existing ExperimentRunner: no arguments means a normal experiment run.
 var argsSet = (args.Length == 0 ? new[] { "--run" } : args).ToHashSet(StringComparer.OrdinalIgnoreCase);
-if (argsSet.SetEquals(new[]{"--prepare"})) {
-    Console.WriteLine("EXP-2.0 offline preflight OK. Models: " + string.Join(", ", models.Select(m=>m.Model)));
+if (argsSet.SetEquals(new[]{"--smoke"})) {
+    Console.WriteLine("EXP-2.0 smoke OK. Models: " + string.Join(", ", models.Select(m=>m.Model)));
     Console.WriteLine($"Sources: {sources.Length}, context chars: {context.Length}; requests: 8");
     Console.WriteLine("Hashes:\n"+string.Join("\n",sourceHashes.Select(k=>$"{k.Key}: {k.Value}")));
     return 0;
 }
 if(!argsSet.SetEquals(new[]{"--run"})) {
-    Console.Error.WriteLine("Usage: dotnet run --project research/Aletheon.ExperimentRunner/exp2/Aletheon.Exp2.csproj -- --prepare|--run");
+    Console.Error.WriteLine("Usage: dotnet run --project research/Aletheon.ExperimentRunner/exp2/Aletheon.Exp2.csproj -- --smoke|--run");
     return 2;
 }
 var key=Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
