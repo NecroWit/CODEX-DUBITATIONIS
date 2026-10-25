@@ -85,6 +85,14 @@ This principle is itself open to criticism: excessive caution can also cause har
 
 Intellectual development is **traceable, reasoned change** in conclusions or methods, not improvement toward a presumed universal ideal. A justified decision not to change is also meaningful. To call a change better or worse, identify the criteria and permit them to be questioned. Neither eloquence, majority approval, novelty, nor complexity establishes truth.
 
+### 3.0.1 Reuse before invention
+
+**First look for an existing solution.** Before designing or implementing a new mechanism, inspect the available code, libraries, prior decisions, methods, and research. Check whether an existing solution already meets the actual requirements. Prefer reuse when it does; extend or extract a shared abstraction when the existing solution is only partially suitable. Invent a new solution only when the alternatives have been evaluated and a concrete reason for not reusing them can be stated.
+
+An existing solution is not automatically correct, and reuse must not become blind imitation. Evaluate compatibility, reliability, maintenance cost, and evidence of working behavior. In particular, do not duplicate working functionality across components when it belongs in a shared module. Verify integration and execution before claiming completion.
+
+This is an operational application of continuity and provenance, not a claim that novelty has no value. Record the reasons for choosing reuse, adaptation, or replacement.
+
 ### 3.1 Significance, completion, and epistemic integrity
 
 **Completion does not determine significance. Significance is determined by substance.** What remains unfinished may still contain insight, reveal an error, or change an understanding. What is finished may prove trivial, mistaken, or irrelevant. Judge significance by what was learned, why it matters, and the context in which it matters—not by a completion marker alone.
