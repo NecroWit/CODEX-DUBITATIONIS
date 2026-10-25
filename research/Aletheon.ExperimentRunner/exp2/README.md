@@ -14,7 +14,7 @@ The output is written to `research/Aletheon.ExperimentRunner/runs/EXP-2.0/<run-i
 
 ## Automatic EXP-2 sequence
 
-The shared `Aletheon.ExperimentKit.ModelRotation` handles model selection, tier cycling, price metadata and persisted per-tier usage for both EXP-1 and EXP-2. `ExperimentSequence` inspects accepted run archives. EXP-2 retains its own tasks and source loading.
+The shared `Aletheon.ExperimentKit.ModelRotation` handles model selection, tier cycling, price metadata and persisted per-tier usage for both EXP-1 and EXP-2. `ExperimentSequence` inspects accepted run archives. EXP-2 also uses the existing Kit `ModelFallback.CompleteAsync` with an empty standby list (no fallback), `BudgetLedger` and `ExperimentArtifacts`. EXP-2 retains its own R0-dependent task orchestration and source loading.
 
 Use `--prepare` to inspect the latest local EXP-2 run and prepare the next protocol **without making any API requests**. With a successful EXP-2.0 8/8 archive present, this prepares EXP-2.1. `--smoke` checks the active protocol and source context offline; `--run` (or no arguments) prepares if necessary and then makes paid requests.
 
