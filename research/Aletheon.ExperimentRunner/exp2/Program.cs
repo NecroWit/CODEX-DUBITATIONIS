@@ -17,33 +17,17 @@ var smokeOnly = args.Length == 1 && args[0].Equals("--smoke", StringComparison.O
 if (!smokeOnly)
 {
     Directory.CreateDirectory(runsRoot);
-    var completed = Directory.GetDirectories(runsRoot, "EXP-2.*")
-        .Select(path => new { Path = path, Name = Path.GetFileName(path) })
-        .Select(x => new { x.Path, x.Name, Match = System.Text.RegularExpressions.Regex.Match(x.Name, @"^EXP-2\.(\d+)$") })
-        .Where(x => x.Match.Success)
-        .OrderBy(x => int.Parse(x.Match.Groups[1].Value)).ToArray();
-    bool Accepted(string run) => new[] { "A-R0", "A-H1", "A-H2", "A-H3", "B-R0", "B-H1", "B-H2", "B-H3" }
-        .All(label => {
-            try {
-                using var d = JsonDocument.Parse(File.ReadAllText(Path.Combine(run, label + ".accepted.json")));
-                return d.RootElement.GetProperty("accepted").GetBoolean();
-            } catch { return false; }
-        });
-    if (completed.Length == 0)
+    var latest = ExperimentSequence.Inspect(runsRoot, 2,
+        new[] { "A-R0", "A-H1", "A-H2", "A-H3", "B-R0", "B-H1", "B-H2", "B-H3" });
+    if (latest is null)
     {
         if (!File.Exists(protocolPath))
             File.Copy(Path.Combine(expDir, "EXP-2.0.protocol.json"), protocolPath);
     }
     else
     {
-        var latest = completed[^1];
-        var attempts = Directory.GetDirectories(latest.Path)
-            .Where(path => File.Exists(Path.Combine(path, "manifest.json"))).ToArray();
-        var accepted = attempts.Any(Accepted);
-        var archived = attempts.OrderByDescending(path => path)
-            .Select(path => Path.Combine(path, "protocol.json")).FirstOrDefault(File.Exists);
-        if (archived is null)
-            throw new InvalidOperationException($"No archived protocol for {latest.Name}; refusing paid run.");
+        var accepted = latest.Accepted;
+        var archived = ExperimentSequence.RequireArchivedProtocol(latest);
         if (!accepted)
         {
             File.Copy(archived, protocolPath, true);
@@ -51,7 +35,7 @@ if (!smokeOnly)
         }
         else
         {
-            var next = "EXP-2." + (int.Parse(latest.Match.Groups[1].Value) + 1);
+            var next = ExperimentSequence.NextId(latest, 2);
             if (!File.Exists(protocolPath) || JsonDocument.Parse(File.ReadAllText(protocolPath)).RootElement.GetProperty("id").GetString() != next)
             {
                 var tiers = JsonDocument.Parse(File.ReadAllText(Path.Combine(repo, "experiments", "agents.mixed.json"))).RootElement.GetProperty("mixedTiers");
@@ -63,8 +47,8 @@ if (!smokeOnly)
                 var prevTier = rotation.FirstOrDefault(t => tiers.TryGetProperty(t, out var group) &&
                     previousModels.All(m => group.EnumerateArray().Any(x => x.GetString() == m)));
                 // Mixed groups are heterogeneous; infer the tier from the previous experiment number.
-                var nextTier = rotation[(int.Parse(latest.Match.Groups[1].Value) + 1) % rotation.Length];
-                var used = completed.SelectMany(exp => Directory.GetDirectories(exp.Path)
+                var nextTier = rotation[(latest.Number + 1) % rotation.Length];
+                var used = Directory.GetDirectories(runsRoot, "EXP-2.*").SelectMany(path => Directory.GetDirectories(path)
                     .Select(path => Path.Combine(path, "protocol.json")).Where(File.Exists))
                     .SelectMany(path => {
                         using var d = JsonDocument.Parse(File.ReadAllText(path));
