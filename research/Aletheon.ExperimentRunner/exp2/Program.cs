@@ -52,14 +52,10 @@ if (!smokeOnly)
     else
     {
         var archived = ExperimentSequence.RequireArchivedProtocol(latest);
-        var reportPath = Path.Combine(expDir, latest.Id + "-REPORT.md");
-        var acceptedByResearch = File.Exists(reportPath) &&
-            File.ReadAllText(reportPath)
-                .Contains("**Статус:** принят как успешный этап", StringComparison.Ordinal);
-        if (!latest.Accepted && !acceptedByResearch)
+        if (!latest.Completed)
         {
-            File.Copy(archived, protocolPath, true);
-            Console.WriteLine($"{latest.Id} incomplete; retrying unchanged protocol.");
+            Console.Error.WriteLine($"{latest.Id} has missing or unusable responses. No automatic paid retry; inspect archived results.");
+            return 2;
         }
         else
         {
@@ -77,7 +73,7 @@ if (!smokeOnly)
                     Path.Combine(repo, "research", "Aletheon.ExperimentKit"), targetId: next,
                     protocolOverride: protocolPath,
                     stateOverride: Path.Combine(runsRoot, "exp2-rotation-state.json"), exp2: true);
-                Console.WriteLine($"{latest.Id} accepted (technical or documented research decision); prepared {next} offline.");
+                Console.WriteLine($"{latest.Id} complete (validation results preserved); prepared {next} offline.");
             }
         }
     }
