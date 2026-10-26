@@ -51,7 +51,7 @@ if (!smokeOnly)
     }
     else
     {
-        var archived = ExperimentSequence.RequireArchivedProtocol(latest);
+        var archived = latest.ArchivedProtocol ?? (File.Exists(protocolPath) ? protocolPath : Path.Combine(expDir, "EXP-2.0.protocol.json"));
             var next = ExperimentSequence.NextId(latest, 2);
             string? currentId = null;
             if (File.Exists(protocolPath))
@@ -61,7 +61,8 @@ if (!smokeOnly)
             }
             if (currentId != next)
             {
-                File.Copy(archived, protocolPath, true);
+                if (!Path.GetFullPath(archived).Equals(Path.GetFullPath(protocolPath), StringComparison.OrdinalIgnoreCase))
+                    File.Copy(archived, protocolPath, true);
                 ModelRotation.Prepare(repo, Path.Combine(repo, "research", "Aletheon.ExperimentRunner"),
                     Path.Combine(repo, "research", "Aletheon.ExperimentKit"), targetId: next,
                     protocolOverride: protocolPath,
