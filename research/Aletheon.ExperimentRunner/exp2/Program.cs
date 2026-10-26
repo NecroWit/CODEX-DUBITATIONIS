@@ -52,29 +52,6 @@ if (!smokeOnly)
     else
     {
         var archived = ExperimentSequence.RequireArchivedProtocol(latest);
-        // A partial run with at least one substantive result is archived and never replayed.
-        // A run with only transport failures (e.g. HTTP 404) must not count as research.
-        var hasResearchData = latest.Attempts.Any(attempt =>
-            Directory.EnumerateFiles(attempt, "*.result.json").Any(file =>
-            {
-                try
-                {
-                    using var result = JsonDocument.Parse(File.ReadAllText(file));
-                    var root = result.RootElement;
-                    var assessment = root.GetProperty("Assessment");
-                    return root.GetProperty("Error").ValueKind == JsonValueKind.Null &&
-                        assessment.GetProperty("Complete").GetBoolean() &&
-                        !string.IsNullOrWhiteSpace(assessment.GetProperty("Content").GetString());
-                }
-                catch { return false; }
-            }));
-        if (!hasResearchData)
-        {
-            Console.Error.WriteLine($"{latest.Id} has no substantive responses. No paid requests sent.");
-            return 2;
-        }
-        else
-        {
             var next = ExperimentSequence.NextId(latest, 2);
             string? currentId = null;
             if (File.Exists(protocolPath))
@@ -89,9 +66,8 @@ if (!smokeOnly)
                     Path.Combine(repo, "research", "Aletheon.ExperimentKit"), targetId: next,
                     protocolOverride: protocolPath,
                     stateOverride: Path.Combine(runsRoot, "exp2-rotation-state.json"), exp2: true);
-                Console.WriteLine($"{latest.Id} archived (including partial results); prepared {next} offline.");
+                Console.WriteLine($"{latest.Id} already has a run directory; prepared {next} offline.");
             }
-        }
     }
 }
 else if (!File.Exists(protocolPath))
