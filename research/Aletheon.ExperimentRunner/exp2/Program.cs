@@ -52,9 +52,9 @@ if (!smokeOnly)
     else
     {
         var archived = ExperimentSequence.RequireArchivedProtocol(latest);
-        var acceptedByResearch = latest.Id == "EXP-2.0" &&
-            File.Exists(Path.Combine(expDir, "EXP-2.0-REPORT.md")) &&
-            File.ReadAllText(Path.Combine(expDir, "EXP-2.0-REPORT.md"))
+        var reportPath = Path.Combine(expDir, latest.Id + "-REPORT.md");
+        var acceptedByResearch = File.Exists(reportPath) &&
+            File.ReadAllText(reportPath)
                 .Contains("**Статус:** принят как успешный этап", StringComparison.Ordinal);
         if (!latest.Accepted && !acceptedByResearch)
         {
