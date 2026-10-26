@@ -6,7 +6,7 @@ namespace Aletheon.ExperimentKit;
 /// <summary>Shared archived-run sequencing for EXP-1 and EXP-2. Never sends requests.</summary>
 public static class ExperimentSequence
 {
-    public sealed record Latest(string Id, int Number, string Path, string[] Attempts, bool Accepted, string? ArchivedProtocol);
+    public sealed record Latest(string Id, int Number, string Path, string[] Attempts, bool Accepted, bool Completed, string? ArchivedProtocol);
 
     public static Latest? Inspect(string runsRoot, int major, IReadOnlyList<string> requiredLabels)
     {
@@ -27,10 +27,27 @@ public static class ExperimentSequence
             }
             catch { return false; }
         });
+        // Completion is about usable responses, not word-count acceptance.
+        bool Completed(string attempt) => requiredLabels.All(label =>
+        {
+            try
+            {
+                using var json = JsonDocument.Parse(File.ReadAllText(System.IO.Path.Combine(attempt, label + ".result.json")));
+                var root = json.RootElement;
+                var assessment = root.GetProperty("Assessment");
+                return root.GetProperty("Error").ValueKind == JsonValueKind.Null &&
+                    assessment.GetProperty("Complete").GetBoolean() &&
+                    assessment.GetProperty("CostUsd").ValueKind == JsonValueKind.Number &&
+                    !string.IsNullOrWhiteSpace(assessment.GetProperty("Content").GetString()) &&
+                    string.Equals(root.GetProperty("requestedModel").GetString(),
+                        root.GetProperty("actualModel").GetString(), StringComparison.OrdinalIgnoreCase);
+            }
+            catch { return false; }
+        });
         var archived = attempts.OrderByDescending(x => x)
             .Select(x => System.IO.Path.Combine(x, "protocol.json")).FirstOrDefault(File.Exists);
         var number = int.Parse(latest.Match.Groups[1].Value);
-        return new Latest($"EXP-{major}.{number}", number, latest.Path, attempts, attempts.Any(Accepted), archived);
+        return new Latest($"EXP-{major}.{number}", number, latest.Path, attempts, attempts.Any(Accepted), attempts.Any(Completed), archived);
     }
 
     public static string RequireArchivedProtocol(Latest latest)
