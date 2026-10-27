@@ -1,16 +1,11 @@
 {
   "id": "EXP-3.0",
-  "design": "C#/.NET 8 runner derived from EXP-2; 2 models x (R0 + H1/H2/H3/H4)",
+  "design": "Single model, paired independent conditions: N(no context) H1-H4 then C(full Aletheon context) H1-H4",
   "participants": [
     {
       "id": "A",
       "provider": "openrouter",
       "model_id": "meta-llama/llama-4-maverick"
-    },
-    {
-      "id": "B",
-      "provider": "openrouter",
-      "model_id": "google/gemini-3-flash-preview"
     }
   ],
   "tasks": [
@@ -47,13 +42,13 @@
       "ALETHEON_RESEARCH_LOG.md",
       "CODEX-DUBITATIONIS.md"
     ],
-    "method": "Same EXP-2 frozen reconstruction R0, then four independent held-out questions"
+    "method": "No R0; identical H1-H4 prompts in independent requests; N has no Aletheon files, C has all seven full files"
   },
   "max_completion_tokens": 6400,
   "temperature": 0,
-  "budget_usd_max": 3.75,
+  "budget_usd_max": 6,
   "max_total_input_chars": 1000000,
-  "model_fallback": true,
-  "comparison": "H1/H2/H3 held identical to EXP-2; H4 added",
-  "notes": "EXP-3 derived from EXP-2; no changes to EXP-2 runner; semantic audit required."
+  "model_fallback": false,
+  "comparison": "Within-model paired N vs C for H1-H4; rotate one model between EXP-3 stages; manually evaluate semantic reconstruction",
+  "notes": "One model per run; 8 calls; no fallback within a paired run; no responses passed between calls. The H1-H4 question wording is unchanged."
 }
