@@ -42,30 +42,35 @@ if (resetOnly)
 if (!smokeOnly)
 {
     Directory.CreateDirectory(runsRoot);
-    var latest = ExperimentSequence.Inspect(runsRoot, 3,
-        new[] { "N-H1", "N-H2", "N-H3", "N-H4", "C-H1", "C-H2", "C-H3", "C-H4" });
+    var labels = new[] { "N-H1", "N-H2", "N-H3", "N-H4", "C-H1", "C-H2", "C-H3", "C-H4" };
+    var latest = ExperimentSequence.Inspect(runsRoot, 3, labels);
     if (latest is null)
     {
-        // No recorded EXP-3 runs: replace any stale two-model draft protocol.
-        File.Copy(Path.Combine(expDir, "EXP-3.0.protocol.json"), protocolPath, true);
+        // Preserve an already prepared protocol.
+        if (!File.Exists(protocolPath))
+            File.Copy(Path.Combine(expDir, "EXP-3.0.protocol.json"), protocolPath);
     }
     else
     {
-        var archived = latest.ArchivedProtocol ?? (File.Exists(protocolPath) ? protocolPath : Path.Combine(expDir, "EXP-3.0.protocol.json"));
-            var next = ExperimentSequence.NextId(latest, 3);
-            string? currentId = null;
-            if (File.Exists(protocolPath))
-            {
-                using var active = JsonDocument.Parse(File.ReadAllText(protocolPath));
-                currentId = active.RootElement.GetProperty("id").GetString();
-            }
-            if (currentId != next)
-            {
-                if (!Path.GetFullPath(archived).Equals(Path.GetFullPath(protocolPath), StringComparison.OrdinalIgnoreCase))
-                    File.Copy(archived, protocolPath, true);
-                PrepareSingleModel(next);
-                Console.WriteLine($"{latest.Id} already has a run directory; prepared {next} offline.");
-            }
+        var archived = ExperimentSequence.RequireArchivedProtocol(latest);
+        string? activeId = null;
+        if (File.Exists(protocolPath))
+        {
+            using var active = JsonDocument.Parse(File.ReadAllText(protocolPath));
+            activeId = active.RootElement.GetProperty("id").GetString();
+        }
+        var nextId = ExperimentSequence.NextId(latest, 3);
+        if (!latest.Accepted)
+        {
+            if (activeId != latest.Id) File.Copy(archived, protocolPath, true);
+            Console.WriteLine($"{latest.Id} is not accepted 8/8: retaining model and experiment number.");
+        }
+        else if (activeId != nextId)
+        {
+            if (!Path.GetFullPath(archived).Equals(Path.GetFullPath(protocolPath), StringComparison.OrdinalIgnoreCase))
+                File.Copy(archived, protocolPath, true);
+            Exp3ModelRotation.Prepare(repo, protocolPath, runsRoot, nextId);
+        }
     }
 }
 else if (!File.Exists(protocolPath))
