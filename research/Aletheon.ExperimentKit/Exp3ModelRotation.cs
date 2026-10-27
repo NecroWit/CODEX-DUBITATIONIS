@@ -28,9 +28,11 @@ public static class Exp3ModelRotation
                 var participants = prior.RootElement.GetProperty("participants").EnumerateArray().ToArray();
                 if (participants.Length == 1) used.Add(participants[0].GetProperty("model_id").GetString()!);
             }
-        var available = eligible.Where(id => !used.Contains(id)).ToArray();
-        if (available.Length == 0) available = eligible;
-        if (available.Length == 0) throw new InvalidOperationException("No eligible EXP-3 models.");
+        var currentModel = current.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
+        var alternatives = eligible.Where(id => !string.Equals(id, currentModel, StringComparison.OrdinalIgnoreCase)).ToArray();
+        var available = alternatives.Where(id => !used.Contains(id)).ToArray();
+        if (available.Length == 0) available = alternatives;
+        if (available.Length == 0) throw new InvalidOperationException("No alternative eligible EXP-3 model; refusing to retry the same model.");
         var chosen = available[RandomNumberGenerator.GetInt32(available.Length)];
         var tier = tiers.EnumerateObject().Single(t => t.Value.EnumerateArray()
             .Any(x => string.Equals(x.GetString(), chosen, StringComparison.OrdinalIgnoreCase))).Name;
