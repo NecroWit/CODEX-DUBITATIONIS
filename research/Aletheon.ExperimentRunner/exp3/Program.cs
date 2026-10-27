@@ -74,8 +74,8 @@ if (!smokeOnly)
         new[] { "N-H1", "N-H2", "N-H3", "N-H4", "C-H1", "C-H2", "C-H3", "C-H4" });
     if (latest is null)
     {
-        if (!File.Exists(protocolPath))
-            File.Copy(Path.Combine(expDir, "EXP-3.0.protocol.json"), protocolPath);
+        // No recorded EXP-3 runs: replace any stale two-model draft protocol.
+        File.Copy(Path.Combine(expDir, "EXP-3.0.protocol.json"), protocolPath, true);
     }
     else
     {
