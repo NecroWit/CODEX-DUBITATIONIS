@@ -161,11 +161,18 @@ foreach(var model in models) {
             result.Error,result.HttpAttempts,result.Seconds,result.Assessment});
         if(result.Raw is not null) File.WriteAllText(Path.Combine(output,label+".response.json"),result.Raw);
         var text=result.Assessment?.Content;
-        var accepted=result.Complete && result.Assessment?.CostUsd is not null && text is not null &&
-            text.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Length<=words &&
-            (result.Assessment?.ReturnedModel is { } actualModel && actualModel.Equals(completion.ActualModel,StringComparison.OrdinalIgnoreCase));
-        Save(label+".accepted.json",new {accepted,reason=accepted?"complete":"incomplete_or_overlong_or_model_mismatch"});
-        Console.WriteLine(label+": "+(accepted?"ACCEPTED":"FAILED")+" / "+result.Assessment?.Status);
+        var wordCount = text?.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length;
+        var modelMatched = result.Assessment?.ReturnedModel is { } actualModel &&
+            actualModel.Equals(completion.ActualModel, StringComparison.OrdinalIgnoreCase);
+        var complete = result.Complete && result.Assessment?.CostUsd is not null &&
+            text is not null && modelMatched;
+        var overlong = complete && wordCount > words;
+        var accepted = complete && !overlong;
+        var status = accepted ? "ACCEPTED" : overlong ? "OVERLONG" : "INCOMPLETE";
+        Save(label+".accepted.json",new {accepted,reason=accepted?"complete":overlong?"overlong":"incomplete_or_model_mismatch",
+            complete, wordCount, maxWords=words, excessWords=wordCount.HasValue?Math.Max(0,wordCount.Value-words):0});
+        Console.WriteLine(label+": "+status+" / "+result.Assessment?.Status+
+            (overlong?$" ({wordCount}/{words} words, +{wordCount-words})":""));
         if(!accepted) failures++;
         return (result,text);
     }
