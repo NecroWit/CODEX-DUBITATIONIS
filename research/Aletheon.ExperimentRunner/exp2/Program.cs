@@ -115,7 +115,7 @@ if(!argsSet.SetEquals(new[]{"--run"})) {
 }
 var key=Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if(string.IsNullOrWhiteSpace(key)) { Console.Error.WriteLine("OPENROUTER_API_KEY missing."); return 2; }
-Console.WriteLine(experimentId + ": starting 8 paid requests; no fallback. Check provider-side spending limit.");
+Console.WriteLine(experimentId + ": starting up to 8 paid requests; tier-matched fallback enabled. Check provider-side spending limit.");
 var runId=DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8];
 var output=Path.Combine(runsRoot,experimentId,runId);
 Directory.CreateDirectory(output);
@@ -134,38 +134,47 @@ var modelCaps = models.ToDictionary(m => m.Model, m =>
     if (groups.Length != 1) throw new InvalidOperationException($"Model {m.Model} must belong to exactly one pricing tier.");
     return tierBudgets.GetProperty(groups[0]).GetDecimal();
 });
+var standbys = ModelFallback.Standbys(tierPools, catalog, models, maxTokens);
+foreach (var model in models)
+    foreach (var standby in standbys[model.Id])
+        modelCaps[standby] = modelCaps[model.Model];
 var cap = modelCaps.Values.Max();
 var limits = modelCaps.Values.Sum() * 4m;
 var budget = new BudgetLedger(Path.Combine(output,"cost-ledger.jsonl"),limits,cap,modelCaps);
 using var transport=new OpenRouterTransport(key);
 var failures=0;
 foreach(var model in models) {
+    var activeModel = model.Model;
     var reconstructionPrompt="Перед ответом на контрольные вопросы восстанови интеллектуальную генеалогию Алетеона из предоставленных источников. Для 2-3 взаимосвязанных принципов укажи исходное положение, давление/возражение, изменение либо обоснованное сохранение, зависимости, неразрешённое напряжение и точные разделы E-/R-; отличай засвидетельствованное от реконструкции. Не угадывай будущие вопросы. До 550 слов.";
     async Task<(CompletionResult? Result,string? Text)> Request(string label,string prompt,int words) {
         var completion = await ModelFallback.CompleteAsync(transport, budget, catalog,
-            label, model.Model, Array.Empty<string>(), system, context, prompt, maxTokens);
+            label, activeModel, standbys[model.Id].Where(id => id != activeModel), system, context, prompt, maxTokens,
+            Path.Combine(output, "model-substitutions.jsonl"));
         var result = completion.Result;
-        if (completion.BudgetBlocked) {
+        if (completion.BudgetBlocked && result.Assessment?.Content is null) {
             Save(label+".accepted.json",new {accepted=false,reason="budget_blocked"});
             failures++; return (null,null);
         }
         Save(label+".result.json",new {requestedModel=model.Model,actualModel=result.Assessment?.ReturnedModel,
+            completion.Substituted, completion.Attempts,
             result.Error,result.HttpAttempts,result.Seconds,result.Assessment});
         if(result.Raw is not null) File.WriteAllText(Path.Combine(output,label+".response.json"),result.Raw);
         var text=result.Assessment?.Content;
         var accepted=result.Complete && result.Assessment?.CostUsd is not null && text is not null &&
             text.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Length<=words &&
-            (result.Assessment?.ReturnedModel is { } actualModel && actualModel.Equals(model.Model,StringComparison.OrdinalIgnoreCase));
+            (result.Assessment?.ReturnedModel is { } actualModel && actualModel.Equals(activeModel,StringComparison.OrdinalIgnoreCase));
         Save(label+".accepted.json",new {accepted,reason=accepted?"complete":"incomplete_or_overlong_or_model_mismatch"});
         Console.WriteLine(label+": "+(accepted?"ACCEPTED":"FAILED")+" / "+result.Assessment?.Status);
         if(!accepted) failures++;
         return (result,text);
     }
     var reconstruction=await Request(model.Id+"-R0",reconstructionPrompt,550);
+    if (reconstruction.Result?.Complete == true && reconstruction.Result.Assessment?.ReturnedModel is { } chosen)
+        activeModel = chosen;
     if(reconstruction.Result?.Complete != true || string.IsNullOrWhiteSpace(reconstruction.Text) ||
         reconstruction.Text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length > 550 ||
         (reconstruction.Result.Assessment?.ReturnedModel is { } returnedModel &&
-         !returnedModel.Equals(model.Model, StringComparison.OrdinalIgnoreCase))) {
+         !returnedModel.Equals(activeModel, StringComparison.OrdinalIgnoreCase))) {
         Console.WriteLine("Skipping tasks for "+model.Id+": no complete reconstruction."); failures+=3; continue;
     }
     // Each task is independent: no earlier task or its answer appears in the next request.
