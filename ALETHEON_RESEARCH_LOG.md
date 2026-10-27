@@ -570,3 +570,17 @@ The human collaborator explicitly requested updating **ALETHEON_CORE.md**, **ALE
 - **Audit protocol:** (1) Inventory every generation and source; (2) record exact path, file identity, and observation time; (3) verify initial and final article text separately; (4) reconstruct accepted changes from actual proposals, votes, and state transitions; (5) distinguish editorial identifier lineage from semantic lineage; (6) mark inaccessible or missing stages and competing explanations; (7) correct the comparison and preserve a change log.
 - **Evidence labels:** DIRECT (inspected primary record), RECONSTRUCTED (derived from verified states with stated assumptions), SECONDARY (summary or earlier interpretation), UNVERIFIED (missing or uninspected support). Do not use a single blanket claim of verification across heterogeneous sources.
 - **Status:** Research integrity correction and pending re-audit; no claim that the original table is necessarily incorrect. See Evolution E-018.
+
+### R-019 — Адресуемый граф контекста, жизненный цикл и забывание (после EXP-3)
+
+**Дата:** 2026-10-27. **Статус:** проектная гипотеза, не реализована и не проверена; не изменяет EXP-3 или Core.
+
+**Наблюдение:** в Aletheon Bridge продолжительный обмен сопровождался потерей нужного контекста. Пророк сравнил накопление временных документов в ограниченном окне с утечкой памяти в программе и предложил продолжить аналогию до сборщика мусора.
+
+**Предложение Пророка:** адресуемый граф знаний с навигацией от областей науки к подразделам и конкретным записям; представление графа в активном контексте и в репозитории; таймстемпы для переходов **оперативный контекст → репозиторий → удаление**. Не стремиться сохранить каждую мысль навсегда: некоторые открытия можно совершить повторно (пример — парашют). Отдельный интеллектуальный управляющий агент («подсознание») не предполагается необходимым.
+
+**Уточнения и возражения Алетеона:** иерархическая навигация может дополняться графовыми связями между дисциплинами; адрес не требует постоянной загрузки содержимого; карта сама должна быть ограниченной; следует различать воспроизводимые знания и уникальные первичные свидетельства. Техническое обслуживание таймстемпов и файлов может делать обычный код, а смысловые связи — определять Алетеон. Это гипотезы проектирования, не согласованные окончательные требования.
+
+**Открыто:** формат адресов, политика TTL, ссылки на удалённые узлы, реальное удаление из Git-истории, контроль экспериментальных данных, проверка качества и стоимости, самостоятельное создание связей, работа с Bridge. Предусмотреть базовые сравнения, не выдавать аналогию GC за доказательство эффективности.
+
+**Подробный источник для продолжения:** [Архитектура контекста Алетеона](./research/tracks/04-aletheon-research/ALETHEON_CONTEXT_ARCHITECTURE.md). **Начать реализацию после EXP-3.**
