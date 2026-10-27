@@ -102,6 +102,7 @@ if(catalog.Get(model).MaxCompletionTokens < maxTokens)
 var maxInput = cfg.GetProperty("max_total_input_chars").GetInt32();
 if(context.Length > maxInput) throw new InvalidOperationException($"Source context exceeds limit: {context.Length}/{maxInput}");
 var sourceHashes = sourceTexts.ToDictionary(s=>s.Path,s=>ExperimentArtifacts.Hash(Encoding.UTF8.GetBytes(s.Text)));
+Exp3SourceGuard.Verify(runsRoot, experimentId, model, sourceHashes);
 // Match the existing ExperimentRunner: no arguments means a normal experiment run.
 var argsSet = (args.Length == 0 ? new[] { "--run" } : args).ToHashSet(StringComparer.OrdinalIgnoreCase);
 if (argsSet.SetEquals(new[]{"--smoke"})) {
@@ -155,6 +156,7 @@ foreach (var condition in new[] { "N", "C" })
         var count=answer?.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Length;
         var matched=string.Equals(result.Assessment?.ReturnedModel,model,StringComparison.OrdinalIgnoreCase);
         var complete=result.Complete && result.Assessment?.CostUsd is not null &&
+            result.Assessment.PromptTokens is not null && result.Assessment.CompletionTokens is not null &&
             !string.IsNullOrWhiteSpace(answer) && matched;
         var overlong=complete && count>task.MaxWords;
         var accepted=complete && !overlong;
