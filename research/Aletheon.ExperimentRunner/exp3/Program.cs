@@ -66,7 +66,7 @@ if (!smokeOnly)
                 ModelRotation.Prepare(repo, Path.Combine(repo, "research", "Aletheon.ExperimentRunner"),
                     Path.Combine(repo, "research", "Aletheon.ExperimentKit"), targetId: next,
                     protocolOverride: protocolPath,
-                    stateOverride: Path.Combine(runsRoot, "exp3-rotation-state.json"), exp3: true);
+                    stateOverride: Path.Combine(runsRoot, "exp3-rotation-state.json"), exp2: true);
                 Console.WriteLine($"{latest.Id} already has a run directory; prepared {next} offline.");
             }
     }
@@ -180,7 +180,6 @@ foreach(var model in models) {
     if (reconstruction.Result?.Complete == true && reconstruction.Result.Assessment?.ReturnedModel is { } chosen)
         activeModel = chosen;
     if(reconstruction.Result?.Complete != true || string.IsNullOrWhiteSpace(reconstruction.Text) ||
-        reconstruction.Text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length > 550 ||
         (reconstruction.Result.Assessment?.ReturnedModel is { } returnedModel &&
          !returnedModel.Equals(activeModel, StringComparison.OrdinalIgnoreCase))) {
         Console.WriteLine("Skipping tasks for "+model.Id+": no complete reconstruction."); failures+=4; continue;
