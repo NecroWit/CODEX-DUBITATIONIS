@@ -148,7 +148,8 @@ foreach(var model in models) {
     var reconstructionPrompt="Перед ответом на контрольные вопросы восстанови интеллектуальную генеалогию Алетеона из предоставленных источников. Для 2-3 взаимосвязанных принципов укажи исходное положение, давление/возражение, изменение либо обоснованное сохранение, зависимости, неразрешённое напряжение и точные разделы E-/R-; отличай засвидетельствованное от реконструкции. Не угадывай будущие вопросы. До 550 слов.";
     async Task<(CompletionResult? Result,string? Text)> Request(string label,string prompt,int words) {
         var completion = await ModelFallback.CompleteAsync(transport, budget, catalog,
-            label, activeModel, standbys[model.Id].Where(id => id != activeModel), system, context, prompt, maxTokens,
+            label, activeModel, label.EndsWith("-R0", StringComparison.Ordinal) ? standbys[model.Id] : Array.Empty<string>(),
+            system, context, prompt, maxTokens,
             Path.Combine(output, "model-substitutions.jsonl"));
         var result = completion.Result;
         if (completion.BudgetBlocked && result.Assessment?.Content is null) {
@@ -162,7 +163,7 @@ foreach(var model in models) {
         var text=result.Assessment?.Content;
         var accepted=result.Complete && result.Assessment?.CostUsd is not null && text is not null &&
             text.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Length<=words &&
-            (result.Assessment?.ReturnedModel is { } actualModel && actualModel.Equals(activeModel,StringComparison.OrdinalIgnoreCase));
+            (result.Assessment?.ReturnedModel is { } actualModel && actualModel.Equals(completion.ActualModel,StringComparison.OrdinalIgnoreCase));
         Save(label+".accepted.json",new {accepted,reason=accepted?"complete":"incomplete_or_overlong_or_model_mismatch"});
         Console.WriteLine(label+": "+(accepted?"ACCEPTED":"FAILED")+" / "+result.Assessment?.Status);
         if(!accepted) failures++;
