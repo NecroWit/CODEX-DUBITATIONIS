@@ -60,7 +60,7 @@ if (!smokeOnly)
             activeId = active.RootElement.GetProperty("id").GetString();
         }
         var nextId = ExperimentSequence.NextId(latest, 3);
-        if (!latest.Accepted)
+        if (!Exp3RunStatus.LatestAccepted(latest.Path, labels))
         {
             if (activeId != latest.Id) File.Copy(archived, protocolPath, true);
             Console.WriteLine($"{latest.Id} is not accepted 8/8: retaining model and experiment number.");
