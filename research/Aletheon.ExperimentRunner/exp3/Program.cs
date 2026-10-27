@@ -62,9 +62,20 @@ if (!smokeOnly)
         var nextId = ExperimentSequence.NextId(latest, 3);
         if (!Exp3RunStatus.LatestAccepted(latest.Path, labels))
         {
-            File.Copy(archived, protocolPath, true);
-            Exp3ModelRotation.Prepare(repo, protocolPath, runsRoot, latest.Id);
-            Console.WriteLine($"{latest.Id} is not accepted 8/8: switching model for the next independent attempt; experiment number unchanged.");
+            using var previous = JsonDocument.Parse(File.ReadAllText(archived));
+            var failedModel = previous.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
+            string? preparedModel = null;
+            if (activeId == latest.Id && File.Exists(protocolPath))
+            {
+                using var prepared = JsonDocument.Parse(File.ReadAllText(protocolPath));
+                preparedModel = prepared.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
+            }
+            if (string.IsNullOrEmpty(preparedModel) || string.Equals(preparedModel, failedModel, StringComparison.OrdinalIgnoreCase))
+            {
+                File.Copy(archived, protocolPath, true);
+                Exp3ModelRotation.Prepare(repo, protocolPath, runsRoot, latest.Id);
+            }
+            Console.WriteLine($"{latest.Id} is not accepted 8/8: next attempt uses a different model; experiment number unchanged.");
         }
         else if (activeId != nextId)
         {
