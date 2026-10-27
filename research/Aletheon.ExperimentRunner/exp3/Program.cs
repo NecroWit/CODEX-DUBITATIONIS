@@ -20,34 +20,6 @@ if (args.Length > 1 || (args.Length == 1 && !new[] { "--smoke", "--prepare", "--
     Console.Error.WriteLine("Usage: --prepare (offline), --smoke (offline), --run (paid). No arguments means --run.");
     return 2;
 }
-// EXP-3 uses the EXP-2 rotation sources but selects ONE model per stage.
-void PrepareSingleModel(string nextId)
-{
-    using var poolDoc=JsonDocument.Parse(File.ReadAllText(Path.Combine(repo,"experiments","agents.mixed.json")));
-    var pools=poolDoc.RootElement.GetProperty("mixedTiers");
-    var all=pools.EnumerateObject().SelectMany(g=>g.Value.EnumerateArray().Select(v=>v.GetString()!))
-        .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
-    var catalog=ModelCatalog.Load(Path.Combine(repo,"research","Aletheon.ExperimentKit","models.json"));
-    var eligible=all.Where(id=>catalog.All.Any(m=>m.Id==id && m.MaxCompletionTokens>=6400)).ToArray();
-    if(eligible.Length==0) throw new InvalidOperationException("No eligible models for EXP-3.");
-    var statePath=Path.Combine(runsRoot,"exp3-rotation-state.json");
-    var used=File.Exists(statePath)?JsonSerializer.Deserialize<string[]>(File.ReadAllText(statePath))??Array.Empty<string>():Array.Empty<string>();
-    var available=eligible.Where(id=>!used.Contains(id,StringComparer.OrdinalIgnoreCase)).ToArray();
-    if(available.Length==0) { used=Array.Empty<string>(); available=eligible; }
-    var selected=available[System.Security.Cryptography.RandomNumberGenerator.GetInt32(available.Length)];
-    using var source=JsonDocument.Parse(File.ReadAllText(protocolPath));
-    var node=System.Text.Json.Nodes.JsonNode.Parse(source.RootElement.GetRawText())!.AsObject();
-    node["id"]=nextId;
-    node["participants"]![0]!["model_id"]=selected;
-    node["rotation"]=new System.Text.Json.Nodes.JsonObject { ["selection"]="one model, without repeats until exhausted",
-        ["source"]="experiments/agents.mixed.json:mixedTiers" };
-    var tier=pools.EnumerateObject().Single(g=>g.Value.EnumerateArray().Any(v=>v.GetString()==selected)).Name;
-    var perRequest=poolDoc.RootElement.GetProperty("mixedTierBudgetsUsd").GetProperty(tier).GetDecimal();
-    node["budget_usd_max"]=perRequest*8m;
-    File.WriteAllText(protocolPath,node.ToJsonString(new JsonSerializerOptions{WriteIndented=true})+Environment.NewLine);
-    File.WriteAllText(statePath,JsonSerializer.Serialize(used.Append(selected).ToArray()));
-    Console.WriteLine(nextId+": model="+selected+" (offline rotation; no paid requests).");
-}
 if (resetOnly)
 {
     Directory.CreateDirectory(runsRoot);
