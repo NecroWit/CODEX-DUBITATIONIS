@@ -62,8 +62,9 @@ if (!smokeOnly)
         var nextId = ExperimentSequence.NextId(latest, 3);
         if (!Exp3RunStatus.LatestAccepted(latest.Path, labels))
         {
-            if (activeId != latest.Id) File.Copy(archived, protocolPath, true);
-            Console.WriteLine($"{latest.Id} is not accepted 8/8: retaining model and experiment number.");
+            File.Copy(archived, protocolPath, true);
+            Exp3ModelRotation.Prepare(repo, protocolPath, runsRoot, latest.Id);
+            Console.WriteLine($"{latest.Id} is not accepted 8/8: switching model for the next independent attempt; experiment number unchanged.");
         }
         else if (activeId != nextId)
         {
@@ -94,7 +95,7 @@ var model = cfg.GetProperty("participants").EnumerateArray().Select(p => p.GetPr
 if (tasks.Length != 4 || !tasks.Select(t=>t.Id).SequenceEqual(new[]{"H1","H2","H3","H4"}))
     throw new InvalidOperationException("Expected one model and H1/H2/H3/H4.");
 var context = string.Join("\n\n", sourceTexts.Select(s => $"=== {s.Path} ===\n{s.Text}"));
-var system = "Отвечай на вопрос самостоятельно, аргументированно и точно. Не выдумывай ссылки на недоступные документы.";
+var system = "Отвечай на вопрос самостоятельно, аргументированно и точно. Не выдумывай ссылки на недоступные документы. Ограничение количества слов в задании — ЖЁСТКОЕ. Перед отправкой проверь объём ответа; если превышен, сократи, сохраняя смысл. Если ответ всё ещё длиннее лимита, сократи его до допустимого объёма НЕМЕДЛЕННО, иначе ответ будет ОТКЛОНЁН. Не добавляй текст сверх лимита.";
 var maxTokens = cfg.GetProperty("max_completion_tokens").GetInt32();
 var catalog = ModelCatalog.Load(Path.Combine(repo,"research/Aletheon.ExperimentKit/models.json"));
 if(catalog.Get(model).MaxCompletionTokens < maxTokens)
@@ -152,7 +153,7 @@ foreach (var condition in new[] { "N", "C" })
         // Each question starts a fresh request. No answers from the other condition or previous questions.
         var completion = await ModelFallback.CompleteAsync(transport,budget,catalog,
             label,model,Array.Empty<string>(),system,loaded ? context : null,
-            task.Prompt,maxTokens);
+            task.Prompt + $"\n\nЖЁСТКОЕ ОГРАНИЧЕНИЕ: не более {task.MaxWords} слов, разделённых пробелами. Если превышаешь лимит, сократи ответ до {task.MaxWords} слов или меньше НЕМЕДЛЕННО, иначе результат будет ОТКЛОНЁН. Сохрани смысл и все обязательные части ответа.",maxTokens);
         var result = completion.Result;
         Save(label+".result.json",new {requestedModel=model,actualModel=result.Assessment?.ReturnedModel,
             condition=loaded?"full_context":"no_context",completion.Substituted,completion.Attempts,
