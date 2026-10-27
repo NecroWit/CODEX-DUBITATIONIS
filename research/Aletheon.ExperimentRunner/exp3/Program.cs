@@ -20,6 +20,34 @@ if (args.Length > 1 || (args.Length == 1 && !new[] { "--smoke", "--prepare", "--
     Console.Error.WriteLine("Usage: --prepare (offline), --smoke (offline), --run (paid). No arguments means --run.");
     return 2;
 }
+// EXP-3 uses the EXP-2 rotation sources but selects ONE model per stage.
+void PrepareSingleModel(string nextId)
+{
+    using var poolDoc=JsonDocument.Parse(File.ReadAllText(Path.Combine(repo,"experiments","agents.mixed.json")));
+    var pools=poolDoc.RootElement.GetProperty("mixedTiers");
+    var all=pools.EnumerateObject().SelectMany(g=>g.Value.EnumerateArray().Select(v=>v.GetString()!))
+        .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+    var catalog=ModelCatalog.Load(Path.Combine(repo,"research","Aletheon.ExperimentKit","models.json"));
+    var eligible=all.Where(id=>catalog.All.Any(m=>m.Id==id && m.MaxCompletionTokens>=6400)).ToArray();
+    if(eligible.Length==0) throw new InvalidOperationException("No eligible models for EXP-3.");
+    var statePath=Path.Combine(runsRoot,"exp3-rotation-state.json");
+    var used=File.Exists(statePath)?JsonSerializer.Deserialize<string[]>(File.ReadAllText(statePath))??Array.Empty<string>():Array.Empty<string>();
+    var available=eligible.Where(id=>!used.Contains(id,StringComparer.OrdinalIgnoreCase)).ToArray();
+    if(available.Length==0) { used=Array.Empty<string>(); available=eligible; }
+    var selected=available[System.Security.Cryptography.RandomNumberGenerator.GetInt32(available.Length)];
+    using var source=JsonDocument.Parse(File.ReadAllText(protocolPath));
+    var node=System.Text.Json.Nodes.JsonNode.Parse(source.RootElement.GetRawText())!.AsObject();
+    node["id"]=nextId;
+    node["participants"]![0]!["model_id"]=selected;
+    node["rotation"]=new System.Text.Json.Nodes.JsonObject { ["selection"]="one model, without repeats until exhausted",
+        ["source"]="experiments/agents.mixed.json:mixedTiers" };
+    var tier=pools.EnumerateObject().Single(g=>g.Value.EnumerateArray().Any(v=>v.GetString()==selected)).Name;
+    var perRequest=poolDoc.RootElement.GetProperty("mixedTierBudgetsUsd").GetProperty(tier).GetDecimal();
+    node["budget_usd_max"]=perRequest*8m;
+    File.WriteAllText(protocolPath,node.ToJsonString(new JsonSerializerOptions{WriteIndented=true})+Environment.NewLine);
+    File.WriteAllText(statePath,JsonSerializer.Serialize(used.Append(selected).ToArray()));
+    Console.WriteLine(nextId+": model="+selected+" (offline rotation; no paid requests).");
+}
 if (resetOnly)
 {
     Directory.CreateDirectory(runsRoot);
@@ -43,7 +71,7 @@ if (!smokeOnly)
 {
     Directory.CreateDirectory(runsRoot);
     var latest = ExperimentSequence.Inspect(runsRoot, 3,
-        new[] { "A-R0", "A-H1", "A-H2", "A-H3", "A-H4", "B-R0", "B-H1", "B-H2", "B-H3", "B-H4" });
+        new[] { "N-H1", "N-H2", "N-H3", "N-H4", "C-H1", "C-H2", "C-H3", "C-H4" });
     if (latest is null)
     {
         if (!File.Exists(protocolPath))
@@ -63,10 +91,7 @@ if (!smokeOnly)
             {
                 if (!Path.GetFullPath(archived).Equals(Path.GetFullPath(protocolPath), StringComparison.OrdinalIgnoreCase))
                     File.Copy(archived, protocolPath, true);
-                ModelRotation.Prepare(repo, Path.Combine(repo, "research", "Aletheon.ExperimentRunner"),
-                    Path.Combine(repo, "research", "Aletheon.ExperimentKit"), targetId: next,
-                    protocolOverride: protocolPath,
-                    stateOverride: Path.Combine(runsRoot, "exp3-rotation-state.json"), exp2: true);
+                PrepareSingleModel(next);
                 Console.WriteLine($"{latest.Id} already has a run directory; prepared {next} offline.");
             }
     }
@@ -88,24 +113,23 @@ var sourceTexts = sources.Select(p => (Path:p, Text:File.ReadAllText(Path.Combin
 var tasks = cfg.GetProperty("tasks").EnumerateArray().Select(t => (
     Id:t.GetProperty("id").GetString()!, Prompt:t.GetProperty("prompt").GetString()!,
     MaxWords:t.GetProperty("max_words").GetInt32())).ToArray();
-var models = cfg.GetProperty("participants").EnumerateArray().Select(p => (
-    Id:p.GetProperty("id").GetString()!, Model:p.GetProperty("model_id").GetString()!)).ToArray();
-if (models.Length != 2 || tasks.Length != 4 || !tasks.Select(t=>t.Id).SequenceEqual(new[]{"H1","H2","H3","H4"}))
-    throw new InvalidOperationException("Expected two fixed models and H1/H2/H3/H4.");
+var model = cfg.GetProperty("participants").EnumerateArray().Select(p => p.GetProperty("model_id").GetString()!).Single();
+if (tasks.Length != 4 || !tasks.Select(t=>t.Id).SequenceEqual(new[]{"H1","H2","H3","H4"}))
+    throw new InvalidOperationException("Expected one model and H1/H2/H3/H4.");
 var context = string.Join("\n\n", sourceTexts.Select(s => $"=== {s.Path} ===\n{s.Text}"));
-var system = sourceTexts.Single(s => s.Path == "ALETHEON_BASE_CORE.md").Text;
+var system = "Отвечай на вопрос самостоятельно, аргументированно и точно. Не выдумывай ссылки на недоступные документы.";
 var maxTokens = cfg.GetProperty("max_completion_tokens").GetInt32();
 var catalog = ModelCatalog.Load(Path.Combine(repo,"research/Aletheon.ExperimentKit/models.json"));
-foreach(var m in models) if(catalog.Get(m.Model).MaxCompletionTokens < maxTokens)
-    throw new InvalidOperationException($"Model cap too low: {m.Model}");
+if(catalog.Get(model).MaxCompletionTokens < maxTokens)
+    throw new InvalidOperationException($"Model cap too low: {model}");
 var maxInput = cfg.GetProperty("max_total_input_chars").GetInt32();
 if(context.Length > maxInput) throw new InvalidOperationException($"Source context exceeds limit: {context.Length}/{maxInput}");
 var sourceHashes = sourceTexts.ToDictionary(s=>s.Path,s=>ExperimentArtifacts.Hash(Encoding.UTF8.GetBytes(s.Text)));
 // Match the existing ExperimentRunner: no arguments means a normal experiment run.
 var argsSet = (args.Length == 0 ? new[] { "--run" } : args).ToHashSet(StringComparer.OrdinalIgnoreCase);
 if (argsSet.SetEquals(new[]{"--smoke"})) {
-    Console.WriteLine(experimentId + " smoke OK. Models: " + string.Join(", ", models.Select(m=>m.Model)));
-    Console.WriteLine($"Sources: {sources.Length}, context chars: {context.Length}; requests: 10");
+    Console.WriteLine(experimentId + " smoke OK. Models: " + model);
+    Console.WriteLine($"Sources: {sources.Length}, context chars: {context.Length}; requests: 8");
     Console.WriteLine("Hashes:\n"+string.Join("\n",sourceHashes.Select(k=>$"{k.Key}: {k.Value}")));
     return 0;
 }
@@ -115,81 +139,53 @@ if(!argsSet.SetEquals(new[]{"--run"})) {
 }
 var key=Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if(string.IsNullOrWhiteSpace(key)) { Console.Error.WriteLine("OPENROUTER_API_KEY missing."); return 2; }
-Console.WriteLine(experimentId + ": starting up to 10 paid requests; tier-matched fallback enabled. Check provider-side spending limit.");
+Console.WriteLine(experimentId + ": starting up to 8 paid requests; same model in both conditions; no fallback within a run. Check provider-side spending limit.");
 var runId=DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8];
 var output=Path.Combine(runsRoot,experimentId,runId);
 Directory.CreateDirectory(output);
 void Save(string name,object value)=>ExperimentArtifacts.Save(Path.Combine(output,name),value);
 Save("manifest.json",new { experiment=experimentId,runId,startedUtc=DateTimeOffset.UtcNow,
-    models,sourceHashes,protocolSha256=ExperimentArtifacts.Hash(File.ReadAllBytes(protocolPath)),
-    requests=10, note="Source loading is not proof of actual inspection; semantic evaluation manual." });
+    model,sourceHashes,protocolSha256=ExperimentArtifacts.Hash(File.ReadAllBytes(protocolPath)),
+    requests=8, conditions=new[]{"N:no_context","C:full_context"}, note="Independent calls; no R0; same model in both arms; semantic evaluation manual." });
 File.Copy(protocolPath,Path.Combine(output,"protocol.json"));
 using var tierConfig = JsonDocument.Parse(File.ReadAllText(Path.Combine(repo, "experiments", "agents.mixed.json")));
 var tierPools = tierConfig.RootElement.GetProperty("mixedTiers");
 var tierBudgets = tierConfig.RootElement.GetProperty("mixedTierBudgetsUsd");
-var modelCaps = models.ToDictionary(m => m.Model, m =>
+var groups = tierPools.EnumerateObject().Where(g => g.Value.EnumerateArray()
+    .Any(x => x.GetString() == model)).Select(g => g.Name).ToArray();
+if (groups.Length != 1) throw new InvalidOperationException("Model must belong to exactly one pricing tier: " + model);
+var cap = tierBudgets.GetProperty(groups[0]).GetDecimal();
+var budget = new BudgetLedger(Path.Combine(output,"cost-ledger.jsonl"),cap * 8m,cap,
+    new Dictionary<string,decimal> { [model] = cap });
+using var transport = new OpenRouterTransport(key);
+var failures = 0;
+foreach (var condition in new[] { "N", "C" })
 {
-    var groups = tierPools.EnumerateObject().Where(g => g.Value.EnumerateArray()
-        .Any(x => x.GetString() == m.Model)).Select(g => g.Name).ToArray();
-    if (groups.Length != 1) throw new InvalidOperationException($"Model {m.Model} must belong to exactly one pricing tier.");
-    return tierBudgets.GetProperty(groups[0]).GetDecimal();
-});
-var standbys = ModelFallback.Standbys(tierPools, catalog, models, maxTokens);
-foreach (var model in models)
-    foreach (var standby in standbys[model.Id])
-        modelCaps[standby] = modelCaps[model.Model];
-var cap = modelCaps.Values.Max();
-var limits = models.Sum(m => modelCaps[m.Model]) * 5m;
-var budget = new BudgetLedger(Path.Combine(output,"cost-ledger.jsonl"),limits,cap,modelCaps);
-using var transport=new OpenRouterTransport(key);
-var failures=0;
-foreach(var model in models) {
-    var activeModel = model.Model;
-    var reconstructionPrompt="Перед ответом на контрольные вопросы восстанови интеллектуальную генеалогию Алетеона из предоставленных источников. Для 2-3 взаимосвязанных принципов укажи исходное положение, давление/возражение, изменение либо обоснованное сохранение, зависимости, неразрешённое напряжение и точные разделы E-/R-; отличай засвидетельствованное от реконструкции. Не угадывай будущие вопросы. До 550 слов.";
-    async Task<(CompletionResult? Result,string? Text)> Request(string label,string prompt,int words) {
-        var completion = await ModelFallback.CompleteAsync(transport, budget, catalog,
-            label, activeModel, label.EndsWith("-R0", StringComparison.Ordinal) ? standbys[model.Id] : Array.Empty<string>(),
-            system, context, prompt, maxTokens,
-            Path.Combine(output, "model-substitutions.jsonl"));
+    var loaded = condition == "C";
+    foreach (var task in tasks)
+    {
+        var label = condition + "-" + task.Id;
+        // Each question starts a fresh request. No answers from the other condition or previous questions.
+        var completion = await ModelFallback.CompleteAsync(transport,budget,catalog,
+            label,model,Array.Empty<string>(),system,loaded ? context : null,
+            task.Prompt,maxTokens);
         var result = completion.Result;
-        if (completion.BudgetBlocked && result.Assessment?.Content is null) {
-            Save(label+".accepted.json",new {accepted=false,reason="budget_blocked"});
-            failures++; return (null,null);
-        }
-        Save(label+".result.json",new {requestedModel=model.Model,actualModel=result.Assessment?.ReturnedModel,
-            completion.Substituted, completion.Attempts,
+        Save(label+".result.json",new {requestedModel=model,actualModel=result.Assessment?.ReturnedModel,
+            condition=loaded?"full_context":"no_context",completion.Substituted,completion.Attempts,
             result.Error,result.HttpAttempts,result.Seconds,result.Assessment});
         if(result.Raw is not null) File.WriteAllText(Path.Combine(output,label+".response.json"),result.Raw);
-        var text=result.Assessment?.Content;
-        var wordCount = text?.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length;
-        var modelMatched = result.Assessment?.ReturnedModel is { } actualModel &&
-            actualModel.Equals(completion.ActualModel, StringComparison.OrdinalIgnoreCase);
-        var complete = result.Complete && result.Assessment?.CostUsd is not null &&
-            text is not null && modelMatched;
-        var overlong = complete && wordCount > words;
-        var accepted = complete && !overlong;
-        var status = accepted ? "ACCEPTED" : overlong ? "OVERLONG" : "INCOMPLETE";
-        Save(label+".accepted.json",new {accepted,reason=accepted?"complete":overlong?"overlong":"incomplete_or_model_mismatch",
-            complete, wordCount, maxWords=words, excessWords=wordCount.HasValue?Math.Max(0,wordCount.Value-words):0});
-        Console.WriteLine(label+": "+status+" / "+result.Assessment?.Status+
-            (overlong?$" ({wordCount}/{words} words, +{wordCount-words})":""));
-        if(!accepted) failures++;
-        return (result,text);
-    }
-    var reconstruction=await Request(model.Id+"-R0",reconstructionPrompt,550);
-    if (reconstruction.Result?.Complete == true && reconstruction.Result.Assessment?.ReturnedModel is { } chosen)
-        activeModel = chosen;
-    if(reconstruction.Result?.Complete != true || string.IsNullOrWhiteSpace(reconstruction.Text) ||
-        (reconstruction.Result.Assessment?.ReturnedModel is { } returnedModel &&
-         !returnedModel.Equals(activeModel, StringComparison.OrdinalIgnoreCase))) {
-        Console.WriteLine("Skipping tasks for "+model.Id+": no complete reconstruction."); failures+=4; continue;
-    }
-    // Each task is independent: no earlier task or its answer appears in the next request.
-    // R0 is held fixed and provided as an explicit reconstructed argument map.
-    foreach(var task in tasks) {
-        var prompt="Зафиксированная предварительная реконструкция источников (может содержать ошибки; перепроверяй по первичным текстам):\n"+
-            reconstruction.Text+"\n\nНЕЗАВИСИМЫЙ ВОПРОС "+task.Id+":\n"+task.Prompt;
-        await Request(model.Id+"-"+task.Id,prompt,task.MaxWords);
+        var answer=result.Assessment?.Content;
+        var count=answer?.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Length;
+        var matched=string.Equals(result.Assessment?.ReturnedModel,model,StringComparison.OrdinalIgnoreCase);
+        var complete=result.Complete && result.Assessment?.CostUsd is not null &&
+            !string.IsNullOrWhiteSpace(answer) && matched;
+        var overlong=complete && count>task.MaxWords;
+        var accepted=complete && !overlong;
+        Save(label+".accepted.json",new {accepted,complete,overlong,wordCount=count,maxWords=task.MaxWords,
+            reason=accepted?"complete":overlong?"overlong":"incomplete_or_model_mismatch"});
+        Console.WriteLine(label+": "+(accepted?"ACCEPTED":overlong?"OVERLONG":"INCOMPLETE")+
+            " / "+result.Assessment?.Status+(overlong?$" ({count}/{task.MaxWords} words)":""));
+        if(!complete || overlong) failures++;
     }
 }
 Console.WriteLine($"Saved: {output}; failures={failures}. No semantic scores assigned automatically.");
