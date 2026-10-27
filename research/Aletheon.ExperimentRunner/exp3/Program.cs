@@ -132,9 +132,15 @@ var tierBudgets = tierConfig.RootElement.GetProperty("mixedTierBudgetsUsd");
 var groups = tierPools.EnumerateObject().Where(g => g.Value.EnumerateArray()
     .Any(x => x.GetString() == model)).Select(g => g.Name).ToArray();
 if (groups.Length != 1) throw new InvalidOperationException("Model must belong to exactly one pricing tier: " + model);
-var cap = tierBudgets.GetProperty(groups[0]).GetDecimal();
-var budget = new BudgetLedger(Path.Combine(output,"cost-ledger.jsonl"),cap * 8m,cap,
-    new Dictionary<string,decimal> { [model] = cap });
+var configuredCap = tierBudgets.GetProperty(groups[0]).GetDecimal();
+var requestCap = Exp3BudgetPolicy.RequiredRequestCap(catalog.Get(model), system,
+    context, tasks.Select(t => t.Prompt), maxTokens, configuredCap);
+var totalCap = cfg.GetProperty("budget_usd_max").GetDecimal();
+if (requestCap > totalCap)
+    throw new InvalidOperationException($"EXP-3 reservation {requestCap} USD exceeds total budget {totalCap} USD.");
+Console.WriteLine($"EXP-3 budget: request reservation cap {requestCap} USD, total cap {totalCap} USD (unchanged).");
+var budget = new BudgetLedger(Path.Combine(output,"cost-ledger.jsonl"),totalCap,requestCap,
+    new Dictionary<string,decimal> { [model] = requestCap });
 using var transport = new OpenRouterTransport(key);
 var failures = 0;
 foreach (var condition in new[] { "N", "C" })
