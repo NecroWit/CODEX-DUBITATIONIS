@@ -95,11 +95,7 @@ var resolvedModels = models.Select(m =>
     return new { m.Id, m.Model, Group = group, Cap = cap };
 }).ToArray();
 // Standbys must stay in the same pricing tier and cannot be an assigned participant.
-var standbys = resolvedModels.ToDictionary(m => m.Id, m =>
-    pools.GetProperty(m.Group).EnumerateArray().Select(x => x.GetString()!)
-        .Where(id => id != m.Model && !models.Any(other => other.Model == id))
-        .Where(id => catalog.All.Any(info => info.Id == id && info.MaxCompletionTokens >= completionTokens))
-        .ToArray());
+var standbys = ModelFallback.Standbys(pools, catalog, models, completionTokens);
 var modelCaps = resolvedModels.ToDictionary(m => m.Model, m => m.Cap);
 foreach (var m in resolvedModels)
     foreach (var standby in standbys[m.Id]) modelCaps[standby] = m.Cap;
