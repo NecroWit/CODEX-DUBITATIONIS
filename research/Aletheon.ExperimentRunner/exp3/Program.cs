@@ -60,7 +60,23 @@ if (!smokeOnly)
             activeId = active.RootElement.GetProperty("id").GetString();
         }
         var nextId = ExperimentSequence.NextId(latest, 3);
-        if (!Exp3RunStatus.LatestAccepted(latest.Path, labels))
+        var sourcePathsForGuard = new[] { "ALETHEON_BOOTSTRAP.md", "ALETHEON_CONTEXT_INDEX.yaml",
+            "ALETHEON_BASE_CORE.md", "ALETHEON_EXTENDED_CORE.md", "ALETHEON_EVOLUTION.md",
+            "ALETHEON_RESEARCH_LOG.md", "CODEX-DUBITATIONIS.md" };
+        var currentHashesForGuard = sourcePathsForGuard.ToDictionary(
+            p => p, p => ExperimentArtifacts.Hash(File.ReadAllBytes(Path.Combine(repo, p))));
+        var changedSource = Exp3SourceGuard.FirstChangedSource(runsRoot, latest.Id, currentHashesForGuard);
+        if (changedSource is not null)
+        {
+            // Preserve old runs as historical evidence: a changed source is a new experimental stage.
+            if (activeId != nextId)
+            {
+                File.Copy(archived, protocolPath, true);
+                Exp3ModelRotation.Prepare(repo, protocolPath, runsRoot, nextId);
+            }
+            Console.WriteLine($"{latest.Id}: source drift in {changedSource}; preserving historical attempts and moving to {nextId}.");
+        }
+        else if (!Exp3RunStatus.LatestAccepted(latest.Path, labels))
         {
             using var previous = JsonDocument.Parse(File.ReadAllText(archived));
             var failedModel = previous.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
