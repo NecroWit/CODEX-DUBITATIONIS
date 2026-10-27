@@ -17,6 +17,23 @@ public sealed record FallbackCompletion(string RequestedModel, CompletionResult 
 public static class ModelFallback
 {
     private static readonly object LogGate = new();
+    public static Dictionary<string, string[]> Standbys(JsonElement pools, ModelCatalog catalog,
+        IReadOnlyList<(string Id, string Model)> participants, int maxTokens)
+    {
+        return participants.ToDictionary(p => p.Id, p =>
+        {
+            var groups = pools.EnumerateObject()
+                .Where(g => g.Value.EnumerateArray().Any(x => x.GetString() == p.Model))
+                .Select(g => g.Name).ToArray();
+            if (groups.Length != 1)
+                throw new InvalidOperationException("Model must belong to one pricing tier: " + p.Model);
+            return pools.GetProperty(groups[0]).EnumerateArray().Select(x => x.GetString()!)
+                .Where(id => id != p.Model && !participants.Any(other => other.Model == id))
+                .Where(id => catalog.All.Any(info => info.Id == id && info.MaxCompletionTokens >= maxTokens))
+                .Distinct(StringComparer.OrdinalIgnoreCase).ToArray();
+        });
+    }
+
     public static async Task<FallbackCompletion> CompleteAsync(
         OpenRouterTransport transport, BudgetLedger budget, ModelCatalog catalog,
         string label, string requestedModel, IEnumerable<string> standbyModels,
@@ -38,7 +55,7 @@ public static class ModelFallback
             if (reservation is null)
             {
                 blocked = true;
-                break;
+                continue;
             }
             var result = await transport.CompleteAsync(model, system, additionalContext, prompt, maxTokens, cancellation);
             // HTTP 429/404 responses do not generate completions; release their reservation.
@@ -58,6 +75,7 @@ public static class ModelFallback
             }
             if (!fallbackError || i == candidates.Length - 1) break;
         }
+        if (last is not null && last.Error is not ("HTTP 429" or "HTTP 404")) blocked = false;
         if (last is null)
             return new(requestedModel, new CompletionResult(requestedModel, null, null,
                 "Budget blocked or no eligible model", 0, 0), attempts, blocked);
