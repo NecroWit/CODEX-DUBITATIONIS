@@ -159,12 +159,16 @@ foreach (var condition in new[] { "N", "C" })
             result.Assessment.PromptTokens is not null && result.Assessment.CompletionTokens is not null &&
             !string.IsNullOrWhiteSpace(answer) && matched;
         var overlong=complete && count>task.MaxWords;
-        var accepted=complete && !overlong;
+        // EXP-3 treats a provider-truncated response as a valid observation.
+        // Do not silently accept transport errors, missing responses, or model substitutions.
+        var truncated=result.Assessment?.Status == "truncated" &&
+            result.Raw is not null && matched;
+        var accepted=(complete && !overlong) || truncated;
         Save(label+".accepted.json",new {accepted,complete,overlong,wordCount=count,maxWords=task.MaxWords,
-            reason=accepted?"complete":overlong?"overlong":"incomplete_or_model_mismatch"});
+            reason=truncated?"truncated_observation":accepted?"complete":overlong?"overlong":"incomplete_or_model_mismatch"});
         Console.WriteLine(label+": "+(accepted?"ACCEPTED":overlong?"OVERLONG":"INCOMPLETE")+
             " / "+result.Assessment?.Status+(overlong?$" ({count}/{task.MaxWords} words)":""));
-        if(!complete || overlong) failures++;
+        if(!accepted) failures++;
     }
 }
 Console.WriteLine($"Saved: {output}; failures={failures}. No semantic scores assigned automatically.");
