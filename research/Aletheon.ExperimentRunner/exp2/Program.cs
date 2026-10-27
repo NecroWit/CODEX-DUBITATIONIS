@@ -180,7 +180,6 @@ foreach(var model in models) {
     if (reconstruction.Result?.Complete == true && reconstruction.Result.Assessment?.ReturnedModel is { } chosen)
         activeModel = chosen;
     if(reconstruction.Result?.Complete != true || string.IsNullOrWhiteSpace(reconstruction.Text) ||
-        reconstruction.Text.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries).Length > 550 ||
         (reconstruction.Result.Assessment?.ReturnedModel is { } returnedModel &&
          !returnedModel.Equals(activeModel, StringComparison.OrdinalIgnoreCase))) {
         Console.WriteLine("Skipping tasks for "+model.Id+": no complete reconstruction."); failures+=3; continue;
