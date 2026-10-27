@@ -1,0 +1,52 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1080" height="940" viewBox="0 0 1080 940">
+<rect width="1080" height="940" fill="white"/>
+<text x="45" y="40" font-size="25" font-family="Arial" font-weight="bold">EXP-3A — N / C comparison</text>
+<text x="45" y="93" font-size="19" font-family="Arial" font-weight="bold">Логика (%)</text>
+<text x="45" y="132" font-size="15" font-family="Arial">Llama 4 Maverick</text>
+<rect x="280" y="117" width="389.18" height="21" fill="#8a9aae"/>
+<rect x="280" y="140" width="434.32000000000005" height="21" fill="#246b88"/>
+<text x="679.1800000000001" y="133" font-size="13" font-family="Arial">63.8%</text>
+<text x="724.32" y="156" font-size="13" font-family="Arial">71.2%</text>
+<text x="45" y="201" font-size="15" font-family="Arial">Kimi K2.5</text>
+<rect x="280" y="186" width="381.25" height="21" fill="#8a9aae"/>
+<rect x="280" y="209" width="549" height="21" fill="#246b88"/>
+<text x="671.25" y="202" font-size="13" font-family="Arial">62.5%</text>
+<text x="839" y="225" font-size="13" font-family="Arial">90%</text>
+<text x="45" y="270" font-size="15" font-family="Arial">MiniMax M2.5</text>
+<rect x="280" y="255" width="518.5" height="21" fill="#8a9aae"/>
+<rect x="280" y="278" width="511.18" height="21" fill="#246b88"/>
+<text x="808.5" y="271" font-size="13" font-family="Arial">85%</text>
+<text x="801.1800000000001" y="294" font-size="13" font-family="Arial">83.8%</text>
+<text x="45" y="378" font-size="19" font-family="Arial" font-weight="bold">Алетеон (%)</text>
+<text x="45" y="417" font-size="15" font-family="Arial">Llama 4 Maverick</text>
+<rect x="280" y="402" width="289.75" height="21" fill="#8a9aae"/>
+<rect x="280" y="425" width="419.67999999999995" height="21" fill="#246b88"/>
+<text x="579.75" y="418" font-size="13" font-family="Arial">47.5%</text>
+<text x="709.68" y="441" font-size="13" font-family="Arial">68.8%</text>
+<text x="45" y="486" font-size="15" font-family="Arial">Kimi K2.5</text>
+<rect x="280" y="471" width="335.5" height="21" fill="#8a9aae"/>
+<rect x="280" y="494" width="564.25" height="21" fill="#246b88"/>
+<text x="625.5" y="487" font-size="13" font-family="Arial">55%</text>
+<text x="854.25" y="510" font-size="13" font-family="Arial">92.5%</text>
+<text x="45" y="555" font-size="15" font-family="Arial">MiniMax M2.5</text>
+<rect x="280" y="540" width="457.5" height="21" fill="#8a9aae"/>
+<rect x="280" y="563" width="525.8199999999999" height="21" fill="#246b88"/>
+<text x="747.5" y="556" font-size="13" font-family="Arial">75%</text>
+<text x="815.8199999999999" y="579" font-size="13" font-family="Arial">86.2%</text>
+<text x="45" y="663" font-size="19" font-family="Arial" font-weight="bold">Стоимость (USD)</text>
+<text x="45" y="702" font-size="15" font-family="Arial">Llama 4 Maverick</text>
+<rect x="280" y="687" width="9.692222222222222" height="21" fill="#8a9aae"/>
+<rect x="280" y="710" width="75.70777777777778" height="21" fill="#246b88"/>
+<text x="299.6922222222222" y="703" font-size="13" font-family="Arial">$0.00143</text>
+<text x="365.7077777777778" y="726" font-size="13" font-family="Arial">$0.01117</text>
+<text x="45" y="771" font-size="15" font-family="Arial">Kimi K2.5</text>
+<rect x="280" y="756" width="327.50222222222226" height="21" fill="#8a9aae"/>
+<rect x="280" y="779" width="518.7033333333334" height="21" fill="#246b88"/>
+<text x="617.5022222222223" y="772" font-size="13" font-family="Arial">$0.04832</text>
+<text x="808.7033333333334" y="795" font-size="13" font-family="Arial">$0.07653</text>
+<text x="45" y="840" font-size="15" font-family="Arial">MiniMax M2.5</text>
+<rect x="280" y="825" width="47.24111111111111" height="21" fill="#8a9aae"/>
+<rect x="280" y="848" width="228.61444444444447" height="21" fill="#246b88"/>
+<text x="337.2411111111111" y="841" font-size="13" font-family="Arial">$0.00697</text>
+<text x="518.6144444444444" y="864" font-size="13" font-family="Arial">$0.03373</text>
+<rect x="45" y="918" width="14" height="14" fill="#8a9aae"/><text x="64" y="930" font-size="14" font-family="Arial">N: no context</text><rect x="240" y="918" width="14" height="14" fill="#246b88"/><text x="259" y="930" font-size="14" font-family="Arial">C: full context</text></svg>
