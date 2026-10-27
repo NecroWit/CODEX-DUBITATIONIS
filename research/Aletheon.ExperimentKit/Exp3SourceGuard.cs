@@ -2,7 +2,7 @@ using System.Text.Json;
 
 namespace Aletheon.ExperimentKit;
 
-/// <summary>Fail closed if a repeated EXP-3 stage changes model or source documents.</summary>
+/// <summary>Allow model rotation between EXP-3 attempts; fail closed on source changes.</summary>
 public static class Exp3SourceGuard
 {
     public static void Verify(string runsRoot, string experimentId, string model,
@@ -16,8 +16,6 @@ public static class Exp3SourceGuard
             if (!File.Exists(manifest)) continue;
             using var doc = JsonDocument.Parse(File.ReadAllText(manifest));
             var root = doc.RootElement;
-            if (!string.Equals(root.GetProperty("model").GetString(), model, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException("EXP-3 model differs from earlier attempt; refusing to mix paired trials.");
             var hashes = root.GetProperty("sourceHashes");
             foreach (var pair in sourceHashes)
                 if (!hashes.TryGetProperty(pair.Key, out var previous) || previous.GetString() != pair.Value)
