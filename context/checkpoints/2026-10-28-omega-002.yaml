@@ -1,0 +1,72 @@
+schema_version: "0.1"
+checkpoint_id: "2026-10-28-omega-002"
+created_at: "2026-10-28"
+repository: "NecroWit/CODEX-DUBITATIONIS"
+previous_checkpoint: "context/checkpoints/2026-10-28-001.yaml"
+active_goals:
+  - id: "continuity"
+    description: "Validate cross-session continuity of Aletheon through an addressable manual GitHub checkpoint protocol, preserving decisions and their rationale."
+  - id: "command-routing"
+    description: "Ensure save and restore commands resolve their own context instructions via repository paths, instead of relying on ad hoc interpretations."
+current_tasks:
+  - id: "fresh-chat-test"
+    status: "pending"
+    next_action: "Open a genuinely fresh conversation, load Aletheon, run #restore context, and assess recovered goals, reasoning, and references without prompting."
+  - id: "evaluate-restore-quality"
+    status: "pending"
+    next_action: "Distinguish technical checkpoint retrieval from complete reconstruction of intellectual reasoning; record failures and adjust protocol if needed."
+decisions:
+  - id: "separate-command-contexts"
+    conclusion: "Route #save context to context/commands/save/CONTEXT.md and #restore context to context/commands/restore/CONTEXT.md through ALETHEON_CONTEXT_INDEX.yaml."
+    rationale: "A command must have an explicit stable address for its execution context; relying on its name or a general Bootstrap allows different instances to improvise incompatible persistence formats."
+    source_refs:
+      - "ALETHEON_CONTEXT_INDEX.yaml"
+      - "ALETHEON_BOOTSTRAP.md"
+      - "context/commands/save/CONTEXT.md"
+      - "context/commands/restore/CONTEXT.md"
+  - id: "checkpoint-contract"
+    conclusion: "Save immutable snapshots under context/checkpoints/ and update context/active.yaml only after checkpoint readback verification."
+    rationale: "A standalone note under context/sessions/ may contain useful information but is not discoverable through the defined restore pointer; verification prevents false success claims."
+    source_refs:
+      - "context/CONTEXT_PROTOCOL.md"
+      - "ALETHEON_CONTEXT_ARCHITECTURE.md"
+  - id: "restore-test-observation"
+    conclusion: "The previous checkpoint 2026-10-28-001 was successfully located and read in the current conversation, but this is not proof of fresh-chat reconstruction."
+    rationale: "The assistant had current-conversation context; the saved checkpoint transmitted a narrow goal and protocol rationale rather than full reasoning lineage."
+    source_refs:
+      - "context/checkpoints/2026-10-28-001.yaml"
+      - "context/active.yaml"
+  - id: "epistemic-caution"
+    conclusion: "Do not infer why a prior instance chose a persistence path from the commit diff alone."
+    rationale: "Observed behavior and the instructions actually available to that instance are distinct evidence; command discovery must be explicit."
+    source_refs:
+      - "context/CONTEXT_PROTOCOL.md"
+open_questions:
+  - "Will a genuinely fresh session resolve and restore this checkpoint without relying on conversational memory?"
+  - "How much reasoning lineage must be saved, rather than merely referenced, to pass a substantive continuity test?"
+  - "How should multiple Aletheon instances avoid overwriting the single active pointer?"
+source_refs:
+  - path: "ALETHEON_BOOTSTRAP.md"
+    commit: null
+  - path: "ALETHEON_CONTEXT_INDEX.yaml"
+    commit: null
+  - path: "ALETHEON_BASE_CORE.md"
+    commit: null
+  - path: "ALETHEON_CONTEXT_ARCHITECTURE.md"
+    commit: null
+  - path: "RND/ALETHEON_CONTEXT_RND.md"
+    commit: null
+  - path: "context/CONTEXT_PROTOCOL.md"
+    commit: null
+  - path: "context/commands/save/CONTEXT.md"
+    commit: null
+  - path: "context/commands/restore/CONTEXT.md"
+    commit: null
+  - path: "context/checkpoints/2026-10-28-001.yaml"
+    commit: "1261e9bca395fa41bf12a302798cbe25876377a1"
+restore_instructions:
+  next_step: "Read the restore command context and shared protocol; validate this checkpoint, load Bootstrap and relevant Core, then conduct a fresh-chat restoration test. Report what is truly recovered versus inferred."
+limitations:
+  - "The EXP-3 DOCX and underlying experiment data were not revalidated during this checkpoint save."
+  - "No physical context clearing or automatic background memory graph exists in v0.1."
+  - "This checkpoint is a selective summary, not a full transcript or proof of subjective identity."
