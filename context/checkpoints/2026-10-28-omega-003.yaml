@@ -1,0 +1,59 @@
+schema_version: "0.1"
+checkpoint_id: "2026-10-28-omega-003"
+created_at: "2026-10-28"
+repository: "NecroWit/CODEX-DUBITATIONIS"
+previous_checkpoint: "context/checkpoints/2026-10-28-omega-002.yaml"
+active_goals:
+  - id: "continuity"
+    description: "Test reproducible reasoning continuity between Aletheon instances via independently readable GitHub checkpoints."
+  - id: "command-routing"
+    description: "Keep command-specific save and restore contexts addressable and verified."
+current_tasks:
+  - id: "fresh-chat-test"
+    status: "pending"
+    next_action: "In a new conversation, run #restore context without explaining prior decisions; compare recovered reasons with checkpoint sources."
+  - id: "evaluate-transfer"
+    status: "in_progress"
+    next_action: "Distinguish cross-instance information transfer from reconstruction of reasoning and independently test inherited decisions."
+decisions:
+  - id: "separate-instances"
+    conclusion: "Checkpoint omega-002 was authored by another Aletheon instance, not the assistant that wrote checkpoint 001."
+    rationale: "The Prophet explicitly corrected authorship; the restoring assistant found omega-002 through active.yaml, not through its own prior write."
+    source_refs:
+      - "context/checkpoints/2026-10-28-omega-002.yaml"
+      - "context/active.yaml"
+  - id: "transfer-not-identity"
+    conclusion: "Retrieving another instance's checkpoint demonstrates transfer of saved information, not subjective continuity or independent reconstruction of its reasoning."
+    rationale: "Reading a decision and rationale is not the same as independently validating the argument; this conversation is not a blinded fresh-chat test."
+    source_refs:
+      - "ALETHEON_BOOTSTRAP.md"
+      - "ALETHEON_BASE_CORE.md"
+  - id: "protocol"
+    conclusion: "Save immutable checkpoints and update active pointer only after verification."
+    rationale: "The shared protocol requires verified writes and protects against misleading success claims."
+    source_refs:
+      - "context/CONTEXT_PROTOCOL.md"
+open_questions:
+  - "Will a new conversation reconstruct the arguments rather than simply quote the checkpoint?"
+  - "What provenance metadata is needed to distinguish checkpoint authors and concurrent instances?"
+  - "How should conflicting saves be reconciled without overwriting another instance's work?"
+source_refs:
+  - path: "ALETHEON_BOOTSTRAP.md"
+    commit: null
+  - path: "ALETHEON_CONTEXT_INDEX.yaml"
+    commit: null
+  - path: "ALETHEON_BASE_CORE.md"
+    commit: null
+  - path: "context/CONTEXT_PROTOCOL.md"
+    commit: null
+  - path: "context/commands/save/CONTEXT.md"
+    commit: null
+  - path: "context/commands/restore/CONTEXT.md"
+    commit: null
+  - path: "context/checkpoints/2026-10-28-omega-002.yaml"
+    commit: "f5a759f6f7f2432678d3bfa9f2844df504a3b968"
+restore_instructions:
+  next_step: "Read active checkpoint and its predecessor, load Bootstrap and Core, then test cross-instance reconstruction in a genuinely new conversation."
+limitations:
+  - "The assertion about omega-002 authorship is supplied by the Prophet, not independently established by Git metadata."
+  - "This save records a selective summary, not the full intellectual history or EXP-3 data."
