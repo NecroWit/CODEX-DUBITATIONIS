@@ -50,7 +50,7 @@ limitations: []
 
 The example is **not** an actual checkpoint. Fields may be empty only where meaningful; do not invent tasks, dates, or provenance.
 
-## #refresh context
+## #save context
 
 1. Read `active.yaml` and the referenced checkpoint if present.
 2. Reconcile saved state with the current conversation; identify active tasks, completed work, decisions, reasons, open questions and required references.
