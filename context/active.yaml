@@ -1,5 +1,5 @@
 # Pointer to the latest verified Aletheon context checkpoint.
 schema_version: "0.1"
-checkpoint_id: "2026-10-28-omega-002"
-checkpoint_path: "context/checkpoints/2026-10-28-omega-002.yaml"
-checkpoint_commit: "f5a759f6f7f2432678d3bfa9f2844df504a3b968"
+checkpoint_id: "2026-10-28-omega-003"
+checkpoint_path: "context/checkpoints/2026-10-28-omega-003.yaml"
+checkpoint_commit: "f6350f1111da96b39bf65adafd02c0f93a7cd28e"
