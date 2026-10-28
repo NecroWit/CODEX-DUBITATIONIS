@@ -100,7 +100,7 @@ post_exp3_context_architecture:
   status: "Proposed, documented 2026-10-27; do not implement or alter EXP-3 protocols before EXP-3 is complete."
   question: "Can an addressable knowledge graph with active context, repository storage, timestamps and eventual forgetting prevent context accumulation without requiring a second reasoning agent?"
   read:
-    - research/tracks/04-aletheon-research/ALETHEON_CONTEXT_ARCHITECTURE.md
+    - RND/ALETHEON_CONTEXT_RND.md
     - ALETHEON_RESEARCH_LOG.md#R-019
     - experiments/aletheon-bridge/README.md
   rule: "Load this design when context architecture or post-EXP-3 planning is relevant; it is not part of always_load and not an adopted Core principle."
