@@ -3,6 +3,14 @@
 **Status:** initial manual protocol specification; commands require a ChatGPT session with GitHub read/write tools.  
 **Architecture:** [../ALETHEON_CONTEXT_ARCHITECTURE.md](../ALETHEON_CONTEXT_ARCHITECTURE.md).
 
+## Command routing
+
+The authoritative command-address map is `ALETHEON_CONTEXT_INDEX.yaml#context_commands`:
+- `#save context` → `context/commands/save/CONTEXT.md`
+- `#restore context` → `context/commands/restore/CONTEXT.md`
+
+Read the command-specific context and this shared protocol before acting. The command files define the workflow; this file defines shared data invariants and failure semantics. A generic note under `context/sessions/` does not replace a checkpoint or active pointer update.
+
 ## Paths
 
 - `context/active.yaml` — mutable pointer to the latest verified checkpoint.
