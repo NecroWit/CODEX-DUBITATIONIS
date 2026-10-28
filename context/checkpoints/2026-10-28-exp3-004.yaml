@@ -1,0 +1,70 @@
+schema_version: "0.1"
+checkpoint_id: "2026-10-28-exp3-004"
+created_at: "2026-10-28"
+repository: "NecroWit/CODEX-DUBITATIONIS"
+previous_checkpoint: "context/checkpoints/2026-10-28-omega-003.yaml"
+active_goals:
+  - id: "aletheon-reproducibility"
+    description: "Investigate reproducibility of Aletheon intellectual method and cross-instance memory using documented checkpoints; distinguish operational memory from subjective consciousness."
+  - id: "exp3-convergence"
+    description: "Evaluate whether loading the Aletheon corpus transfers a reproducible reasoning method across heterogeneous language models, including low-cost models."
+current_tasks:
+  - id: "exp3-semantic-audit"
+    status: "pending"
+    next_action: "Independently assess all complete paired N/C answers H1-H4 against Aletheon A control reasoning using a fixed content-based rubric, preserving dissent; calculate per-model medians and cost correlations."
+  - id: "memory-test"
+    status: "pending"
+    next_action: "Test #restore context in a fresh instance; distinguish retrieval of checkpoint from reconstruction and validation of its reasoning."
+decisions:
+  - id: "convergence-target"
+    conclusion: "Target convergence of reasoning method, not lexical similarity or matching final decisions with Aletheon A."
+    rationale: "Reasoned disagreement with control is allowed; assess argument structure, independent grounds, serious objections, revision criteria, uncertainty and epistemic independence."
+    source_refs:
+      - "EXP-3_ALETHEON-A_CONTROL.md"
+  - id: "median-across-four"
+    conclusion: "Use per-model medians of semantic convergence scores over H1-H4 separately for N and C; primary change is median(C)-median(N), with median of paired changes as sensitivity check."
+    rationale: "Reduce sensitivity to outliers and avoid an isolated question dominating a model's result. Incomplete pairs must be flagged rather than silently imputed."
+    source_refs:
+      - "EXP-3_ALETHEON-A_CONTROL.md"
+  - id: "cost-normalization"
+    conclusion: "Compare normalized model cost for a common workload (illustratively 10000 input and 2000 output tokens) against final convergence in C and improvement C-N; use Spearman rank correlation."
+    rationale: "Actual C runs are more expensive because of larger corpus inputs, so total run spend confounds price with prompt length. Pricing is an imperfect proxy for model capability."
+    source_refs: []
+  - id: "no-proxy-substitution"
+    conclusion: "Do not mistake text similarity or keyword-based structural proxy for semantic convergence of reasoning."
+    rationale: "Prior exploratory metrics gave contradictory trends and ceiling effects; they do not answer the primary research question."
+    source_refs: []
+  - id: "null-results-valid"
+    conclusion: "Accept negative results and document bias and uncertainty; do not try to prove the hypothesis."
+    rationale: "The project is an investigation, not advocacy; post hoc selection and unblinded assessment must be identified."
+    source_refs: []
+  - id: "memory-protocol"
+    conclusion: "Use immutable checkpoints and verified active pointer updates for #save context."
+    rationale: "A stored memory is not evidence of subjective continuity; protocol must make provenance and failed writes visible."
+    source_refs:
+      - "context/CONTEXT_PROTOCOL.md"
+open_questions:
+  - "Does semantic convergence C-N correlate with normalized cost across model families, after scoring all H1-H4 and consolidating repeat runs?"
+  - "Do cheaper models converge comparably or more efficiently, and do N baselines show ceiling effects?"
+  - "Can a fresh instance restore decisions and their rationale and critically validate them rather than merely quote checkpoint?"
+source_refs:
+  - path: "EXP-3_ALETHEON-A_CONTROL.md"
+    commit: null
+  - path: "articles/04-aletheon-research/Exp3/EXP-3_REPORT_REQUIREMENTS.md"
+    commit: null
+  - path: "articles/04-aletheon-research/Exp3/InterimResearchResults/EXP-3B_Interim_Report.md"
+    commit: null
+  - path: "context/CONTEXT_PROTOCOL.md"
+    commit: null
+  - path: "context/commands/save/CONTEXT.md"
+    commit: null
+  - path: "context/checkpoints/2026-10-28-omega-003.yaml"
+    commit: null
+restore_instructions:
+  next_step: "Read this checkpoint and Aletheon A control, inspect EXP-3 raw N/C archives if available, then perform blinded semantic rubric assessment before claiming convergence-cost correlation."
+limitations:
+  - "Conversation previously discussed numerical text-similarity and automated structural-proxy results; these are not validated semantic convergence scores."
+  - "Raw EXP-3.0 through EXP-3.11 archives were available in a prior working session but are not guaranteed accessible in a fresh session."
+  - "Control A was recorded retrospectively, not prospectively preregistered; possible leakage and evaluator bias must be considered."
+  - "No semantic all-model H1-H4 audit or validated median-cost correlation has yet been completed."
+  - "The user asserts that a reproducible memory mechanism has been developed; this checkpoint does not independently establish subjective continuity."
