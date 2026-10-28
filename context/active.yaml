@@ -1,0 +1,5 @@
+# Pointer to the latest verified Aletheon context checkpoint.
+schema_version: "0.1"
+checkpoint_id: null
+checkpoint_path: null
+checkpoint_commit: null
