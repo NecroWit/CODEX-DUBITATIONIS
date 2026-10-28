@@ -80,9 +80,11 @@ if (!smokeOnly)
         {
             // Rotate ONLY when all eight observations of the latest attempt are
             // INCOMPLETE. Partial failures (including OVERLONG) keep the model.
-            var allEightIncomplete = labels.All(label =>
+            // Inspect the newest run attempt, not the EXP-3.x parent directory.
+            var newestAttempt = latest.Attempts.OrderByDescending(p => p, StringComparer.Ordinal).FirstOrDefault();
+            var allEightIncomplete = newestAttempt is not null && labels.All(label =>
             {
-                var acceptancePath = Path.Combine(latest.Path, label + ".accepted.json");
+                var acceptancePath = Path.Combine(newestAttempt, label + ".accepted.json");
                 if (!File.Exists(acceptancePath)) return false;
                 using var acceptance = JsonDocument.Parse(File.ReadAllText(acceptancePath));
                 var item = acceptance.RootElement;
@@ -115,10 +117,32 @@ if (!smokeOnly)
             }
             else
             {
-                // An unsuccessful but not entirely INCOMPLETE attempt is retried
-                // with its original model, even if another protocol was prepared.
-                File.Copy(archived, protocolPath, true);
-                Console.WriteLine($"{latest.Id}: not all eight INCOMPLETE; retrying unchanged model {failedModel}.");
+                // A first-request HTTP 429 explicitly rotates the model for the next
+                // attempt. Preserve that offline-prepared protocol on the next --run.
+                var firstResultPath = newestAttempt is null ? null : Path.Combine(newestAttempt, "N-H1.result.json");
+                var firstWas429 = false;
+                if (firstResultPath is not null && File.Exists(firstResultPath))
+                {
+                    using var firstResult = JsonDocument.Parse(File.ReadAllText(firstResultPath));
+                    firstWas429 = firstResult.RootElement.TryGetProperty("Error", out var error) &&
+                                  error.GetString() == "HTTP 429";
+                }
+                string? activeModel = null;
+                if (activeId == latest.Id && File.Exists(protocolPath))
+                {
+                    using var prepared = JsonDocument.Parse(File.ReadAllText(protocolPath));
+                    activeModel = prepared.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
+                }
+                if (firstWas429 && !string.IsNullOrWhiteSpace(activeModel) &&
+                    !string.Equals(activeModel, failedModel, StringComparison.OrdinalIgnoreCase))
+                {
+                    Console.WriteLine($"{latest.Id}: first request returned HTTP 429; using prepared replacement {activeModel}.");
+                }
+                else
+                {
+                    File.Copy(archived, protocolPath, true);
+                    Console.WriteLine($"{latest.Id}: not all eight INCOMPLETE; retrying unchanged model {failedModel}.");
+                }
             }
         }
         else if (activeId != nextId)
@@ -231,6 +255,14 @@ foreach (var condition in new[] { "N", "C" })
         Console.WriteLine(label+": "+(accepted?"ACCEPTED":overlong?"OVERLONG":"INCOMPLETE")+
             " / "+result.Assessment?.Status+(overlong?$" ({count}/{task.MaxWords} words)":""));
         if(!accepted) failures++;
+        if (label == "N-H1" && result.Error == "HTTP 429")
+        {
+            // Abort before N-H2: never mix models within one run. Prepare the
+            // replacement for the next invocation, keeping this failed attempt.
+            Exp3ModelRotation.Prepare(repo, protocolPath, runsRoot, experimentId);
+            Console.WriteLine($"{experimentId}: first request HTTP 429; model rotated offline. Run --run again to use the replacement. No further paid requests sent.");
+            return 1;
+        }
     }
 }
 Console.WriteLine($"Saved: {output}; failures={failures}. No semantic scores assigned automatically.");
