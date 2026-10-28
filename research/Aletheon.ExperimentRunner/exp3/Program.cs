@@ -91,7 +91,15 @@ if (!smokeOnly)
                 File.Copy(archived, protocolPath, true);
                 Exp3ModelRotation.Prepare(repo, protocolPath, runsRoot, latest.Id);
             }
-            Console.WriteLine($"{latest.Id} is not accepted 8/8: next attempt uses a different model; experiment number unchanged.");
+            // A failed run must never silently repeat the same model, especially
+            // when all eight observations were INCOMPLETE.
+            using var rotatedProtocol = JsonDocument.Parse(File.ReadAllText(protocolPath));
+            var rotatedModel = rotatedProtocol.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
+            if (string.Equals(rotatedModel, failedModel, StringComparison.OrdinalIgnoreCase))
+                throw new InvalidOperationException(
+                    $"EXP-3 rotation failed: previous model {failedModel} was not replaced. " +
+                    "Choose an eligible alternative before issuing any paid requests.");
+            Console.WriteLine($"{latest.Id} is not accepted 8/8: model changed from {failedModel} to {rotatedModel}; experiment number unchanged.");
         }
         else if (activeId != nextId)
         {
