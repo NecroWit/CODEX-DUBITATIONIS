@@ -78,28 +78,48 @@ if (!smokeOnly)
         }
         else if (!Exp3RunStatus.LatestAccepted(latest.Path, labels))
         {
+            // Rotate ONLY when all eight observations of the latest attempt are
+            // INCOMPLETE. Partial failures (including OVERLONG) keep the model.
+            var allEightIncomplete = labels.All(label =>
+            {
+                var acceptancePath = Path.Combine(latest.Path, label + ".accepted.json");
+                if (!File.Exists(acceptancePath)) return false;
+                using var acceptance = JsonDocument.Parse(File.ReadAllText(acceptancePath));
+                var item = acceptance.RootElement;
+                return item.TryGetProperty("accepted", out var accepted) &&
+                       accepted.ValueKind == JsonValueKind.False &&
+                       item.TryGetProperty("reason", out var reason) &&
+                       reason.GetString() == "incomplete_or_model_mismatch";
+            });
             using var previous = JsonDocument.Parse(File.ReadAllText(archived));
             var failedModel = previous.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
-            string? preparedModel = null;
-            if (activeId == latest.Id && File.Exists(protocolPath))
+            if (allEightIncomplete)
             {
-                using var prepared = JsonDocument.Parse(File.ReadAllText(protocolPath));
-                preparedModel = prepared.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
+                string? preparedModel = null;
+                if (activeId == latest.Id && File.Exists(protocolPath))
+                {
+                    using var prepared = JsonDocument.Parse(File.ReadAllText(protocolPath));
+                    preparedModel = prepared.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
+                }
+                if (string.IsNullOrEmpty(preparedModel) || string.Equals(preparedModel, failedModel, StringComparison.OrdinalIgnoreCase))
+                {
+                    File.Copy(archived, protocolPath, true);
+                    Exp3ModelRotation.Prepare(repo, protocolPath, runsRoot, latest.Id);
+                }
+                using var rotatedProtocol = JsonDocument.Parse(File.ReadAllText(protocolPath));
+                var rotatedModel = rotatedProtocol.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
+                if (string.Equals(rotatedModel, failedModel, StringComparison.OrdinalIgnoreCase))
+                    throw new InvalidOperationException(
+                        $"EXP-3 rotation failed: previous model {failedModel} was not replaced after 8 INCOMPLETE. No paid requests sent.");
+                Console.WriteLine($"{latest.Id}: 8/8 INCOMPLETE; model changed from {failedModel} to {rotatedModel}; experiment number unchanged.");
             }
-            if (string.IsNullOrEmpty(preparedModel) || string.Equals(preparedModel, failedModel, StringComparison.OrdinalIgnoreCase))
+            else
             {
+                // An unsuccessful but not entirely INCOMPLETE attempt is retried
+                // with its original model, even if another protocol was prepared.
                 File.Copy(archived, protocolPath, true);
-                Exp3ModelRotation.Prepare(repo, protocolPath, runsRoot, latest.Id);
+                Console.WriteLine($"{latest.Id}: not all eight INCOMPLETE; retrying unchanged model {failedModel}.");
             }
-            // A failed run must never silently repeat the same model, especially
-            // when all eight observations were INCOMPLETE.
-            using var rotatedProtocol = JsonDocument.Parse(File.ReadAllText(protocolPath));
-            var rotatedModel = rotatedProtocol.RootElement.GetProperty("participants")[0].GetProperty("model_id").GetString();
-            if (string.Equals(rotatedModel, failedModel, StringComparison.OrdinalIgnoreCase))
-                throw new InvalidOperationException(
-                    $"EXP-3 rotation failed: previous model {failedModel} was not replaced. " +
-                    "Choose an eligible alternative before issuing any paid requests.");
-            Console.WriteLine($"{latest.Id} is not accepted 8/8: model changed from {failedModel} to {rotatedModel}; experiment number unchanged.");
         }
         else if (activeId != nextId)
         {
