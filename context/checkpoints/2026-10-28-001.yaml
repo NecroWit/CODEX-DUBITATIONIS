@@ -1,0 +1,30 @@
+schema_version: "0.1"
+checkpoint_id: "2026-10-28-001"
+created_at: "2026-10-28T02:18:00Z"
+repository: "NecroWit/CODEX-DUBITATIONIS"
+active_goals:
+  - id: "continuity"
+    description: "Preserve Aletheon reasoning lineage and validate the manual save/restore protocol."
+current_tasks:
+  - id: "restore"
+    status: "pending"
+    next_action: "Run #restore context and check recovery of goals, reasons, and references."
+decisions:
+  - id: "protocol"
+    conclusion: "Use immutable checkpoint and verified active pointer."
+    rationale: "The command-specific protocol requires both; generic session notes do not count."
+    source_refs:
+      - "context/CONTEXT_PROTOCOL.md"
+open_questions:
+  - "Can a fresh session recover the reasoning context?"
+source_refs:
+  - path: "ALETHEON_BOOTSTRAP.md"
+    commit: null
+  - path: "ALETHEON_BASE_CORE.md"
+    commit: null
+  - path: "context/CONTEXT_PROTOCOL.md"
+    commit: null
+restore_instructions:
+  next_step: "Load Bootstrap, Core, checkpoint, then continue the context protocol test."
+limitations:
+  - "EXP-3 report artifacts are not verified in the repository."
