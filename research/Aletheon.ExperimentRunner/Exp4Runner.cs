@@ -129,13 +129,26 @@ internal static class Exp4Runner
         foreach (var p in participants)
         {
             var label = $"g{p.Generation}-{p.Slot}";
-            var result = await ModelFallback.CompleteAsync(transport, budget, catalog,
-                label, p.Model, Array.Empty<string>(), system, context, prompt, maxTokens);
+            var adaptive = await AdaptiveCompletion.CompleteAsync(
+                transport, budget, catalog, label, p.Model, system, context, prompt,
+                maxTokens, maxRetries: 2, maxTokensCeiling: 12000,
+                onAttempt: attempt =>
+                {
+                    var index = attempt.MaxTokens;
+                    var completion = attempt.Completion.Result;
+                    ExperimentArtifacts.Save(Path.Combine(output, $"{label}.tokens-{index}.attempt.json"), new {
+                        label, maxTokens = index, completion.Model, completion.Error,
+                        completion.Assessment, completion.Raw, attempt.Completion.Attempts
+                    });
+                    Console.WriteLine($"{label}: attempt limit={index}, status={completion.Assessment?.Status ?? completion.Error ?? "unknown"}, outputTokens={completion.Assessment?.CompletionTokens?.ToString() ?? "?"}");
+                });
+            var result = adaptive.Final;
             var response = result.Result;
             ExperimentArtifacts.Save(Path.Combine(output, label + ".json"), new {
                 participant = p, requestedModel = p.Model, actualModel = result.ActualModel,
                 response.Complete, response.Error, response.Assessment, response.HttpAttempts,
-                response.Seconds, response.Raw, result.Attempts
+                response.Seconds, response.Raw, result.Attempts,
+                tokenAttempts = adaptive.History.Select(a => new { a.MaxTokens, status = a.Completion.Result.Assessment?.Status, a.Completion.Result.Error })
             });
             if (response.Raw is not null)
                 File.WriteAllText(Path.Combine(output, label + ".response.json"), response.Raw);
@@ -157,13 +170,13 @@ internal static class Exp4Runner
             });
             if (!response.Complete)
             {
-                Console.Error.WriteLine("Stopping after incomplete response. Inspect artifacts before retrying.");
-                return 1;
+                Console.Error.WriteLine("Incomplete participant saved; continuing with remaining participants.");
+                continue;
             }
             accepted++;
         }
         Console.WriteLine($"EXP-4 transport completion: {accepted}/{participants.Count}. Semantic assessment is manual.");
-        return 0;
+        return accepted == participants.Count ? 0 : 1;
     }
 
     private static string Decision(string answer, string question)
