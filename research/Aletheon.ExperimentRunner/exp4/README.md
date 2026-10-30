@@ -8,7 +8,7 @@ The single authority for tier membership and per-request spending caps is `exper
 
 ## Rider (recommended)
 
-Open `research/Aletheon.ExperimentRunner/exp4/Aletheon.EXP4.sln` in Rider. Select **Aletheon.Exp4** as the startup project and click **Run**. The default starts an **offline, free two-generation plan**. To send paid requests, edit the Rider run configuration's **Program arguments** to `--exp4-run 2 42` and set `OPENROUTER_API_KEY` in **Environment variables**. To explicitly plan, set arguments to `--exp4-plan 2 42`. No PowerShell is needed.
+Open `research/Aletheon.ExperimentRunner/exp4/Aletheon.EXP4.sln` in Rider. Select **Aletheon.Exp4** as the startup project and click **Run**. The default **Run executes the paid experiment** using `execution.generations` and `execution.seed` from `EXP-4.protocol.json` (initially 2 and 42). Set `OPENROUTER_API_KEY` in Rider **Environment variables** before starting. To preview offline instead, use `--exp4-plan 2 42` as optional Program arguments. No PowerShell is needed.
 
 ## Optional CLI commands
 
