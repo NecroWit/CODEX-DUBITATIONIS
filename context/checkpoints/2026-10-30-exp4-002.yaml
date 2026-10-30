@@ -1,0 +1,73 @@
+schema_version: "0.1"
+checkpoint_id: "2026-10-30-exp4-002"
+created_at: "2026-10-30"
+repository: "NecroWit/CODEX-DUBITATIONIS"
+previous_checkpoint: "context/checkpoints/2026-10-30-exp4-001.yaml"
+active_goals:
+  - id: "exp4-repair"
+    description: "Integrate and verify EXP-4 in the existing Rider-first C# research project layout, without duplicating or guessing paths."
+  - id: "aletheon-continuity"
+    description: "Preserve reconstructible reasoning lineage and independent criticism through verifiable context checkpoints."
+current_tasks:
+  - id: "exp4-solution-location"
+    status: "pending"
+    next_action: "Move root Aletheon.Exp4.sln to research/Aletheon.Exp4.sln, matching existing Exp2/Exp3 solutions; adjust relative project paths and verify the result. Avoid modifying existing Exp2/Exp3."
+  - id: "research-architecture-location"
+    status: "pending"
+    next_action: "Relocate root RESEARCH_ARCHITECTURE.md to research/ or reconcile its contents with existing research layout and RESEARCH_ROADMAP.md; verify links before deleting root copy."
+  - id: "exp4-build-validation"
+    status: "pending"
+    next_action: "Inspect EXP-4 C# implementation and shared kit, compile and test offline; do not claim built or executed before verification. No paid OpenRouter calls without review."
+  - id: "exp3-semantic-audit"
+    status: "pending_from_prior_checkpoint"
+    next_action: "Keep EXP-3 N/C semantic convergence evaluation in scope; consult previous checkpoints."
+decisions:
+  - id: "verified-research-root"
+    conclusion: "The existing solution files Aletheon.Exp2.sln and Aletheon.Exp3.sln and RESEARCH_ROADMAP.md live in research/ on main, not repository root."
+    rationale: "GitHub fetch_file verified all three after earlier incorrect claims that they were absent. The user's screenshot showed the research folder, not the repository root."
+    source_refs:
+      - "research/Aletheon.Exp2.sln"
+      - "research/Aletheon.Exp3.sln"
+      - "research/RESEARCH_ROADMAP.md"
+  - id: "search-before-architecting"
+    conclusion: "Inspect the actual repository tree and file paths before architectural speculation, code changes or asking the user to locate files."
+    rationale: "Assistant wasted substantial user time by assuming paths and inventing branch/repository explanations; a simple path search established the truth. The user explicitly highlighted this failure humorously."
+    source_refs:
+      - "research/Aletheon.Exp2.sln"
+      - "research/Aletheon.Exp3.sln"
+  - id: "exp4-current-state"
+    conclusion: "EXP-4 C# sources and project exist, but Aletheon.Exp4.sln and RESEARCH_ARCHITECTURE.md were mistakenly committed to repository root. They have not yet been relocated, built, or run."
+    rationale: "Confirmed existing file paths by GitHub fetch_file. Do not claim completion of repair."
+    source_refs:
+      - "Aletheon.Exp4.sln"
+      - "RESEARCH_ARCHITECTURE.md"
+      - "research/Aletheon.ExperimentRunner/exp4/Aletheon.Exp4.csproj"
+      - "research/Aletheon.ExperimentRunner/Exp4Runner.cs"
+open_questions:
+  - "Does EXP-4 compile and run correctly in Rider after correcting solution paths?"
+  - "Does the research architecture document need changes beyond moving it into research/?"
+  - "What EXP-4 preflight, budget and cohort checks still need validation?"
+source_refs:
+  - path: "research/Aletheon.Exp2.sln"
+    commit: null
+  - path: "research/Aletheon.Exp3.sln"
+    commit: null
+  - path: "research/RESEARCH_ROADMAP.md"
+    commit: null
+  - path: "Aletheon.Exp4.sln"
+    commit: null
+  - path: "RESEARCH_ARCHITECTURE.md"
+    commit: null
+  - path: "research/Aletheon.ExperimentRunner/exp4/Aletheon.Exp4.csproj"
+    commit: null
+  - path: "research/Aletheon.ExperimentRunner/Exp4Runner.cs"
+    commit: null
+  - path: "context/CONTEXT_PROTOCOL.md"
+    commit: null
+restore_instructions:
+  next_step: "Start by reading this checkpoint and verifying the actual research/ directory structure. Fix misplaced EXP-4 solution and architecture document, preserving Exp2/Exp3 and checking relative paths; then compile and test EXP-4 offline."
+limitations:
+  - "No EXP-4 build or execution has been verified."
+  - "No paid API calls were performed during this save."
+  - "Earlier checkpoint 2026-10-30-exp4-001 is outdated about the Python pilot; the Python file was subsequently deleted and C# sources were added."
+  - "Checkpoint preserves documented decisions and tasks, not hidden reasoning or subjective identity."
