@@ -158,8 +158,8 @@ internal static class Exp4Runner
             Console.WriteLine($"\\n===== {label} | {result.ActualModel} | {(response.Complete ? "COMPLETE" : "INCOMPLETE")} =====");
             var answer = response.Assessment?.Content ?? "";
             Console.WriteLine(string.IsNullOrWhiteSpace(answer) ? "(No answer text returned)" : answer);
-            var adoption = Decision(answer, "A1");
-            var recommendation = Decision(answer, "A2");
+            var adoption = response.Complete ? Decision(answer, "A1") : "unknown";
+            var recommendation = response.Complete ? Decision(answer, "A2") : "unknown";
             decisions.Add((label, adoption, recommendation));
             Console.WriteLine($"\\nDecisions: A1 adoption={adoption}; A2 recommendation={recommendation}");
             PrintPercentages(decisions);
