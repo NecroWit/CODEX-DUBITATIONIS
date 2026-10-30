@@ -4,7 +4,7 @@ using Aletheon.ExperimentKit;
 var runner = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../"));
 var repo = Path.GetFullPath(Path.Combine(runner, "../.."));
 var kit = Path.Combine(repo, "research", "Aletheon.ExperimentKit");
-if (args.Length == 1 && args[0] == "--rotate") return ModelRotation.Prepare(repo, runner, kit);
+if (args.Length > 0 && (args[0] == "--exp4-plan" || args[0] == "--exp4-run"))\n    return await Exp4Runner.Execute(repo, runner, args);\nif (args.Length == 1 && args[0] == "--rotate") return ModelRotation.Prepare(repo, runner, kit);
 var smoke = args.Contains("--smoke", StringComparer.OrdinalIgnoreCase);
 var run = args.Contains("--run", StringComparer.OrdinalIgnoreCase);
 if (smoke && run) { Console.Error.WriteLine("Choose either --smoke or --run."); return 2; }
