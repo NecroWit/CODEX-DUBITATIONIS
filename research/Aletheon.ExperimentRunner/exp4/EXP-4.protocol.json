@@ -34,6 +34,7 @@
   },
   "execution": {
     "generations": 2,
-    "seed": 42
+    "seed": 42,
+    "budget_multiplier": 10
   }
 }
