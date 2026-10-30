@@ -33,6 +33,9 @@ internal static class Exp4Runner
         using var tierDoc = JsonDocument.Parse(tierBytes);
         var tiers = tierDoc.RootElement.GetProperty("mixedTiers");
         var caps = tierDoc.RootElement.GetProperty("mixedTierBudgetsUsd");
+        var budgetMultiplier = cfg.GetProperty("execution").GetProperty("budget_multiplier").GetDecimal();
+        if (budgetMultiplier <= 0m) throw new InvalidOperationException("Budget multiplier must be positive.");
+        decimal TierCap(string tier) => caps.GetProperty(tier).GetDecimal() * budgetMultiplier;
         var catalogPath = Path.Combine(repo, "research", "Aletheon.ExperimentKit", "models.json");
         var catalogBytes = File.ReadAllBytes(catalogPath);
         var catalog = ModelCatalog.Load(catalogPath);
@@ -83,11 +86,11 @@ internal static class Exp4Runner
         var system = cfg.GetProperty("system_prompt").GetString()!;
         var context = cfg.GetProperty("loading_prompt").GetString()! + "\n\n" + corpus;
         var prompt = cfg.GetProperty("questions_prompt").GetString()!;
-        var capByModel = participants.Select(p => new { p.Model, Cap = caps.GetProperty(p.Tier).GetDecimal() })
+        var capByModel = participants.Select(p => new { p.Model, Cap = TierCap(p.Tier) })
             .GroupBy(x => x.Model, StringComparer.OrdinalIgnoreCase)
             .ToDictionary(g => g.Key, g => g.Min(x => x.Cap), StringComparer.OrdinalIgnoreCase);
-        var totalBudget = participants.Sum(p => caps.GetProperty(p.Tier).GetDecimal());
-        var perRequest = participants.Max(p => caps.GetProperty(p.Tier).GetDecimal());
+        var totalBudget = participants.Sum(p => TierCap(p.Tier));
+        var perRequest = participants.Max(p => TierCap(p.Tier));
         // Preflight each estimated reservation; do not create a partial run if any model cannot fit.
         foreach (var p in participants)
         {
@@ -95,9 +98,9 @@ internal static class Exp4Runner
             var estimatedInput = Math.Ceiling((system.Length + context.Length + prompt.Length) / 2m) + 1024m;
             var estimate = Math.Ceiling((estimatedInput * info.InputUsdPerMillionTokens +
                 maxTokens * info.OutputUsdPerMillionTokens) / 1_000_000m * 1.2m * 100000m) / 100000m;
-            if (estimate > caps.GetProperty(p.Tier).GetDecimal())
+            if (estimate > TierCap(p.Tier))
             {
-                Console.Error.WriteLine($"Budget preflight blocked {p.Slot}/{p.Model}: estimated ${estimate}, tier cap ${caps.GetProperty(p.Tier).GetDecimal()}. No requests sent.");
+                Console.Error.WriteLine($"Budget preflight blocked {p.Slot}/{p.Model}: estimated ${estimate}, tier cap ${TierCap(p.Tier)}. No requests sent.");
                 return 2;
             }
         }
@@ -112,6 +115,7 @@ internal static class Exp4Runner
             sources = sourceRecords.Select(s => new { s.path, s.sha256 }),
             corpusSha256 = ExperimentArtifacts.Hash(Encoding.UTF8.GetBytes(corpus)),
             totalBudgetUsd = totalBudget, perRequestBudgetUsd = perRequest,
+            budgetMultiplier,
             note = "Independent simulated cohorts; no actual AI-to-AI messaging, no persistence of model identity."
         });
         File.WriteAllBytes(Path.Combine(output, "EXP-4.protocol.json"), protocolBytes);
