@@ -31,5 +31,9 @@
       "H4 declarations are not behavior"
     ],
     "limitation": "Independent cohorts, no autonomous propagation or cross-agent transmission; generation is a cohort index, not a verified referral chain."
+  },
+  "execution": {
+    "generations": 2,
+    "seed": 42
   }
 }
