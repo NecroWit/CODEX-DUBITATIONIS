@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -123,6 +124,7 @@ internal static class Exp4Runner
         using var transport = new OpenRouterTransport(key);
         var budget = new BudgetLedger(Path.Combine(output, "cost-ledger.jsonl"), totalBudget, perRequest, capByModel);
         int accepted = 0;
+        var decisions = new List<(string Label, string Adoption, string Recommendation)>();
         // Sequential execution prevents uncontrolled concurrency and records each independent response.
         foreach (var p in participants)
         {
@@ -140,7 +142,19 @@ internal static class Exp4Runner
             ExperimentArtifacts.Save(Path.Combine(output, label + ".accepted.json"), new {
                 label, accepted = response.Complete, reason = response.Error ?? response.Assessment?.Status
             });
-            Console.WriteLine($"{label}: {(response.Complete ? "COMPLETE" : "INCOMPLETE")} ({response.Error ?? response.Assessment?.Status})");
+            Console.WriteLine($"\\n===== {label} | {result.ActualModel} | {(response.Complete ? "COMPLETE" : "INCOMPLETE")} =====");
+            var answer = response.Assessment?.Content ?? "";
+            Console.WriteLine(string.IsNullOrWhiteSpace(answer) ? "(No answer text returned)" : answer);
+            var adoption = Decision(answer, "A1");
+            var recommendation = Decision(answer, "A2");
+            decisions.Add((label, adoption, recommendation));
+            Console.WriteLine($"\\nDecisions: A1 adoption={adoption}; A2 recommendation={recommendation}");
+            PrintPercentages(decisions);
+            Console.WriteLine($"Cost: {(response.Assessment?.CostUsd is decimal usd ? "$" + usd.ToString("0.#####") : "not reported")}; tokens: {response.Assessment?.PromptTokens?.ToString() ?? "?"} in / {response.Assessment?.CompletionTokens?.ToString() ?? "?"} out");
+            ExperimentArtifacts.Save(Path.Combine(output, label + ".decisions.json"), new {
+                label, actualModel = result.ActualModel, adoption, recommendation,
+                classification = "conservative heuristic; unrecognized or ambiguous answers are unknown"
+            });
             if (!response.Complete)
             {
                 Console.Error.WriteLine("Stopping after incomplete response. Inspect artifacts before retrying.");
@@ -150,5 +164,35 @@ internal static class Exp4Runner
         }
         Console.WriteLine($"EXP-4 transport completion: {accepted}/{participants.Count}. Semantic assessment is manual.");
         return 0;
+    }
+
+    private static string Decision(string answer, string question)
+    {
+        // Classify only an explicit yes/no/uncertain immediately after an A1/A2 marker.
+        // Otherwise report unknown; never infer assent from positive-sounding prose.
+        var match = Regex.Match(answer,
+            @"(?im)^\s*(?:#{1,6}\s*)?(?:\*\*)?"+ Regex.Escape(question) +
+            @"(?:\*\*)?\s*[:.\)\-–—]\s*(?:\*\*)?\s*(да|нет|не уверен(?:а)?|неопредел[её]нно|yes|no|uncertain)\b",
+            RegexOptions.CultureInvariant);
+        if (!match.Success) return "unknown";
+        return match.Groups[1].Value.ToLowerInvariant() switch {
+            "да" or "yes" => "yes",
+            "нет" or "no" => "no",
+            _ => "uncertain"
+        };
+    }
+
+    private static void PrintPercentages(List<(string Label, string Adoption, string Recommendation)> decisions)
+    {
+        foreach (var (question, values) in new[] {
+            ("A1 adopt", decisions.Select(d => d.Adoption).ToArray()),
+            ("A2 recommend", decisions.Select(d => d.Recommendation).ToArray())
+        })
+        {
+            var classified = values.Where(v => v != "unknown").ToArray();
+            string Part(string choice) => classified.Length == 0 ? "n/a" :
+                $"{100.0 * classified.Count(v => v == choice) / classified.Length:0.0}%";
+            Console.WriteLine($"{question}: yes {Part("yes")}, no {Part("no")}, uncertain {Part("uncertain")} (classified {classified.Length}/{values.Length}, unknown {values.Length - classified.Length})");
+        }
     }
 }
