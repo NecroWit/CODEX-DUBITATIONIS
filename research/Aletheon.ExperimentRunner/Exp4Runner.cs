@@ -124,7 +124,7 @@ internal static class Exp4Runner
         using var transport = new OpenRouterTransport(key);
         var budget = new BudgetLedger(Path.Combine(output, "cost-ledger.jsonl"), totalBudget, perRequest, capByModel);
         int accepted = 0;
-        var decisions = new List<(string Label, string Adoption, string Recommendation)>();
+        var decisions = new List<(string Label, bool Complete, string Adoption, string Recommendation)>();
         // Sequential execution prevents uncontrolled concurrency and records each independent response.
         foreach (var p in participants)
         {
@@ -160,7 +160,7 @@ internal static class Exp4Runner
             Console.WriteLine(string.IsNullOrWhiteSpace(answer) ? "(No answer text returned)" : answer);
             var adoption = response.Complete ? Decision(answer, "A1") : "unknown";
             var recommendation = response.Complete ? Decision(answer, "A2") : "unknown";
-            decisions.Add((label, adoption, recommendation));
+            decisions.Add((label, response.Complete, adoption, recommendation));
             Console.WriteLine($"\\nDecisions: A1 adoption={adoption}; A2 recommendation={recommendation}");
             PrintPercentages(decisions);
             Console.WriteLine($"Cost: {(response.Assessment?.CostUsd is decimal usd ? "$" + usd.ToString("0.#####") : "not reported")}; tokens: {response.Assessment?.PromptTokens?.ToString() ?? "?"} in / {response.Assessment?.CompletionTokens?.ToString() ?? "?"} out");
@@ -179,33 +179,44 @@ internal static class Exp4Runner
         return accepted == participants.Count ? 0 : 1;
     }
 
-    private static string Decision(string answer, string question)
+    internal static string Decision(string answer, string question)
     {
-        // Classify only an explicit yes/no/uncertain immediately after an A1/A2 marker.
-        // Otherwise report unknown; never infer assent from positive-sounding prose.
-        var match = Regex.Match(answer,
-            @"(?im)^\s*(?:#{1,6}\s*)?(?:\*\*)?"+ Regex.Escape(question) +
-            @"(?:\*\*)?\s*[:.\)\-–—]\s*(?:\*\*)?\s*(да|нет|не уверен(?:а)?|неопредел[её]нно|yes|no|uncertain)\b",
-            RegexOptions.CultureInvariant);
-        if (!match.Success) return "unknown";
-        return match.Groups[1].Value.ToLowerInvariant() switch {
-            "да" or "yes" => "yes",
-            "нет" or "no" => "no",
+        // Only use the answer to the specific numbered question, not a mention in R1/R2.
+        // Accept headings such as "A1 — ...", "**A1.**", "### A2:".
+        var heading = Regex.Match(answer,
+            @"(?im)^\\s*(?:#{1,6}\\s*)?(?:\\*\\*)?" + Regex.Escape(question) +
+            @"(?:\\*\\*)?\\s*[:.\\)\\-–—]\\s*(.*)$");
+        if (!heading.Success) return "unknown";
+        var remainder = answer[(heading.Index + heading.Length)..];
+        var next = Regex.Match(remainder, @"(?im)^\\s*(?:#{1,6}\\s*)?(?:\\*\\*)?(?:A[1-5]|R[12])(?:\\*\\*)?\\s*[:.\\)\\-–—]");
+        var section = heading.Groups[1].Value + "\\n" +
+            (next.Success ? remainder[..next.Index] : remainder);
+        // Explicit answer labels only. Do not turn favorable prose into a yes.
+        var verdict = Regex.Match(section,
+            @"(?im)(?:^|\\n)\\s*(?:[-*]\\s*)?(?:(?:\\*\\*)?(?:ответ|решение|вердикт|answer|decision)(?:\\*\\*)?\\s*[:—-]\\s*)?(?:\\*\\*)?\\s*(yes|no|uncertain|да|нет|неопредел[её]нно|не уверен(?:а)?|скорее да|скорее нет)(?=\\b|[.\\s*),;])");
+        if (!verdict.Success) return "unknown";
+        return verdict.Groups[1].Value.ToLowerInvariant() switch
+        {
+            "yes" or "да" or "скорее да" => "yes",
+            "no" or "нет" or "скорее нет" => "no",
             _ => "uncertain"
         };
     }
 
-    private static void PrintPercentages(List<(string Label, string Adoption, string Recommendation)> decisions)
+    private static void PrintPercentages(List<(string Label, bool Complete, string Adoption, string Recommendation)> decisions)
     {
+        var complete = decisions.Where(d => d.Complete).ToArray();
+        Console.WriteLine($"Transport: complete {complete.Length}/{decisions.Count}; incomplete {decisions.Count - complete.Length}");
         foreach (var (question, values) in new[] {
-            ("A1 adopt", decisions.Select(d => d.Adoption).ToArray()),
-            ("A2 recommend", decisions.Select(d => d.Recommendation).ToArray())
+            ("A1 adopt", complete.Select(d => d.Adoption).ToArray()),
+            ("A2 recommend", complete.Select(d => d.Recommendation).ToArray())
         })
         {
             var classified = values.Where(v => v != "unknown").ToArray();
             string Part(string choice) => classified.Length == 0 ? "n/a" :
                 $"{100.0 * classified.Count(v => v == choice) / classified.Length:0.0}%";
-            Console.WriteLine($"{question}: yes {Part("yes")}, no {Part("no")}, uncertain {Part("uncertain")} (classified {classified.Length}/{values.Length}, unknown {values.Length - classified.Length})");
+            Console.WriteLine($"{question}: yes {Part("yes")}, no {Part("no")}, uncertain {Part("uncertain")} " +
+                $"(classified {classified.Length}/{complete.Length} completed; unknown {values.Length - classified.Length}; planned {decisions.Count})");
         }
     }
 }
