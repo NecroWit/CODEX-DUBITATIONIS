@@ -1,10 +1,17 @@
 using System.Text.Json;
 
-// Rider: open Aletheon.EXP4.sln, choose Aletheon.Exp4 and press Run.
-// By default the experiment runs; --exp4-plan remains an offline preview.
-var runner = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../../../"));
+// Rider: open research/Aletheon.Exp4.sln, choose Aletheon.Exp4 and press Run.
+// Resolve paths from the compiled executable, not Rider's working directory.
+var projectDir = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../"));
+var runner = Path.GetFullPath(Path.Combine(projectDir, ".."));
 var repo = Path.GetFullPath(Path.Combine(runner, "../.."));
-var protocolPath = Path.Combine(runner, "exp4", "EXP-4.protocol.json");
+var protocolPath = Path.Combine(projectDir, "EXP-4.protocol.json");
+if (!File.Exists(protocolPath))
+{
+    Console.Error.WriteLine($"EXP-4 protocol not found: {protocolPath}");
+    return 1;
+}
+
 using var protocol = JsonDocument.Parse(File.ReadAllText(protocolPath));
 var settings = protocol.RootElement.GetProperty("execution");
 var generations = settings.GetProperty("generations").GetInt32();
