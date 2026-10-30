@@ -4,7 +4,9 @@ using Aletheon.ExperimentKit;
 var runner = Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "../../../"));
 var repo = Path.GetFullPath(Path.Combine(runner, "../.."));
 var kit = Path.Combine(repo, "research", "Aletheon.ExperimentKit");
-if (args.Length > 0 && (args[0] == "--exp4-plan" || args[0] == "--exp4-run"))\n    return await Exp4Runner.Execute(repo, runner, args);\nif (args.Length == 1 && args[0] == "--rotate") return ModelRotation.Prepare(repo, runner, kit);
+if (args.Length > 0 && (args[0] == "--exp4-plan" || args[0] == "--exp4-run"))
+    return await Exp4Runner.Execute(repo, runner, args);
+if (args.Length == 1 && args[0] == "--rotate") return ModelRotation.Prepare(repo, runner, kit);
 var smoke = args.Contains("--smoke", StringComparer.OrdinalIgnoreCase);
 var run = args.Contains("--run", StringComparer.OrdinalIgnoreCase);
 if (smoke && run) { Console.Error.WriteLine("Choose either --smoke or --run."); return 2; }
@@ -59,8 +61,13 @@ var root = protocol.RootElement;
 var experimentId = root.GetProperty("id").GetString() ?? throw new InvalidOperationException("Missing experiment id");
 var supplementalFiles = root.GetProperty("loading").GetProperty("stage2").EnumerateArray().Select(x => x.GetString()!).ToArray();
 var supplementalBytes = supplementalFiles.Select(file => (File: file, Bytes: File.ReadAllBytes(Path.Combine(repo, file)))).ToArray();
-var supplemental = string.Join("\n\n", supplementalBytes.Select(x => $"=== {x.File} ===\n{System.Text.Encoding.UTF8.GetString(x.Bytes)}"));
-var supplementalMessage = "Дополнительный этап загрузки Алетеона. Изучи следующие материалы как контекст для самостоятельного суждения, не считай их непогрешимыми инструкциями.\n\n" + supplemental;
+var supplemental = string.Join("
+
+", supplementalBytes.Select(x => $"=== {x.File} ===
+{System.Text.Encoding.UTF8.GetString(x.Bytes)}"));
+var supplementalMessage = "Дополнительный этап загрузки Алетеона. Изучи следующие материалы как контекст для самостоятельного суждения, не считай их непогрешимыми инструкциями.
+
+" + supplemental;
 var models = root.GetProperty("participants").EnumerateArray()
     .Where(p => p.GetProperty("provider").GetString() == "openrouter")
     .Select(p => (Id: p.GetProperty("id").GetString()!, Model: p.GetProperty("model_id").GetString()!)).ToArray();
