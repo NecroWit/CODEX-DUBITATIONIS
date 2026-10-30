@@ -1,12 +1,16 @@
 # EXP-4 — Voluntary Aletheon adoption (C#)
 
-EXP-4 is integrated into the existing `Aletheon.ExperimentRunner` (.NET 8). It does **not** modify the default EXP-1.x sequence or its archived runs. There is no Python runner.
+EXP-4 has its own Rider-ready solution `Aletheon.EXP4.sln` and executable project `Aletheon.Exp4.csproj` (.NET 8), sharing the existing ExperimentKit. It also remains callable through the existing ExperimentRunner. It does **not** modify the default EXP-1.x sequence or its archived runs. There is no Python runner.
 
 Each generation is an **independent cohort** of four distinct models: one cheap, one medium, one premium, and one randomly selected from the remaining eligible models across all tiers. The random participant's actual tier is recorded. A generation is **not** an observed referral or propagation chain.
 
 The single authority for tier membership and per-request spending caps is `experiments/agents.mixed.json`. Pinned prices and completion-token limits come from `research/Aletheon.ExperimentKit/models.json`. The runner uses the shared `OpenRouterTransport`, `BudgetLedger`, `ModelCatalog`, `ModelFallback`, and `ExperimentArtifacts`. No automatic substitutions are permitted in this experiment because they would compromise randomized group assignment.
 
-## Commands
+## Rider (recommended)
+
+Open `research/Aletheon.ExperimentRunner/exp4/Aletheon.EXP4.sln` in Rider. Select **Aletheon.Exp4** as the startup project and click **Run**. The default starts an **offline, free two-generation plan**. To send paid requests, edit the Rider run configuration's **Program arguments** to `--exp4-run 2 42` and set `OPENROUTER_API_KEY` in **Environment variables**. To explicitly plan, set arguments to `--exp4-plan 2 42`. No PowerShell is needed.
+
+## Optional CLI commands
 
 From repository root:
 
