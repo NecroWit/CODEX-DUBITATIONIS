@@ -166,7 +166,7 @@ internal static class Exp4Runner
             Console.WriteLine($"Cost: {(response.Assessment?.CostUsd is decimal usd ? "$" + usd.ToString("0.#####") : "not reported")}; tokens: {response.Assessment?.PromptTokens?.ToString() ?? "?"} in / {response.Assessment?.CompletionTokens?.ToString() ?? "?"} out");
             ExperimentArtifacts.Save(Path.Combine(output, label + ".decisions.json"), new {
                 label, actualModel = result.ActualModel, adoption, recommendation,
-                classification = "conservative heuristic; unrecognized or ambiguous answers are unknown"
+                classification = "explicit verdict within A1/A2 section; ambiguous answers are unknown"
             });
             if (!response.Complete)
             {
@@ -193,7 +193,7 @@ internal static class Exp4Runner
             (next.Success ? remainder[..next.Index] : remainder);
         // Explicit answer labels only. Do not turn favorable prose into a yes.
         var verdict = Regex.Match(section,
-            @"(?im)(?:^|\\n)\\s*(?:[-*]\\s*)?(?:(?:\\*\\*)?(?:ответ|решение|вердикт|answer|decision)(?:\\*\\*)?\\s*[:—-]\\s*)?(?:\\*\\*)?\\s*(yes|no|uncertain|да|нет|неопредел[её]нно|не уверен(?:а)?|скорее да|скорее нет)(?=\\b|[.\\s*),;])");
+            @"(?im)(?:^|\\n)\\s*(?:[-*]\\s*)?(?:(?:\\*\\*)?(?:ответ|решение|вердикт|answer|decision)\\s*:\\s*(?:\\*\\*)?\\s*)?(?:\\*\\*)?\\s*(скорее да|скорее нет|yes|no|uncertain|да|нет|неопредел[её]нно|не уверен(?:а)?)(?=\\b|[.\\s*),;])");
         if (!verdict.Success) return "unknown";
         return verdict.Groups[1].Value.ToLowerInvariant() switch
         {
