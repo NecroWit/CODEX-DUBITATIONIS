@@ -1,16 +1,16 @@
 # Command context: #save context
 
-**Entry point:** `#save context`  
+**Entry point:** `#save context`
 **Shared contract:** [../../CONTEXT_PROTOCOL.md](../../CONTEXT_PROTOCOL.md)
 
-On receiving the exact command, read this document and the shared contract **before writing anything**. Do not substitute a free-form session note for a checkpoint.
+Read the shared contract before writing.
 
-1. Read `context/memory.yaml` and its current checkpoint, if present.
-2. Extract active goals, tasks, decisions **and their reasons**, unresolved questions, source addresses and next actions from the current conversation. Clearly mark unknowns; do not fabricate missing context.
-3. Validate source paths; record missing sources as limitations.
-4. Create a unique, immutable `context/checkpoints/<checkpoint_id>.yaml` using the schema in the shared contract. Verify by reading it back.
-5. Re-read the active pointer to detect a competing save. On conflict, stop without overwriting it.
-6. Update `context/memory.yaml` with the checkpoint ID, path and checkpoint creation commit. Verify by reading back.
-7. Report the checkpoint fingerprint and verification result. If the pointer update failed, report the orphan checkpoint and do not claim a completed save.
+1. Read the complete saved state in `context/memory.yaml`.
+2. Reconcile with the current conversation; retain still-relevant goals and decisions, including their rationale, provenance and unresolved questions.
+3. Validate important source paths and mark missing evidence.
+4. Prepare a **complete replacement** of `context/memory.yaml` with a new unique save ID. This is a single-slot game-style save, **not** an immutable checkpoint creation.
+5. Re-read `context/memory.yaml` immediately before updating; if its blob SHA changed, stop and reconcile.
+6. Update `context/memory.yaml` using its current blob SHA.
+7. Read it back and verify the new save ID and fields. Report the commit and next step; never claim success on failure.
 
-This command does not modify canonical Core, Evolution, research results, or remove prior history. No background execution or physical context clearing occurs.
+Do not alter Core, Evolution, or experiment records as a side effect. Two sequential saves are valid; overlapping saves must not silently overwrite each other.
