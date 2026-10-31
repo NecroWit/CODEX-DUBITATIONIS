@@ -4,7 +4,7 @@ updated: "2026-10-14"
 entrypoint: ALETHEON_BOOTSTRAP.md
 context_commands:
   "#save context": context/commands/save/CONTEXT.md
-  "#restore context": context/commands/restore/CONTEXT.md
+  "#load context": context/commands/load/CONTEXT.md
   shared_protocol: context/CONTEXT_PROTOCOL.md
   rule: "On either command, load its command context and shared protocol before acting. Do not infer command semantics from the command name alone."
 always_load:
