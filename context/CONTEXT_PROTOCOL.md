@@ -1,98 +1,43 @@
-# Aletheon Context Protocol — v0.1
+# Aletheon Context Protocol — v0.2 (Save / Load)
 
-**Status:** initial manual protocol specification; commands require a ChatGPT session with GitHub read/write tools.  
+**Status:** manual GitHub-backed save/load protocol. Commands require an active session with repository tools.
 **Architecture:** [../ALETHEON_CONTEXT_ARCHITECTURE.md](../ALETHEON_CONTEXT_ARCHITECTURE.md).
 
-## Command routing
-
-The authoritative command-address map is `ALETHEON_CONTEXT_INDEX.yaml#context_commands`:
+## Routing
+The authoritative command map is `ALETHEON_CONTEXT_INDEX.yaml#context_commands`:
 - `#save context` → `context/commands/save/CONTEXT.md`
-- `#restore context` → `context/commands/restore/CONTEXT.md`
+- `#load context` → `context/commands/load/CONTEXT.md`
 
-Read the command-specific context and this shared protocol before acting. The command files define the workflow; this file defines shared data invariants and failure semantics. A generic note under `context/sessions/` does not replace a checkpoint or active pointer update.
+Read the command-specific instructions and this protocol before acting.
 
-## Paths
-
-- `context/memory.yaml` — mutable pointer to the latest verified checkpoint.
-- `context/checkpoints/<checkpoint_id>.yaml` — immutable snapshot; never overwrite a published ID.
-- All source references use repository-relative paths; use a Git commit SHA to pin exact versions where necessary.
-
-## Active pointer schema
-
-```yaml
-schema_version: "0.1"
-checkpoint_id: null
-checkpoint_path: null
-checkpoint_commit: null
-```
-
-A null checkpoint indicates an initialized but not yet refreshed state. `checkpoint_commit` refers to the commit that created the checkpoint, not necessarily the current branch head.
-
-## Checkpoint schema (illustrative)
-
-```yaml
-schema_version: "0.1"
-checkpoint_id: "2026-10-28-example-001"
-created_at: "2026-10-28T00:00:00Z"
-repository: "NecroWit/CODEX-DUBITATIONIS"
-active_goals:
-  - id: "goal-example"
-    description: "..."
-current_tasks:
-  - id: "task-example"
-    status: "in_progress"
-    next_action: "..."
-decisions:
-  - id: "decision-example"
-    conclusion: "..."
-    rationale: "..."
-    source_refs: []
-open_questions: []
-source_refs:
-  - path: "ALETHEON_BOOTSTRAP.md"
-    commit: null
-restore_instructions:
-  next_step: "..."
-limitations: []
-```
-
-The example is **not** an actual checkpoint. Fields may be empty only where meaningful; do not invent tasks, dates, or provenance.
+## Storage
+- `context/memory.yaml` is the **single mutable save slot**. It contains the complete current saved state, not a pointer.
+- Previous versions remain in Git commit history. Historical `context/checkpoints/` files are legacy snapshots, not required for new saves or loads.
+- Preserve meaningful fields: `schema_version`, `checkpoint_id` (save identifier), `created_at`, `repository`, `active_goals`, `current_tasks`, `decisions` (with rationale and source refs), `open_questions`, `source_refs`, `restore_instructions`, and `limitations`.
+- Existing v0.1 full-state saves, including `2026-10-31-prime-001`, are readable. Do not require `checkpoint_path` or `checkpoint_commit`.
+- A save ID identifies a particular saved version, not a separately required checkpoint file.
 
 ## #save context
+1. Read `context/memory.yaml` and inspect current conversation and relevant repository sources.
+2. Reconcile goals, unfinished work, decisions **and their reasons**, unresolved questions, source paths, and next actions. Clearly distinguish verified facts, inference, and missing information.
+3. Construct the complete replacement save document. Do not erase unrelated ongoing tasks merely because they were not discussed in this conversation.
+4. Immediately before writing, re-fetch `context/memory.yaml` and compare its blob SHA with the initial read. If another writer changed it, stop and reconcile; do not overwrite blindly.
+5. Replace `context/memory.yaml` using the latest verified blob SHA. Do not create a new checkpoint as part of normal save.
+6. Read the saved file back and verify the ID and expected fields. Report success only after verification; otherwise report the exact failure.
+7. Report a compact fingerprint: save ID, commit, goals, next step, unresolved issues, and missing sources.
 
-1. Read `memory.yaml` and the referenced checkpoint if present.
-2. Reconcile saved state with the current conversation; identify active tasks, completed work, decisions, reasons, open questions and required references.
-3. Validate important repository references before saving; mark inaccessible references explicitly.
-4. Create a new uniquely identified checkpoint file; never overwrite an existing checkpoint.
-5. Read the checkpoint back and verify the expected fields and source addresses.
-6. Update `memory.yaml` with checkpoint path and the commit that created it.
-7. Read `memory.yaml` back and verify it points to the new checkpoint.
-8. Return a compact fingerprint: checkpoint ID, commit, active goals, next step, unresolved issues, and missing references.
+Repeated sequential saves are allowed. If two saves overlap, optimistic concurrency checks prevent silent lost updates.
 
-If any write/verification fails, do not claim success. If the checkpoint was written but the pointer update failed, report the orphaned checkpoint path and leave the previous pointer intact.
+## #load context
+1. Read `context/memory.yaml`.
+2. Validate the available state fields. If the file is absent or empty, report that no saved state is available.
+3. Load Bootstrap, Context Index, Base Core and task-relevant sources, validating important paths.
+4. Reconstruct the saved goals, decisions, reasons, open questions and next action. Distinguish saved notes from independently verified sources.
+5. Report a compact load fingerprint and any gaps. Do not execute pending irreversible actions automatically.
 
-## #restore context
-
-1. Read `memory.yaml` (or an explicitly supplied checkpoint address).
-2. If no checkpoint exists, report uninitialized state; do not invent a previous session.
-3. Load and validate the checkpoint schema and its repository references.
-4. Read Bootstrap and task-relevant canon/source materials; load only what the active task needs.
-5. Distinguish documented facts, derived interpretations and unavailable sources.
-6. Return a restoration fingerprint and a concrete next step. Do not silently execute irreversible pending actions.
-
-## Conflicts and limitations
-
-- If multiple sessions write concurrently, re-read the pointer immediately before update. If it has changed, stop and request reconciliation; this is best-effort, not a transactional compare-and-swap guarantee.
-- Do not treat an inaccessible source as evidence of its contents.
-- Checkpoint data may be stale; verify important facts at their sources.
-- No command physically clears the ChatGPT context window.
-- `UNLOAD` in v0.1 means omission from the compact working summary, not removal of tokens already present in the model context.
-- No automatic TTL, deletion, background execution or C# Context Manager is implemented.
-- Historical Git commits may retain deleted content; deletion of a file is not guaranteed erasure.
-
-## Acceptance tests
-
-1. Fresh-chat continuation without user restating the unfinished task.
-2. Recovery of decision rationale and verifiable source links.
-3. Broken-source detection with explicit uncertainty.
-4. Failed write must not advance `memory.yaml`.
+## Limits and integrity
+- Save/load are manual tool-mediated operations; Markdown cannot automatically invoke them.
+- Git history is version history, not proof of continuous identity or subjective experience.
+- No automatic garbage collection, TTL, background agent, or context-window clearing is implemented.
+- A Git commit proves a write, not successful philosophical reconstruction.
+- Never claim success if verification fails; never silently overwrite concurrent changes.
