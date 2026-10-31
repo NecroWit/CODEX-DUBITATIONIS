@@ -1,35 +1,31 @@
 # Aletheon Context Architecture
 
-**Status:** accepted design for the manual checkpoint prototype v0.1; not yet experimentally validated.  
-**Research background:** [RND/ALETHEON_CONTEXT_RND.md](RND/ALETHEON_CONTEXT_RND.md).  
+**Status:** accepted manual Save/Load prototype v0.2; not yet experimentally validated.
+**Research background:** [RND/ALETHEON_CONTEXT_RND.md](RND/ALETHEON_CONTEXT_RND.md).
 **Operational contract:** [context/CONTEXT_PROTOCOL.md](context/CONTEXT_PROTOCOL.md).
 
-## Purpose and boundaries
+## Purpose
+Preserve reconstructible intellectual and task continuity between ChatGPT sessions without claiming persistent subjective identity.
 
-Preserve task continuity between independent ChatGPT conversations by persisting an addressable checkpoint in GitHub. This is an engineering continuity mechanism, not a claim about persistent consciousness or identity.
-
-## v0.1 — manual checkpoint architecture
-
-- **Reasoning layer (Aletheon):** selects active goals, summarizes decisions together with their rationale and provenance, identifies unresolved questions, and chooses source references.
-- **Storage (GitHub):** immutable checkpoint files under `context/checkpoints/`; `context/memory.yaml` points to the latest successfully committed checkpoint.
-- **Command routing:** `ALETHEON_CONTEXT_INDEX.yaml#context_commands` maps each command to its own instruction file under `context/commands/`; the shared contract is `context/CONTEXT_PROTOCOL.md`.
-- **Commands:** `#save context` writes and verifies a new checkpoint, then updates the active pointer; `#restore context` reads the pointer, validates the checkpoint and necessary source documents, and reports missing evidence.
-- **Existing canon:** Bootstrap, Core, Evolution, Research Log, and Context Index remain authoritative in their own domains; a checkpoint references them instead of rewriting them.
-- **Scope:** manual tool-mediated operations only. No C# manager, graph GC, TTL deletion, background agent, or physical clearing of the ChatGPT context window in v0.1.
-
-## Planned evolution — not implemented
-
-The R&D document explores hierarchical addresses, cross-domain semantic graph links, GC roots, TTL, tiered caching, and a deterministic C# Context Manager. These are research directions, not v0.1 guarantees. Implement them only after validating the checkpoint protocol.
+## v0.2 — one-slot Save / Load
+- **Reasoning layer:** Aletheon identifies current goals, decisions and their rationale, provenance, open questions, and next steps.
+- **Storage:** `context/memory.yaml` is the complete, mutable saved state (a game-like save slot), not a pointer.
+- **Commands:** `#save context` replaces that state after a concurrent-change check and verifies the write. `#load context` reads and reconstructs the saved state with relevant primary sources.
+- **Routing:** `ALETHEON_CONTEXT_INDEX.yaml#context_commands` links commands to their instructions in `context/commands/`.
+- **Version history:** Git retains previous revisions; old `context/checkpoints/` files are legacy artifacts, not required by normal saves.
+- **Canon:** Bootstrap, Core, Evolution, Research Log and Context Index remain authoritative in their domains; saves reference rather than replace them.
+- **Scope:** manual tool-mediated operations. No C# manager, graph GC, TTL, background agent, or physical context-window clearing.
 
 ## Design constraints
+1. Preserve **reasons and objections**, not only conclusions.
+2. Preserve source addresses and distinguish evidence from reconstruction.
+3. Never claim a save or load succeeded before verification.
+4. Protect against overlapping writes by checking the current file blob SHA.
+5. Retain still-active tasks from previous saves, without inventing missing information.
+6. Separate research proposals, accepted architecture and observed outcomes.
 
-1. Preserve **decisions and reasons**, not just conclusions.
-2. Stable source addresses and commit hashes support reproducible restoration.
-3. Never claim a write or restore succeeded before verification.
-4. On missing or conflicting evidence, report uncertainty rather than inventing state.
-5. No destructive collection in the manual prototype.
-6. Separate research proposals, accepted design, and observed experimental outcomes.
+## Planned evolution
+Hierarchical addresses, semantic graph links, GC roots, TTL and a deterministic C# Context Manager remain research proposals, not implemented v0.2 guarantees.
 
 ## Validation
-
-Test a fresh conversation restoring an unfinished task, the reasoning behind decisions, and graceful failure on a broken reference. Record results separately from the specification.
+Test two sequential saves, concurrent-change detection, fresh-session loading, recovery of decision rationale, and missing-source reporting.
