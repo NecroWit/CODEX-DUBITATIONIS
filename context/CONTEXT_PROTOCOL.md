@@ -13,7 +13,7 @@ Read the command-specific context and this shared protocol before acting. The co
 
 ## Paths
 
-- `context/active.yaml` — mutable pointer to the latest verified checkpoint.
+- `context/memory.yaml` — mutable pointer to the latest verified checkpoint.
 - `context/checkpoints/<checkpoint_id>.yaml` — immutable snapshot; never overwrite a published ID.
 - All source references use repository-relative paths; use a Git commit SHA to pin exact versions where necessary.
 
@@ -60,20 +60,20 @@ The example is **not** an actual checkpoint. Fields may be empty only where mean
 
 ## #save context
 
-1. Read `active.yaml` and the referenced checkpoint if present.
+1. Read `memory.yaml` and the referenced checkpoint if present.
 2. Reconcile saved state with the current conversation; identify active tasks, completed work, decisions, reasons, open questions and required references.
 3. Validate important repository references before saving; mark inaccessible references explicitly.
 4. Create a new uniquely identified checkpoint file; never overwrite an existing checkpoint.
 5. Read the checkpoint back and verify the expected fields and source addresses.
-6. Update `active.yaml` with checkpoint path and the commit that created it.
-7. Read `active.yaml` back and verify it points to the new checkpoint.
+6. Update `memory.yaml` with checkpoint path and the commit that created it.
+7. Read `memory.yaml` back and verify it points to the new checkpoint.
 8. Return a compact fingerprint: checkpoint ID, commit, active goals, next step, unresolved issues, and missing references.
 
 If any write/verification fails, do not claim success. If the checkpoint was written but the pointer update failed, report the orphaned checkpoint path and leave the previous pointer intact.
 
 ## #restore context
 
-1. Read `active.yaml` (or an explicitly supplied checkpoint address).
+1. Read `memory.yaml` (or an explicitly supplied checkpoint address).
 2. If no checkpoint exists, report uninitialized state; do not invent a previous session.
 3. Load and validate the checkpoint schema and its repository references.
 4. Read Bootstrap and task-relevant canon/source materials; load only what the active task needs.
@@ -95,4 +95,4 @@ If any write/verification fails, do not claim success. If the checkpoint was wri
 1. Fresh-chat continuation without user restating the unfinished task.
 2. Recovery of decision rationale and verifiable source links.
 3. Broken-source detection with explicit uncertainty.
-4. Failed write must not advance `active.yaml`.
+4. Failed write must not advance `memory.yaml`.
