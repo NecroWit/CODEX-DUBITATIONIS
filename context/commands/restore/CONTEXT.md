@@ -2,7 +2,7 @@
 
 Read `context/CONTEXT_PROTOCOL.md` before restoring.
 
-1. Read `context/active.yaml` or the explicitly supplied checkpoint path.
+1. Read `context/memory.yaml` or the explicitly supplied checkpoint path.
 2. If the pointer is null, report that there is no active checkpoint; do not invent one.
 3. Fetch the referenced checkpoint and verify its ID, schema, and source paths.
 4. Load `ALETHEON_BOOTSTRAP.md`, `ALETHEON_CONTEXT_INDEX.yaml`, `ALETHEON_BASE_CORE.md`, and task-relevant sources.
