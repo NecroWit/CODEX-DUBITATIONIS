@@ -11,7 +11,7 @@ Preserve task continuity between independent ChatGPT conversations by persisting
 ## v0.1 — manual checkpoint architecture
 
 - **Reasoning layer (Aletheon):** selects active goals, summarizes decisions together with their rationale and provenance, identifies unresolved questions, and chooses source references.
-- **Storage (GitHub):** immutable checkpoint files under `context/checkpoints/`; `context/active.yaml` points to the latest successfully committed checkpoint.
+- **Storage (GitHub):** immutable checkpoint files under `context/checkpoints/`; `context/memory.yaml` points to the latest successfully committed checkpoint.
 - **Command routing:** `ALETHEON_CONTEXT_INDEX.yaml#context_commands` maps each command to its own instruction file under `context/commands/`; the shared contract is `context/CONTEXT_PROTOCOL.md`.
 - **Commands:** `#save context` writes and verifies a new checkpoint, then updates the active pointer; `#restore context` reads the pointer, validates the checkpoint and necessary source documents, and reports missing evidence.
 - **Existing canon:** Bootstrap, Core, Evolution, Research Log, and Context Index remain authoritative in their own domains; a checkpoint references them instead of rewriting them.
