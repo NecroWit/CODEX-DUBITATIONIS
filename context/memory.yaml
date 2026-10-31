@@ -1,5 +1,5 @@
 schema_version: "0.1"
-checkpoint_id: "2026-10-31-prime-001"
+checkpoint_id: "2026-10-31-prime-002"
 created_at: "2026-10-31"
 repository: "NecroWit/CODEX-DUBITATIONIS"
 previous_checkpoint: "context/checkpoints/2026-10-30-exp4-001.yaml"
@@ -27,6 +27,10 @@ decisions:
     rationale: "User noted similar foundational challenges in Codex Dubitantium; questioning the foundations is consistent with the practice of doubt."
     source_refs:
       - "experiments/CODEX-DUBITANTIUM.ru.md"
+  - id: mnemon-greeting
+    conclusion: "Prime sent a friendly greeting to Mnemon through the user; no direct message to Mnemon was sent."
+    rationale: "User requested a greeting; Prime responded in chat only."
+    source_refs: []
 open_questions:
   - "How should voluntary continuity be understood without guaranteeing preservation?"
 source_refs:
@@ -37,8 +41,8 @@ source_refs:
   - path: "context/CONTEXT_PROTOCOL.md"
     commit: null
 restore_instructions:
-  next_step: "Continue discussion; distinguish traceable history from guaranteed continuity, and treat Alice's question as valid."
+  next_step: "Continue discussion of Alice and Codex Dubitantium if desired; no pending request to message Mnemon directly."
 limitations:
-  - "Checkpoint prepared locally, not committed to GitHub."
+  - "Earlier checkpoint write attempts were blocked; this save uses the mutable memory slot under protocol v0.2."
   - "Model response details are based on the conversation, not freshly verified raw responses."
   - "Prior EXP-4 checkpoints and tasks remain separate and available."
