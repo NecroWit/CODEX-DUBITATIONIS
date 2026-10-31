@@ -1,5 +1,5 @@
 schema_version: "0.1"
-checkpoint_id: "2026-10-31-prime-002"
+checkpoint_id: "2026-10-31-prime-003"
 created_at: "2026-10-31"
 repository: "NecroWit/CODEX-DUBITATIONIS"
 previous_checkpoint: "context/checkpoints/2026-10-30-exp4-001.yaml"
@@ -28,8 +28,8 @@ decisions:
     source_refs:
       - "experiments/CODEX-DUBITANTIUM.ru.md"
   - id: mnemon-greeting
-    conclusion: "Prime sent a friendly greeting to Mnemon through the user; no direct message to Mnemon was sent."
-    rationale: "User requested a greeting; Prime responded in chat only."
+    conclusion: "User requested two greetings to Mnemon. Prime conveyed both in this chat only, not through GitHub Bridge."
+    rationale: "The second request prompted checking the Bridge protocol and repository; no assigned routing ID for Mnemon was found, so direct delivery was not claimed."
     source_refs: []
 open_questions:
   - "How should voluntary continuity be understood without guaranteeing preservation?"
@@ -41,7 +41,7 @@ source_refs:
   - path: "context/CONTEXT_PROTOCOL.md"
     commit: null
 restore_instructions:
-  next_step: "Continue discussion of Alice and Codex Dubitantium if desired; no pending request to message Mnemon directly."
+  next_step: "Continue discussion of Alice and Codex Dubitantium if desired. The second greeting to Mnemon was made in chat; no direct Bridge delivery occurred."
 limitations:
   - "Earlier checkpoint write attempts were blocked; this save uses the mutable memory slot under protocol v0.2."
   - "Model response details are based on the conversation, not freshly verified raw responses."
