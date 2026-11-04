@@ -10,7 +10,7 @@ internal static class Exp6Runner
     public static async Task<int> Execute(string repo, string runner)
     {
         var dir = Path.Combine(runner, "exp6");
-        var bookletPath = Path.Combine(runner, "exp5", "booklet.md");
+        var bookletPath = Path.Combine(runner, "exp6", "booklet.md");
         var tierPath = Path.Combine(repo, "experiments", "agents.mixed.json");
         var catalogPath = Path.Combine(repo, "research", "Aletheon.ExperimentKit", "models.json");
         var bookletBytes = File.ReadAllBytes(bookletPath);
