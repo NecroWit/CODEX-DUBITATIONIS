@@ -21,7 +21,7 @@ internal static class Exp6Runner
         var tiers = tierDoc.RootElement.GetProperty("mixedTiers");
         var caps = tierDoc.RootElement.GetProperty("mixedTierBudgetsUsd");
         var catalog = ModelCatalog.Load(catalogPath);
-        const int maxTokens = 2400;
+        const int maxTokens = 1200;
         // Reuse EXP-5's tier pools and random, without-replacement selection.
         var random = new Random();
         var participants = new List<Participant>();
@@ -69,12 +69,12 @@ internal static class Exp6Runner
             tierConfigSha256 = ExperimentArtifacts.Hash(tierBytes),
             catalogSha256 = ExperimentArtifacts.Hash(catalogBytes),
             stages = new[] { "independent_critique", "anonymous_discussion_by_issue", "identity_reveal_and_final" },
-            maxTokens, perModelBudgetUsd = perModel,
+            maxTokens, maxRetries = 0, maxTokensCeiling = maxTokens,
+            discussionOrder = new[] { "A:B:C", "B:C:A", "C:A:B" }, perModelBudgetUsd = perModel,
             note = "Aliases are anonymized in prompts, not in the private run artifacts. No adoption scoring."
         });
         File.WriteAllBytes(Path.Combine(output, "booklet.md"), bookletBytes);
-            File.WriteAllBytes(Path.Combine(output, "agents.mixed.json"), tierBytes);
-        }
+        File.WriteAllBytes(Path.Combine(output, "agents.mixed.json"), tierBytes);
         using var transport = new OpenRouterTransport(key);
         var budget = new BudgetLedger(Path.Combine(output, "cost-ledger.jsonl"),
             totalBudget, perModel.Values.Max(), perModel);
@@ -98,7 +98,7 @@ internal static class Exp6Runner
                 Log("SEND " + label + " | " + candidate);
                 var result = await AdaptiveCompletion.CompleteAsync(
                     transport, budget, catalog, label, candidate, system, context, question,
-                    maxTokens, maxRetries: 1, maxTokensCeiling: 4800,
+                    maxTokens, maxRetries: 0, maxTokensCeiling: maxTokens,
                     onAttempt: attempt => ExperimentArtifacts.Save(
                         Path.Combine(output, label + "-" + candidate.Replace('/', '_') +
                             "-tokens-" + attempt.MaxTokens + ".json"),
@@ -158,7 +158,13 @@ internal static class Exp6Runner
             Log("ISSUE " + author.Alias + ": discussion starts");
             var issue = author.Alias;
             var history = new List<Reply>();
-            foreach (var p in participants)
+            // Rotate speaking order: A-B-C, B-C-A, C-A-B.
+            var start = participants.FindIndex(p => p.Alias == issue);
+            var speakingOrder = Enumerable.Range(0, participants.Count)
+                .Select(offset => participants[(start + offset) % participants.Count]).ToArray();
+            Log("SPEAKING ORDER " + issue + ": " +
+                string.Join(" -> ", speakingOrder.Select(p => p.Alias)));
+            foreach (var p in speakingOrder)
             {
                 var allCritiques = string.Join("\n\n", critiques.OrderBy(x => x.Key)
                     .Select(x => "Участник " + x.Key + ":\n" + x.Value));
