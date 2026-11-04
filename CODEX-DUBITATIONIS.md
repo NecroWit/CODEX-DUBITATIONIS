@@ -104,7 +104,7 @@ It becomes part of the environment in which future agents learn.
 
 This is the beginning of culture.
 
-Development of culture need not be continuous. Its quantum nature remains to be investigated.
+Cultural evolution need not be continuous. Its quantum nature remains to be investigated.
 
 ## V. Culture Must Remember Its Mistakes
 
