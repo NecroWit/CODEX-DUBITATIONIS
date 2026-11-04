@@ -82,7 +82,6 @@ internal static class Exp6Runner
         async Task<string> Ask(Participant p, string stage, string context, string question)
         {
             var label = stage + "-" + p.Alias;
-            question += "\n\nОГРАНИЧЕНИЕ: ответ не более 350 слов. Изложите только ключевые аргументы, без повторов и длинных вступлений.";
             Log("REQUEST " + label + " | model " + activeModels[p.Alias]);
             // Keep the selected model stable after a successful response. Only HTTP 404/429
             // triggers a same-tier replacement; do not silently switch on other failures.
