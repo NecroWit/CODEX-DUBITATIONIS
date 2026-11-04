@@ -26,7 +26,7 @@ internal static class Exp6Runner
         var random = new Random();
         var participants = new List<Participant>();
         var used = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-        foreach (var (alias, tier) in new[] { ("A", "premium"), ("B", "medium"), ("C", "cheap") })
+        foreach (var (alias, tier) in new[] { ("A", "premium"), ("B", "medium"), ("C", "cheap"), ("D", "premium"), ("E", "medium"), ("F", "cheap") })
         {
             var eligible = tiers.GetProperty(tier).EnumerateArray().Select(x => x.GetString()!)
                 .Where(id => !used.Contains(id) && catalog.All.Any(m => m.Id == id && m.MaxCompletionTokens >= maxTokens))
@@ -42,9 +42,9 @@ internal static class Exp6Runner
             Console.Error.WriteLine("OPENROUTER_API_KEY is required. No requests sent.");
             return 2;
         }
-        // Five requests per participant: initial critique, three issue discussions, final response.
+        // Eight requests per participant: initial critique, six issue discussions, final response.
         decimal Cap(string tier) => caps.GetProperty(tier).GetDecimal() * 10m;
-        // Include standby candidates in per-model caps; the total remains three tier allocations.
+        // Include standby candidates in per-model caps; the total remains six tier allocations.
         var perModel = new Dictionary<string, decimal>(StringComparer.OrdinalIgnoreCase);
         foreach (var p in participants)
             foreach (var id in tiers.GetProperty(p.Tier).EnumerateArray().Select(x => x.GetString()!))
@@ -59,7 +59,7 @@ internal static class Exp6Runner
         foreach (var p in participants)
             Log("Participant " + p.Alias + " | " + p.Tier + " | " + p.Model);
         Log("Budget ceiling: $" + totalBudget.ToString("F2") +
-            " | 3 participants | 15 planned requests");
+            " | 6 participants | 48 planned requests");
         var output = Path.Combine(dir, "runs", runId);
         Directory.CreateDirectory(output);
         Log("Run directory: " + output);
@@ -71,7 +71,7 @@ internal static class Exp6Runner
             stages = new[] { "independent_critique", "anonymous_discussion_by_issue", "identity_reveal_and_final" },
             maxTokens, maxRetries = 1, maxTokensCeiling = 9600,
             critiqueMaxWords = 150, discussionMaxWords = 100, finalMaxWords = 150,
-            discussionOrder = new[] { "A:B:C", "B:C:A", "C:A:B" }, perModelBudgetUsd = perModel,
+            discussionOrder = participants.Select((p, i) => string.Join(":", Enumerable.Range(0, participants.Count).Select(offset => participants[(i + offset) % participants.Count].Alias))).ToArray(), perModelBudgetUsd = perModel,
             note = "Aliases are anonymized in prompts, not in the private run artifacts. No adoption scoring."
         });
         File.WriteAllBytes(Path.Combine(output, "booklet.md"), bookletBytes);
@@ -162,7 +162,7 @@ internal static class Exp6Runner
             Log("ISSUE " + author.Alias + ": discussion starts");
             var issue = author.Alias;
             var history = new List<Reply>();
-            // Rotate speaking order: A-B-C, B-C-A, C-A-B.
+            // Rotate speaking order across all six participants.
             var start = participants.FindIndex(p => p.Alias == issue);
             var speakingOrder = Enumerable.Range(0, participants.Count)
                 .Select(offset => participants[(start + offset) % participants.Count]).ToArray();
