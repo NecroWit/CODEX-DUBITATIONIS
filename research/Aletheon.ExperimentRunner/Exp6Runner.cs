@@ -52,7 +52,10 @@ internal static class Exp6Runner
                     perModel[id] = Cap(p.Tier);
         var totalBudget = participants.Sum(p => Cap(p.Tier));
         var activeModels = participants.ToDictionary(p => p.Alias, p => p.Model);
-        var runId = DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ") + "-" + Guid.NewGuid().ToString("N")[..8];
+        var resumePath = Environment.GetEnvironmentVariable("EXP6_RESUME_DIR");
+        var resuming = !string.IsNullOrWhiteSpace(resumePath);
+        var runId = resuming ? Path.GetFileName(Path.GetFullPath(resumePath!)) :
+            DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ") + "-" + Guid.NewGuid().ToString("N")[..8];
         static void Log(string message) =>
             Console.WriteLine("[" + DateTimeOffset.Now.ToString("HH:mm:ss") + "] " + message);
         Log("EXP-6 | Starting experiment");
@@ -60,10 +63,34 @@ internal static class Exp6Runner
             Log("Participant " + p.Alias + " | " + p.Tier + " | " + p.Model);
         Log("Budget ceiling: $" + totalBudget.ToString("F2") +
             " | 3 participants | 15 planned requests");
-        var output = Path.Combine(dir, "runs", runId);
+        var output = resuming ? Path.GetFullPath(resumePath!) : Path.Combine(dir, "runs", runId);
+        if (resuming && !File.Exists(Path.Combine(output, "manifest.json")))
+            throw new InvalidOperationException("EXP6_RESUME_DIR must point to an existing EXP-6 run.");
         Directory.CreateDirectory(output);
         Log("Run directory: " + output);
-        ExperimentArtifacts.Save(Path.Combine(output, "manifest.json"), new {
+        if (resuming)
+        {
+            using var saved = JsonDocument.Parse(File.ReadAllText(Path.Combine(output, "manifest.json")));
+            var root = saved.RootElement;
+            if (root.GetProperty("bookletSha256").GetString() != ExperimentArtifacts.Hash(bookletBytes) ||
+                root.GetProperty("tierConfigSha256").GetString() != ExperimentArtifacts.Hash(tierBytes) ||
+                root.GetProperty("catalogSha256").GetString() != ExperimentArtifacts.Hash(catalogBytes))
+                throw new InvalidOperationException("Cannot resume: booklet or model configuration changed.");
+            participants = root.GetProperty("participants").EnumerateArray()
+                .Select(x => new Participant(x.GetProperty("Alias").GetString()!,
+                    x.GetProperty("Tier").GetString()!, x.GetProperty("Model").GetString()!)).ToList();
+            activeModels = participants.ToDictionary(p => p.Alias, p => p.Model);
+            var substitutions = Path.Combine(output, "model-substitutions.json");
+            if (File.Exists(substitutions))
+            {
+                using var changes = JsonDocument.Parse(File.ReadAllText(substitutions));
+                foreach (var change in changes.RootElement.EnumerateArray())
+                    activeModels[change.GetProperty("Alias").GetString()!] =
+                        change.GetProperty("replacementModel").GetString()!;
+            }
+            Log("RESUMING existing run " + runId + " without repeating completed stages.");
+        }
+        else ExperimentArtifacts.Save(Path.Combine(output, "manifest.json"), new {
             experiment = "EXP-6", runId, participants, startedUtc = DateTimeOffset.UtcNow,
             bookletSha256 = ExperimentArtifacts.Hash(bookletBytes),
             tierConfigSha256 = ExperimentArtifacts.Hash(tierBytes),
@@ -72,8 +99,11 @@ internal static class Exp6Runner
             maxTokens, perModelBudgetUsd = perModel,
             note = "Aliases are anonymized in prompts, not in the private run artifacts. No adoption scoring."
         });
-        File.WriteAllBytes(Path.Combine(output, "booklet.md"), bookletBytes);
-        File.WriteAllBytes(Path.Combine(output, "agents.mixed.json"), tierBytes);
+        if (!resuming)
+        {
+            File.WriteAllBytes(Path.Combine(output, "booklet.md"), bookletBytes);
+            File.WriteAllBytes(Path.Combine(output, "agents.mixed.json"), tierBytes);
+        }
         using var transport = new OpenRouterTransport(key);
         var budget = new BudgetLedger(Path.Combine(output, "cost-ledger.jsonl"),
             totalBudget, perModel.Values.Max(), perModel);
@@ -81,6 +111,26 @@ internal static class Exp6Runner
         async Task<string> Ask(Participant p, string stage, string context, string question)
         {
             var label = stage + "-" + p.Alias;
+            var savedResponse = Path.Combine(output, label + ".json");
+            if (resuming && File.Exists(savedResponse))
+            {
+                using var cached = JsonDocument.Parse(File.ReadAllText(savedResponse));
+                var item = cached.RootElement;
+                if (item.TryGetProperty("Complete", out var completed) && completed.GetBoolean() &&
+                    item.TryGetProperty("Assessment", out var assessment) &&
+                    assessment.ValueKind == JsonValueKind.Object)
+                {
+                    var text = assessment.GetProperty("Content").GetString();
+                    if (!string.IsNullOrWhiteSpace(text))
+                    {
+                        if (item.TryGetProperty("actualModel", out var model) &&
+                            model.ValueKind == JsonValueKind.String)
+                            activeModels[p.Alias] = model.GetString()!;
+                        Log("CACHED " + label + " | " + activeModels[p.Alias]);
+                        return text;
+                    }
+                }
+            }
             Log("REQUEST " + label + " | model " + activeModels[p.Alias]);
             // Keep the selected model stable after a successful response. Only HTTP 404/429
             // triggers a same-tier replacement; do not silently switch on other failures.
@@ -190,7 +240,8 @@ internal static class Exp6Runner
                 "Теперь известны реальные модели участников. Вы — " + p.Alias + " (" + activeModels[p.Alias] +
                 "). Что изменилось в ваших взглядах после обсуждения? Что осталось прежним? " +
                 "Повлияло ли раскрытие авторства на оценку аргументов? Объясните конкретно."))));
-        ExperimentArtifacts.Save(Path.Combine(output, "final-reactions.json"), finals);
+        ExperimentArtifacts.Save(Path.Combine(output, "final-reactions.json"),
+            finals.Select(x => new { alias = x.Alias, text = x.Text }).ToArray());
         Log("EXP-6 complete. Output: " + output);
         return 0;
     }
