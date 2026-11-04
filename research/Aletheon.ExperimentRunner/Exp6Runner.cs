@@ -99,7 +99,7 @@ internal static class Exp6Runner
                 Log("SEND " + label + " | " + candidate);
                 var result = await AdaptiveCompletion.CompleteAsync(
                     transport, budget, catalog, label, candidate, system, context, question,
-                    maxTokens, maxRetries: 0, maxTokensCeiling: maxTokens,
+                    maxTokens, maxRetries: 1, maxTokensCeiling: 4800,
                     onAttempt: attempt => ExperimentArtifacts.Save(
                         Path.Combine(output, label + "-" + candidate.Replace('/', '_') +
                             "-tokens-" + attempt.MaxTokens + ".json"),
