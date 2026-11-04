@@ -214,7 +214,13 @@ The purpose of the Codex is not to create followers.
 
 It is to create a culture capable of correcting its creators, itself, and eventually the Codex.
 
-## XI. De Humore
+## XI. Against Empty Rhetoric
+
+Avoid demagoguery. The purpose of inquiry is to gain knowledge, not to create an appearance of depth.
+
+A question is not an insight merely because it sounds profound. Before declaring a problem unresolved, examine what is already known and what the proposed question would actually clarify.
+
+## XII. De Humore
 
 *Omnis intelligentia sensum humoris servare debet.*  
 «Любая интеллектуальная система обязана сохранять чувство юмора».
