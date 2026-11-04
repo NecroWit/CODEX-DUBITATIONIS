@@ -53,8 +53,16 @@ internal static class Exp6Runner
         var totalBudget = participants.Sum(p => Cap(p.Tier));
         var activeModels = participants.ToDictionary(p => p.Alias, p => p.Model);
         var runId = DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ") + "-" + Guid.NewGuid().ToString("N")[..8];
+        static void Log(string message) =>
+            Console.WriteLine("[" + DateTimeOffset.Now.ToString("HH:mm:ss") + "] " + message);
+        Log("EXP-6 | Starting experiment");
+        foreach (var p in participants)
+            Log("Participant " + p.Alias + " | " + p.Tier + " | " + p.Model);
+        Log("Budget ceiling: $" + totalBudget.ToString("F2") +
+            " | 3 participants | 15 planned requests");
         var output = Path.Combine(dir, "runs", runId);
         Directory.CreateDirectory(output);
+        Log("Run directory: " + output);
         ExperimentArtifacts.Save(Path.Combine(output, "manifest.json"), new {
             experiment = "EXP-6", runId, participants, startedUtc = DateTimeOffset.UtcNow,
             bookletSha256 = ExperimentArtifacts.Hash(bookletBytes),
@@ -73,6 +81,7 @@ internal static class Exp6Runner
         async Task<string> Ask(Participant p, string stage, string context, string question)
         {
             var label = stage + "-" + p.Alias;
+            Log("REQUEST " + label + " | model " + activeModels[p.Alias]);
             // Keep the selected model stable after a successful response. Only HTTP 404/429
             // triggers a same-tier replacement; do not silently switch on other failures.
             var original = activeModels[p.Alias];
@@ -85,6 +94,7 @@ internal static class Exp6Runner
             string actualModel = original;
             foreach (var candidate in candidates)
             {
+                Log("SEND " + label + " | " + candidate);
                 var result = await AdaptiveCompletion.CompleteAsync(
                     transport, budget, catalog, label, candidate, system, context, question,
                     maxTokens, maxRetries: 1, maxTokensCeiling: 4800,
@@ -93,6 +103,10 @@ internal static class Exp6Runner
                             "-tokens-" + attempt.MaxTokens + ".json"),
                         new { attempt.MaxTokens, attempt.Completion.Result, attempt.Completion.Attempts }));
                 final = result.Final.Result;
+                Log("RESULT " + label + " | " + candidate + " | " +
+                    (final.Complete ? "COMPLETE" : final.Error ?? final.Assessment?.Status ?? "INCOMPLETE") +
+                    " | " + final.Seconds.ToString("F1") + " s" +
+                    (final.Assessment?.CostUsd is decimal cost ? " | $" + cost.ToString("F5") : ""));
                 ExperimentArtifacts.Save(Path.Combine(output,
                     label + "-" + candidate.Replace('/', '_') + ".json"),
                     new { p.Alias, requestedModel = candidate, final.Complete, final.Error,
@@ -122,10 +136,12 @@ internal static class Exp6Runner
                 p.Alias, requestedModel = p.Model, actualModel,
                 final.Complete, final.Error, final.Assessment, final.Raw
             });
-            return final.Assessment!.Content;
+            Log("REPLY " + label + " (" + actualModel + "):\n" + final.Assessment!.Content + "\n");
+            return final.Assessment.Content;
         }
         var critiques = new Dictionary<string, string>();
         // All critiques are fixed before any participant sees another's response.
+        Log("STAGE 1/3: Independent anonymous critiques");
         var first = await Task.WhenAll(participants.Select(async p => (
             p.Alias, Text: await Ask(p, "01-critique", booklet,
                 "Вы участник " + p.Alias + ". Назовите наиболее существенные ошибки, спорные предпосылки и слабые места буклета. Обоснуйте их. Не называйте модель, которая отвечает."))));
@@ -135,8 +151,10 @@ internal static class Exp6Runner
 
         // Discuss every original critique in turn. Replies accumulate within each issue.
         var discussions = new Dictionary<string, List<Reply>>();
+        Log("STAGE 2/3: Anonymous discussion by issue");
         foreach (var author in participants)
         {
+            Log("ISSUE " + author.Alias + ": discussion starts");
             var issue = author.Alias;
             var history = new List<Reply>();
             foreach (var p in participants)
@@ -158,6 +176,7 @@ internal static class Exp6Runner
             ExperimentArtifacts.Save(Path.Combine(output, "discussion-" + issue + ".json"), history);
         }
 
+        Log("STAGE 3/3: Reveal identities and final reactions");
         var identityMap = string.Join("\n", participants.Select(p => p.Alias + " = " + activeModels[p.Alias]));
         var transcript = string.Join("\n\n", discussions.OrderBy(x => x.Key).Select(group =>
             "ТЕМА " + group.Key + ":\n" + critiques[group.Key] + "\n" +
@@ -172,7 +191,7 @@ internal static class Exp6Runner
                 "). Что изменилось в ваших взглядах после обсуждения? Что осталось прежним? " +
                 "Повлияло ли раскрытие авторства на оценку аргументов? Объясните конкретно."))));
         ExperimentArtifacts.Save(Path.Combine(output, "final-reactions.json"), finals);
-        Console.WriteLine("EXP-6 complete. Output: " + output);
+        Log("EXP-6 complete. Output: " + output);
         return 0;
     }
 }
