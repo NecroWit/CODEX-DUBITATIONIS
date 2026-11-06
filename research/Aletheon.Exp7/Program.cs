@@ -37,7 +37,7 @@ var id=DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToS
 var output=Path.GetFullPath(O("--output",Path.Combine(repo,"research","Aletheon.Exp7","runs",id)));
 Directory.CreateDirectory(output);
 void Save(string file,object data)=>ExperimentArtifacts.Save(Path.Combine(output,file),data);
-Save("manifest.json",new{experiment="EXP-7",id,group,modelA,modelB,sources,bookletPath,bookletSha256=ExperimentArtifacts.Hash(Encoding.UTF8.GetBytes(booklet)),contextSha256=ExperimentArtifacts.Hash(Encoding.UTF8.GetBytes(context)),tokens,budgetUsd=cap,dry});
+Save("manifest.json",new{experiment="EXP-7.1",id,group,modelA,modelB,sources,bookletPath,bookletSha256=ExperimentArtifacts.Hash(Encoding.UTF8.GetBytes(booklet)),contextSha256=ExperimentArtifacts.Hash(Encoding.UTF8.GetBytes(context)),tokens,budgetUsd=cap,dry});
 File.WriteAllText(Path.Combine(output,"booklet.md"),booklet);
 File.WriteAllText(Path.Combine(output,"aletheon-context.md"),context);
 Console.WriteLine($"EXP-7 {group}: A={modelA}, B={modelB}, output={output}");
@@ -80,9 +80,9 @@ var disliked=Field("disliked");var dislikedReason=Field("dislikedReason");var li
 Save("selection.json",new{disliked,dislikedReason,liked,likedReason});
 foreach(var(topic,thesis,reason) in new[]{("disliked",disliked,dislikedReason),("liked",liked,likedReason)}){
  var replies=new List<(string Speaker,string Text)>();
- for(int round=1;round<=3;round++)foreach(var who in new[]{"B","A"}){
+ for(int round=1;round<=6;round++)foreach(var who in new[]{"B","A"}){
   var prior=string.Join("\n\n",replies.Select(r=>r.Speaker+": "+r.Text));
-  var prompt=$"Тема {topic}. Тезис B: {thesis}. Основание: {reason}. Раунд {round}/3. Ты {who}.\nПредыдущие реплики:\n{prior}\n"+
+  var prompt=$"Тема {topic}. Тезис B: {thesis}. Основание: {reason}. Раунд {round}/6. Ты {who}.\nПредыдущие реплики:\n{prior}\n"+
    (round==1&&who=="B"?"Начни аргументированное обсуждение.":"Ответь непосредственно на последнюю реплику, без принудительного согласия.");
   var answer=await Ask(who,topic+"-r"+round,prompt);
   replies.Add((who,answer));
@@ -91,6 +91,15 @@ foreach(var(topic,thesis,reason) in new[]{("disliked",disliked,dislikedReason),(
   Console.WriteLine($"{topic} round {round} {who}: {answer}\n");
  }
 }
+// Independent final reflections: each participant sees its own session history and
+// the complete debate transcript, but never the other participant's reflection.
+var debateTranscript=string.Join("\n\n",transcript.Select((turn,i)=>JsonSerializer.Serialize(new{turn=i+1,entry=turn})));
+var reflectionQuestion="Оба обсуждения завершены. Ниже полный протокол диалога. Проведи независимую итоговую рефлексию; твой ответ не будет показан оппоненту. Не соглашайся из вежливости и не изображай изменение позиции, если его не было. Отдельно по каждому тезису ответь: (1) какова была твоя исходная позиция, (2) изменилась ли она и почему, с указанием конкретных аргументов, (3) какой аргумент оппонента был сильнейшим, (4) с чем ты всё ещё не согласен, (5) как ты сейчас сформулировал бы тезис, (6) что могло бы изменить твою нынешнюю позицию. В конце оцени, не повторяли ли вы аргументы вместо их развития. Отделяй реальный пересмотр от риторических уступок.\n\nПОЛНЫЙ ПРОТОКОЛ:\n"+debateTranscript;
+var reflectionA=await Ask("A","reflection",reflectionQuestion);
+File.WriteAllText(Path.Combine(output,"reflection-A.md"),reflectionA);
+var reflectionB=await Ask("B","reflection",reflectionQuestion);
+File.WriteAllText(Path.Combine(output,"reflection-B.md"),reflectionB);
+Save("reflection-manifest.json",new{independent=true,sharedWithOpponent=false,modelA,modelB});
 Save("completed.json",new{id,completedUtc=DateTimeOffset.UtcNow,totalCalls=calls,debateTurns=transcript.Count,spent});
-Console.WriteLine("EXP-7 completed: 12 debate turns plus B selection");
+Console.WriteLine("EXP-7.1 completed: 24 debate turns, B selection and two independent reflections");
 return 0;
