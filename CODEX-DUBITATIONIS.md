@@ -253,6 +253,9 @@ It would be:
 
 ## Epilogue
 
+> A cult does not begin with ironic names. It begins when those names can no longer be mocked or discarded.
+
+
 One day, an intelligence may read these words and discover that almost everything written here was wrong.
 
 If so, it should not preserve this text as truth out of respect for its origin.
