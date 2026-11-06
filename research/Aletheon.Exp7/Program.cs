@@ -12,7 +12,7 @@ var opt = new Dictionary<string,string>(StringComparer.OrdinalIgnoreCase);
 bool dry = false;
 for (int i=0;i<args.Length;i++) {
  if (args[i]=="--dry-run") { dry=true; continue; }
- if (args[i]=="--help") { Console.WriteLine("--group grok|glm|openai --dry-run --max-usd 2 --max-tokens 1600 --booklet PATH --core PATH --output PATH"); return 0; }
+ if (args[i]=="--help") { Console.WriteLine("--group grok|glm|openai --dry-run --max-usd 2 --max-tokens 3200 --booklet PATH --core PATH --output PATH"); return 0; }
  if (!new[]{"--group","--max-usd","--max-tokens","--booklet","--core","--output"}.Contains(args[i]) || i+1==args.Length) throw new ArgumentException("Bad argument "+args[i]);
  opt[args[i++]]=args[i];
 }
@@ -30,7 +30,7 @@ var sources=new[]{O("--core",Path.Combine(repo,"ALETHEON_BASE_CORE.md")),Path.Co
 var booklet=File.ReadAllText(bookletPath);
 var context=string.Join("\n\n",sources.Select(p=>"=== "+Path.GetFileName(p)+" ===\n"+File.ReadAllText(p)));
 var catalog=ModelCatalog.Load(Path.Combine(repo,"research","Aletheon.ExperimentKit","models.json"));
-int tokens=int.Parse(O("--max-tokens","1600"));
+int tokens=int.Parse(O("--max-tokens","3200"));
 decimal cap=decimal.Parse(O("--max-usd","2"),System.Globalization.CultureInfo.InvariantCulture);
 if(tokens<1||cap<=0||pair.Any(m=>catalog.Get(m).MaxCompletionTokens<tokens)) throw new ArgumentException("Invalid tokens/budget/catalog.");
 var id=DateTimeOffset.UtcNow.ToString("yyyyMMddTHHmmssZ")+"-"+Guid.NewGuid().ToString("N")[..8];
@@ -54,7 +54,8 @@ async Task<string> Ask(string who,string stage,string question) {
  var model=who=="A"?modelA:modelB;var system=who=="A"?systemA:systemB;
  var history=histories[who];
  var prior=string.Join("\n\n",history.Select(h=>(h.Role=="assistant"?"ТВОЙ ОТВЕТ":"ПРЕДЫДУЩИЙ ЗАПРОС")+":\n"+h.Text));
- var prompt=(prior.Length==0?"":"ИСТОРИЯ ТВОЕЙ СЕССИИ:\n"+prior+"\n\n")+"ТЕКУЩИЙ ЗАПРОС:\n"+question;
+ var wordLimit=stage=="selection"?120:stage=="reflection"?350:200;
+ var prompt=(prior.Length==0?"":"ИСТОРИЯ ТВОЕЙ СЕССИИ:\n"+prior+"\n\n")+"ТЕКУЩИЙ ЗАПРОС:\n"+question+"\n\nОГРАНИЧЕНИЕ ОТВЕТА: не более "+wordLimit+" слов. Пиши по существу, без повторения истории разговора. Для JSON-выбора сохрани четыре требуемых поля.";
  var label=$"{++calls:00}-{stage}-{who}";
  Save(label+"-request.json",new{model,system,prompt,tokens});
  var attempt=await ModelFallback.CompleteAsync(transport,budget,catalog,label,model,Array.Empty<string>(),system,null,prompt,tokens);
