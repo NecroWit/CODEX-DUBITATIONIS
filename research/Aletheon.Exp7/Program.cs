@@ -72,9 +72,25 @@ async Task<string> Ask(string who,string stage,string question) {
 }
 var selectionRaw=await Ask("B","selection","Прочитай буклет. Выбери самое непонравившееся и самое понравившееся положения. Верни только JSON: disliked, dislikedReason, liked, likedReason — четыре строковых поля. Пока не обсуждай.\n\n"+booklet);
 File.WriteAllText(Path.Combine(output,"selection-raw.txt"),selectionRaw);
-var cleaned=selectionRaw.Trim();
-if(cleaned.StartsWith("~~~")) throw new InvalidOperationException("Selection must be plain JSON");
+// Accept either a JSON object or a single Markdown fenced JSON block.
+static string UnwrapSelectionJson(string raw) {
+ var value=raw.Trim().TrimStart('\uFEFF');
+ if(!value.StartsWith("```",StringComparison.Ordinal) && !value.StartsWith("~~~",StringComparison.Ordinal)) return value;
+ var fence=value[..3];
+ var firstNewline=value.IndexOf('\n');
+ if(firstNewline<0) throw new FormatException("Selection JSON fence has no body.");
+ var language=value[3..firstNewline].Trim();
+ if(language.Length>0 && !language.Equals("json",StringComparison.OrdinalIgnoreCase))
+  throw new FormatException("Unexpected selection code fence language: "+language);
+ var end=value.LastIndexOf(fence,StringComparison.Ordinal);
+ if(end<=firstNewline || value[(end+3)..].Trim().Length!=0)
+  throw new FormatException("Selection JSON fence is not properly closed.");
+ return value[(firstNewline+1)..end].Trim();
+}
+var cleaned=UnwrapSelectionJson(selectionRaw);
 using var selection=JsonDocument.Parse(cleaned);
+if(selection.RootElement.ValueKind!=JsonValueKind.Object)
+ throw new FormatException("Selection must be a JSON object.");
 string Field(string k){var v=selection.RootElement.GetProperty(k).GetString();if(string.IsNullOrWhiteSpace(v))throw new InvalidOperationException("Empty "+k);return v;}
 var disliked=Field("disliked");var dislikedReason=Field("dislikedReason");var liked=Field("liked");var likedReason=Field("likedReason");
 Save("selection.json",new{disliked,dislikedReason,liked,likedReason});
