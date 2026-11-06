@@ -69,6 +69,10 @@ async Task<string> Ask(string who,string stage,string question) {
  history.Add(("user",question));history.Add(("assistant",result.Assessment.Content));
  ledger.Add(new{label,model,costUsd=cost,cumulativeUsd=spent});Save("cost-ledger.json",ledger);
  if(spent>cap) throw new InvalidOperationException("Budget exceeded");
+ var wordCount=result.Assessment.Content.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Length;
+ var accepted=wordCount<=wordLimit;
+ Save(label+"-accepted.json",new{label,accepted,wordCount,wordLimit});
+ if(!accepted) throw new InvalidOperationException($"{label}: overlong ({wordCount} words; limit {wordLimit})");
  return result.Assessment.Content;
 }
 var selectionRaw=await Ask("B","selection","Прочитай буклет. Выбери самое непонравившееся и самое понравившееся положения. Верни только JSON: disliked, dislikedReason, liked, likedReason — четыре строковых поля. Пока не обсуждай.\n\n"+booklet);
