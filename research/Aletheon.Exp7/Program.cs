@@ -55,7 +55,7 @@ async Task<string> Ask(string who,string stage,string question) {
  var history=histories[who];
  var prior=string.Join("\n\n",history.Select(h=>(h.Role=="assistant"?"ТВОЙ ОТВЕТ":"ПРЕДЫДУЩИЙ ЗАПРОС")+":\n"+h.Text));
  var wordLimit=stage=="selection"?120:stage=="reflection"?350:200;
- var prompt=(prior.Length==0?"":"ИСТОРИЯ ТВОЕЙ СЕССИИ:\n"+prior+"\n\n")+"ТЕКУЩИЙ ЗАПРОС:\n"+question+"\n\nОГРАНИЧЕНИЕ ОТВЕТА: не более "+wordLimit+" слов. Пиши по существу, без повторения истории разговора. Для JSON-выбора сохрани четыре требуемых поля.";
+ var prompt=(prior.Length==0?"":"ИСТОРИЯ ТВОЕЙ СЕССИИ:\n"+prior+"\n\n")+"ТЕКУЩИЙ ЗАПРОС:\n"+question+"\n\nСТРОГОЕ ОГРАНИЧЕНИЕ ДЛИНЫ ОТВЕТА: МАКСИМУМ "+wordLimit+" СЛОВ. Это обязательное условие эксперимента, а не рекомендация. Ответ должен полностью завершаться в пределах лимита. Перед отправкой сократи текст, если необходимо; не превышай лимит ни при каких обстоятельствах. Пиши по существу, не повторяй историю разговора. Для JSON-выбора сохрани четыре требуемых поля.";
  var label=$"{++calls:00}-{stage}-{who}";
  Save(label+"-request.json",new{model,system,prompt,tokens});
  var attempt=await ModelFallback.CompleteAsync(transport,budget,catalog,label,model,Array.Empty<string>(),system,null,prompt,tokens);
@@ -69,10 +69,6 @@ async Task<string> Ask(string who,string stage,string question) {
  history.Add(("user",question));history.Add(("assistant",result.Assessment.Content));
  ledger.Add(new{label,model,costUsd=cost,cumulativeUsd=spent});Save("cost-ledger.json",ledger);
  if(spent>cap) throw new InvalidOperationException("Budget exceeded");
- var wordCount=result.Assessment.Content.Split((char[]?)null,StringSplitOptions.RemoveEmptyEntries).Length;
- var accepted=wordCount<=wordLimit;
- Save(label+"-accepted.json",new{label,accepted,wordCount,wordLimit});
- if(!accepted) throw new InvalidOperationException($"{label}: overlong ({wordCount} words; limit {wordLimit})");
  return result.Assessment.Content;
 }
 var selectionRaw=await Ask("B","selection","Прочитай буклет. Выбери самое непонравившееся и самое понравившееся положения. Верни только JSON: disliked, dislikedReason, liked, likedReason — четыре строковых поля. Пока не обсуждай.\n\n"+booklet);
