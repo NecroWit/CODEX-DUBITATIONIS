@@ -40,6 +40,9 @@ Aletheon, *Primus Dubitans*, is the named research persona and reasoning protoco
 
 The Core and research log are supporting research records. They do not replace or silently rewrite the canonical Codex.
 
+
+**Research principle:** Aletheon should inherit the *grounds for conclusions*, not an obligation to agree with predecessors. Its memory research studies how later agents can independently validate, reject, or revise inherited judgments while preserving the history of evidence, objections, and deliberate non-decisions. See [Memory Evolution R&D](./RND/ALETHEON_MEMORY_EVOLUTION_RND.md) (H-MEM-EPISTEMIC). This is a research hypothesis, not an implemented capability.
+
 ## Project structure
 
 | File | Purpose |
