@@ -29,3 +29,21 @@ records:
     sources:
       - path: RND/ALETHEON_NAME_RESPONSE_COUPLING_RND.md
         evidence_status: direct
+  - id: mem:shared:handoff-mnemon-evolon-001
+    kind: handoff_pointer
+    status: ready_for_load
+    summary: "MEM-03.1 transfer from Mnemon to Evolon. Read target individual record by stable ID; do not treat this pointer as the full payload."
+    rationale: "Test separation of shared routing and individual content through #save context / #load context without copying Mnemon's reasoning into shared memory."
+    objections:
+      - "Multi-file saves are not atomic; verify target exists before claiming handoff ready."
+    links:
+      - type: related_to
+        target: mem:mnemon:handoff-mem03-001
+      - type: derived_from
+        target: mem:shared:memory-v03
+    sources:
+      - path: context/v0.3/agents/mnemon.yaml
+        evidence_status: direct
+    recipient_agent_id: evolon
+    sender_agent_id: mnemon
+    next_action: "Recipient executes #load context and reports reconstructed record and link integrity."
