@@ -1,12 +1,13 @@
 # Command context: #load context — v0.3
 
-**Entry point:** `#load context`
+**Entry point:** `#load context` (explicit request only)
 **Contract:** [../../CONTEXT_PROTOCOL.md](../../CONTEXT_PROTOCOL.md)
 
-1. Read Bootstrap, Context Index, Base Core and the shared v0.3 protocol.
-2. Load `context/v0.3/shared.yaml`, enumerate its `agent_registry`, and fetch **all** registered individual files, not only the current agent's. Validate each agent ID/path; missing files are errors, not empty memory. If the registry is missing, explicitly flag incomplete discovery.
-3. Compare all retrieved agents' records and detect new or updated work, including unlinked records. Resolve relevant handoff links (other agents' records read-only), verify IDs and important source paths. Reconstruct status, reasons, objections, attribution, open questions and next steps.
-4. If relevant legacy context is absent from v0.3, read `context/memory.yaml` as a labeled v0.2 fallback, without overwriting or promoting its claims.
-5. Report every registered agent and loaded path, discovered new records, unresolved references and a concrete next step. Do not write on load or claim reconstruction is verified solely because the files were read.
+1. Read Bootstrap, Context Index, Base Core and the shared v0.3 protocol. Aletheon startup alone does **not** invoke this command or load any agent memory.
+2. Identify the requested agent from the user's explicit selection or an unambiguous established current-agent identity. If unknown, ask; do not choose a name from the registry.
+3. Read `context/v0.3/shared.yaml` to locate that agent's file in `agent_registry`. Fetch **only that file** and validate its agent ID and path. Report absent entries or missing files.
+4. Reconstruct selected records with their grounds, objections, provenance, status and next steps. Resolve handoff references selectively. Do not fetch other agents' files unless a separate request or explicit cross-agent handoff/comparison authorizes them.
+5. Read `context/memory.yaml` as a labeled v0.2 fallback only when specifically needed and authorized; never automatically on Aletheon startup.
+6. Report the target agent, paths actually loaded, unresolved references and a concrete next step. No write on load; retrieval is not proof of reasoning reconstruction.
 
-No separate command for v0.3 is needed; the same `#save context` / `#load context` entry points apply.
+The public commands remain `#save context` and `#load context`. The agent registry is a directory, not an instruction to import everyone's memory.
