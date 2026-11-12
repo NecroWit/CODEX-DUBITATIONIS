@@ -1,6 +1,6 @@
 # Aletheon memory v0.3 — minimal implementation (2026-11-12)
 
-Status: implemented as a manually maintained file convention; cross-context validation pending. v0.2 save/load remains operational and is not silently replaced.
+Status: v0.3 is the active manual #save context / #load context contract; cross-context validation pending. v0.2 snapshot is retained as read-only fallback.
 
 ## 1. Shared and individual memory
 - `context/memory.yaml`: existing v0.2 shared snapshot, unchanged; legacy/default fallback.
@@ -29,7 +29,7 @@ Status: implemented as a manually maintained file convention; cross-context vali
 1. Read the file being updated and its blob SHA; reconcile its existing records with new ones.
 2. Re-fetch immediately before updating; stop on a changed SHA.
 3. Update only the relevant individual file, or shared file if explicitly publishing shared state; read back and verify.
-4. Do not overwrite `context/memory.yaml` implicitly. The v0.2 command remains available during migration.
+4. Do not overwrite `context/memory.yaml` implicitly. The same #save context command now uses v0.3; the v0.2 snapshot remains a read-only fallback.
 
 ## Excluded from v0.3
 No automatic context selection, graph engine, TTL, GC, background service, automatic synchronization, or proof of successful cross-model recovery. Selective loading remains a future requirement.
