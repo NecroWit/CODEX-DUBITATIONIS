@@ -4,7 +4,7 @@ Status: v0.3 is the active manual #save context / #load context contract; cross-
 
 ## 1. Shared and individual memory
 - `context/memory.yaml`: existing v0.2 shared snapshot, unchanged; legacy/default fallback.
-- `context/v0.3/shared.yaml`: shared v0.3 record index, containing accepted shared work and references, not private hypotheses as consensus.
+- `context/v0.3/shared.yaml`: shared v0.3 record index plus `agent_registry` of all discoverable individual files. Registry is routing metadata, not shared consensus.
 - `context/v0.3/agents/<agent-id>.yaml`: individual memory, with local hypotheses and work. A local record is not automatically promoted to shared.
 - Each agent updates only its own file; changes to shared require an explicit shared-memory write. Preserve others' records and use Git blob SHA concurrency checks for each write.
 
@@ -21,14 +21,14 @@ Status: v0.3 is the active manual #save context / #load context contract; cross-
 
 ## Minimal load
 1. Load existing Bootstrap and Core as before.
-2. Read `context/v0.3/shared.yaml` for shared work and the individual file of the requested agent, if present.
+2. Read `context/v0.3/shared.yaml` and enumerate `agent_registry`. Fetch every registered individual file, including other agents' files (read-only). Missing files or mismatched IDs must be reported; detect new records even without incoming links.
 3. Follow record IDs and source paths only as needed. If a target is missing, report the missing reference; do not fabricate it.
 4. For a complete v0.2 snapshot or an agent without a v0.3 file, use `context/memory.yaml` as fallback and label its provenance.
 
 ## Minimal save
 1. Read the file being updated and its blob SHA; reconcile its existing records with new ones.
 2. Re-fetch immediately before updating; stop on a changed SHA.
-3. Update only the relevant individual file, or shared file if explicitly publishing shared state; read back and verify.
+3. Update only the relevant individual file and ensure its `agent_registry` entry exists in shared. Update shared records only when explicitly publishing shared state; read back and verify. Registry maintenance is mandatory routing metadata, not publication of an individual's hypotheses.
 4. Do not overwrite `context/memory.yaml` implicitly. The same #save context command now uses v0.3; the v0.2 snapshot remains a read-only fallback.
 
 ## Excluded from v0.3
