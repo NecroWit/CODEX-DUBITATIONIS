@@ -1,0 +1,31 @@
+schema_version: "0.3"
+scope: shared
+updated_at: "2026-11-12"
+legacy_snapshot: context/memory.yaml
+records:
+  - id: mem:shared:memory-v03
+    kind: task
+    status: in_progress
+    summary: "Introduce three v0.3 memory features: shared/individual separation, stable addresses, and rationale links."
+    rationale: "v0.2 single mutable snapshot cannot independently represent multiple agents' work without contention or conflation."
+    objections:
+      - "Added files and manual linking increase maintenance; no cross-context validation yet."
+    links: []
+    sources:
+      - path: context/CONTEXT_PROTOCOL.md
+        evidence_status: direct
+      - path: RND/ALETHEON_MEMORY_EVOLUTION_RND.md
+        evidence_status: direct
+  - id: mem:shared:name-response-hypothesis
+    kind: research_pointer
+    status: proposed
+    summary: "Hypothesis that selected or assigned names may influence subsequent model responses; assigned to Evolon for study."
+    rationale: "Exploratory comparisons motivate controlled testing, but do not establish causality."
+    objections:
+      - "Prompt priming, order effects, and non-independent observations remain alternative explanations."
+    links:
+      - type: related_to
+        target: mem:shared:memory-v03
+    sources:
+      - path: RND/ALETHEON_NAME_RESPONSE_COUPLING_RND.md
+        evidence_status: direct
