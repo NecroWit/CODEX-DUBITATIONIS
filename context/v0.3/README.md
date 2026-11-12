@@ -19,11 +19,17 @@ Status: v0.3 is the active manual #save context / #load context contract; cross-
 - Source objects: `path`, `evidence_status` (direct, reconstructed, secondary, unverified), optional `note`.
 - An empty link list is permitted; never invent a supporting record.
 
-## Minimal load
-1. Load existing Bootstrap and Core as before.
-2. Read `context/v0.3/shared.yaml` and enumerate `agent_registry`. Fetch every registered individual file, including other agents' files (read-only). Missing files or mismatched IDs must be reported; detect new records even without incoming links.
-3. Follow record IDs and source paths only as needed. If a target is missing, report the missing reference; do not fabricate it.
-4. For a complete v0.2 snapshot or an agent without a v0.3 file, use `context/memory.yaml` as fallback and label its provenance.
+## Startup versus explicit memory load
+- Aletheon startup loads Bootstrap/Core and reasoning lineage, **not** v0.3 shared/individual memory or legacy v0.2 memory.
+- `agent_registry` is a directory of available agent files, not a startup reading list or an identity binding.
+- New instances must not receive another agent's individual memories before choosing a role.
+
+## Minimal load (explicit `#load context` only)
+1. Identify the target agent from an explicit request or an unambiguous current-agent selection; ask if ambiguous.
+2. Read `context/v0.3/shared.yaml` to resolve the target path. Fetch only the selected agent's file and validate its ID. Do not enumerate and fetch every agent.
+3. Resolve record IDs, reasons, objections and relevant handoff links selectively. Read other agents' files only on explicit request or authorized cross-agent handoff/comparison.
+4. Read `context/memory.yaml` as labeled v0.2 fallback only when needed for the authorized target; do not use it on startup.
+5. Report missing entries or links rather than fabricating them.
 
 ## Minimal save
 1. Read the file being updated and its blob SHA; reconcile its existing records with new ones.
@@ -32,4 +38,4 @@ Status: v0.3 is the active manual #save context / #load context contract; cross-
 4. Do not overwrite `context/memory.yaml` implicitly. The same #save context command now uses v0.3; the v0.2 snapshot remains a read-only fallback.
 
 ## Excluded from v0.3
-No automatic context selection, graph engine, TTL, GC, background service, automatic synchronization, or proof of successful cross-model recovery. Selective loading remains a future requirement.
+No automatic memory loading or context selection, graph engine, TTL, GC, background service, automatic synchronization, or proof of successful cross-model recovery. Selective loading remains a future requirement.
