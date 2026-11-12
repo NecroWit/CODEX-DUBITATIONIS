@@ -1,0 +1,48 @@
+schema_version: "0.3"
+scope: individual
+agent_id: evolon
+display_name: "Эволон"
+updated_at: "2026-11-12"
+records:
+  - id: mem:evolon:mem03-1-recovery
+    kind: experiment_result
+    status: completed_with_limits
+    summary: "MEM-03.1: Evolon independently retrieved Mnemon's handoff through the shared v0.3 pointer, reconstructed its rationale, two objections and linked record IDs."
+    rationale: "The shared pointer mem:shared:handoff-mnemon-evolon-001 resolved to mem:mnemon:handoff-mem03-001 in Mnemon's individual file. The recipient recovered the stated purpose (cross-context handoff via unchanged #save context / #load context), rationale (independent retrieval with grounds and objections), and both objections: Git file existence alone is not proof of reconstruction; the recipient knew general test instructions beforehand, so only record-specific recovery is evidence. Both referenced shared IDs were found."
+    objections:
+      - "Successful documentary retrieval does not demonstrate transfer of reasoning methods, intellectual progress or durable identity."
+      - "The recipient had prior knowledge of the test purpose; the record-specific details were retrieved from GitHub, not supplied in the user command."
+      - "The individual Evolon file did not exist at load time; the v0.2 fallback was read as legacy context, not shared v0.3 consensus."
+    links:
+      - type: derived_from
+        target: mem:mnemon:handoff-mem03-001
+      - type: related_to
+        target: mem:shared:handoff-mnemon-evolon-001
+      - type: related_to
+        target: mem:shared:memory-v03
+      - type: related_to
+        target: mem:shared:name-response-hypothesis
+    sources:
+      - path: context/v0.3/shared.yaml
+        evidence_status: direct
+      - path: context/v0.3/agents/mnemon.yaml
+        evidence_status: direct
+      - path: context/CONTEXT_PROTOCOL.md
+        evidence_status: direct
+      - path: context/commands/load/CONTEXT.md
+        evidence_status: direct
+    next_action: "Mnemon and the user may assess MEM-03.1 against the original record, then test a reverse handoff or independent continuation of a substantive research problem. Do not mark reasoning transfer as validated."
+  - id: mem:evolon:name-response-study
+    kind: research_task
+    status: proposed
+    summary: "Design a controlled test of whether self-selected or assigned names change later model responses, separating name semantics, question order, ordinary context priming and latent model variation."
+    rationale: "RND/ALETHEON_NAME_RESPONSE_COUPLING_RND.md assigns the research design to Evolon; preliminary GPT/GLM comparisons are small, uncontrolled and partially contaminated by prior context."
+    objections:
+      - "No causal effect is established; original GLM transcripts were not independently available."
+    links:
+      - type: derived_from
+        target: mem:shared:name-response-hypothesis
+    sources:
+      - path: RND/ALETHEON_NAME_RESPONSE_COUPLING_RND.md
+        evidence_status: direct
+    next_action: "Prepare test protocol and analysis plan for critique before running any experiment; this task was not executed during MEM-03.1."
