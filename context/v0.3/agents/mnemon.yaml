@@ -6,7 +6,7 @@ updated_at: "2026-11-12"
 records:
   - id: mem:mnemon:memory-v03-implementation
     kind: task
-    status: in_progress
+    status: testing
     summary: "Implement and verify the first three v0.3 memory features; independent validation with Evolon and Criterion pending."
     rationale: "User authorized the first three changes; maintain v0.2 compatibility while evaluating v0.3."
     objections:
@@ -17,3 +17,22 @@ records:
     sources:
       - path: context/v0.3/README.md
         evidence_status: direct
+  - id: mem:mnemon:handoff-mem03-001
+    kind: handoff
+    status: ready_for_load
+    summary: "MEM-03.1: Mnemon saved the first v0.3 cross-context handoff for Evolon. Evolon should invoke #load context and independently reconstruct this record, then report the linked shared task and limitations."
+    rationale: "The user requested real transmission using the unchanged #save context / #load context interface. A successful test requires independent retrieval of a Mnemon-owned record via a shared pointer, with reasons and objections intact."
+    objections:
+      - "Git file existence alone does not prove Evolon reconstructed the record."
+      - "The recipient may have seen general test instructions before loading; only record-specific content should be assessed."
+    links:
+      - type: derived_from
+        target: mem:shared:memory-v03
+      - type: related_to
+        target: mem:shared:name-response-hypothesis
+    sources:
+      - path: context/CONTEXT_PROTOCOL.md
+        evidence_status: direct
+      - path: context/commands/load/CONTEXT.md
+        evidence_status: direct
+    next_action: "Evolon: #load context; report record ID, rationale, both objections, linked record IDs, and missing sources; do not edit Mnemon's file."
