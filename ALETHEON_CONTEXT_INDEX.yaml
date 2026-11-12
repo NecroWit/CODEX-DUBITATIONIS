@@ -112,9 +112,9 @@ post_exp3_context_architecture:
 
 # v0.3 memory extension (manual, validation pending)
 memory_v03:
-  status: "implemented_file_convention; cross_context_validation_pending"
+  status: "active_save_load_v03; cross_context_validation_pending"
   documentation: context/v0.3/README.md
   shared_index: context/v0.3/shared.yaml
   individual_pattern: context/v0.3/agents/<agent-id>.yaml
   fallback: context/memory.yaml
-  note: "Existing #save context and #load context commands continue to follow v0.2 until explicitly migrated. Do not merge individual records into shared by default."
+  note: "Existing #save context and #load context now follow v0.3; v0.2 memory.yaml is a read-only fallback. Do not merge individual records into shared by default."
