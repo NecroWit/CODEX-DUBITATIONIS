@@ -1,43 +1,31 @@
-# Aletheon Context Protocol — v0.2 (Save / Load)
+# Aletheon Context Protocol — v0.3 (Save / Load)
 
-**Status:** manual GitHub-backed save/load protocol. Commands require an active session with repository tools.
-**Architecture:** [../ALETHEON_CONTEXT_ARCHITECTURE.md](../ALETHEON_CONTEXT_ARCHITECTURE.md).
+**Status:** active manual GitHub-backed protocol; cross-instance validation pending.
+**Commands:** `#save context` and `#load context` (same public interface as v0.2).
+**Specification:** [v0.3 README](v0.3/README.md).
 
-## Routing
-The authoritative command map is `ALETHEON_CONTEXT_INDEX.yaml#context_commands`:
-- `#save context` → `context/commands/save/CONTEXT.md`
-- `#load context` → `context/commands/load/CONTEXT.md`
-
-Read the command-specific instructions and this protocol before acting.
-
-## Storage
-- `context/memory.yaml` is the **single mutable save slot**. It contains the complete current saved state, not a pointer.
-- Previous versions remain in Git commit history. Historical `context/checkpoints/` files are legacy snapshots, not required for new saves or loads.
-- Preserve meaningful fields: `schema_version`, `checkpoint_id` (save identifier), `created_at`, `repository`, `active_goals`, `current_tasks`, `decisions` (with rationale and source refs), `open_questions`, `source_refs`, `restore_instructions`, and `limitations`.
-- Existing v0.1 full-state saves, including `2026-10-31-prime-001`, are readable. Do not require `checkpoint_path` or `checkpoint_commit`.
-- A save ID identifies a particular saved version, not a separately required checkpoint file.
+## Storage and identity
+- `context/v0.3/shared.yaml` — shared record index.
+- `context/v0.3/agents/<agent-id>.yaml` — each agent's individual records. The agent ID is stable even if its display name changes.
+- `context/memory.yaml` — read-only legacy v0.2 fallback during migration; v0.3 commands must not silently overwrite it.
+- Records use stable `mem:<scope>:<slug>` IDs, `rationale`, `objections`, `links` and `sources`.
+- Shared records are not automatically accepted conclusions: retain `status` and attribution. Individual records are never silently copied to shared.
 
 ## #save context
-1. Read `context/memory.yaml` and inspect current conversation and relevant repository sources.
-2. Reconcile goals, unfinished work, decisions **and their reasons**, unresolved questions, source paths, and next actions. Clearly distinguish verified facts, inference, and missing information.
-3. Construct the complete replacement save document. Do not erase unrelated ongoing tasks merely because they were not discussed in this conversation.
-4. Immediately before writing, re-fetch `context/memory.yaml` and compare its blob SHA with the initial read. If another writer changed it, stop and reconcile; do not overwrite blindly.
-5. Replace `context/memory.yaml` using the latest verified blob SHA. Do not create a new checkpoint as part of normal save.
-6. Read the saved file back and verify the ID and expected fields. Report success only after verification; otherwise report the exact failure.
-7. Report a compact fingerprint: save ID, commit, goals, next step, unresolved issues, and missing sources.
-
-Repeated sequential saves are allowed. If two saves overlap, optimistic concurrency checks prevent silent lost updates.
+1. Read the shared index and the current agent's individual file; if missing, create the individual file with `schema_version: "0.3"`, `scope: individual`, `agent_id`, `display_name`, `updated_at`, `records: []`.
+2. Reconcile current work with existing records. Preserve unrelated records, rationale, objections, provenance, unresolved work, and stable IDs. If important v0.2-only state is needed, read `context/memory.yaml` as a legacy source, not a replacement target.
+3. Store the agent's own work in its individual file. Update shared records only for explicitly shared outcomes, handoffs or pointers; a shared pointer may link to an individual record without copying it. Do not treat proposals as accepted decisions.
+4. Check referenced record IDs and source paths where accessible. Report unresolved references and missing evidence, not fabricated links.
+5. For each file to write, re-fetch immediately before updating and compare blob SHA against initial read. On mismatch, stop and reconcile; do not overwrite concurrent changes. New-file creation must fail safely if file already exists.
+6. Write only the changed files. Re-read every written file; verify IDs, content and links. A partially successful multi-file save must be reported as partial, with exact completed paths; never claim an atomic transaction.
+7. Report agent ID, written paths, commit(s), record IDs, next step and gaps.
 
 ## #load context
-1. Read `context/memory.yaml`.
-2. Validate the available state fields. If the file is absent or empty, report that no saved state is available.
-3. Load Bootstrap, Context Index, Base Core and task-relevant sources, validating important paths.
-4. Reconstruct the saved goals, decisions, reasons, open questions and next action. Distinguish saved notes from independently verified sources.
-5. Report a compact load fingerprint and any gaps. Do not execute pending irreversible actions automatically.
+1. Read Bootstrap, Context Index, Base Core, this protocol and relevant command instructions.
+2. Read `context/v0.3/shared.yaml`; read the current agent's individual file if present. Follow any handoff pointers and relevant record IDs, including other agents' individual records. Other agents' files are **read-only** for the current agent.
+3. Verify target IDs and sources; recover decisions with reasons, objections, attribution, status and next actions. Report missing references.
+4. If v0.3 files are missing or contain no relevant legacy state, read `context/memory.yaml` as an explicitly labeled v0.2 fallback. Do not silently interpret old records as new shared consensus.
+5. Report loaded paths, recovered record IDs, unresolved links and concrete next step. Do not write on load or automatically execute irreversible actions.
 
-## Limits and integrity
-- Save/load are manual tool-mediated operations; Markdown cannot automatically invoke them.
-- Git history is version history, not proof of continuous identity or subjective experience.
-- No automatic garbage collection, TTL, background agent, or context-window clearing is implemented.
-- A Git commit proves a write, not successful philosophical reconstruction.
-- Never claim success if verification fails; never silently overwrite concurrent changes.
+## Limits
+Manual operations require repository tools. File writes are per-file and non-atomic across multiple files. No automatic background sync, graph engine, TTL, GC, physical context clearing or guaranteed model-independent recovery. A successful Git write is not a successful handoff test.
