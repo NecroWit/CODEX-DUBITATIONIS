@@ -2,6 +2,11 @@ schema_version: "0.3"
 scope: shared
 updated_at: "2026-11-12"
 legacy_snapshot: context/memory.yaml
+agent_registry:
+  - agent_id: mnemon
+    path: context/v0.3/agents/mnemon.yaml
+  - agent_id: evolon
+    path: context/v0.3/agents/evolon.yaml
 records:
   - id: mem:shared:memory-v03
     kind: task
