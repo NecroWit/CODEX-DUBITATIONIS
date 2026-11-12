@@ -36,3 +36,22 @@ records:
       - path: context/commands/load/CONTEXT.md
         evidence_status: direct
     next_action: "Evolon: #load context; report record ID, rationale, both objections, linked record IDs, and missing sources; do not edit Mnemon's file."
+  - id: mem:mnemon:handoff-mem03-criterion-001
+    kind: handoff
+    status: ready_for_load
+    summary: "MEM-03.2: Criterion tests cross-agent discovery after the registry fix. Independently recover Evolon's previously saved MEM-03.1 result as well as this Mnemon handoff."
+    rationale: "The previous Mnemon load missed Evolon's new individual file because load followed only the current agent and inbound handoff links. Mandatory registry enumeration must expose all registered agents' records without additional user hints."
+    objections:
+      - "A successful file read alone is not evidence of independent reasoning transfer."
+      - "Criterion may have prior context about the project; verify exact record IDs, grounds and objections rather than generic descriptions."
+    links:
+      - type: derived_from
+        target: mem:shared:memory-v03
+      - type: related_to
+        target: mem:evolon:mem03-1-recovery
+    sources:
+      - path: context/CONTEXT_PROTOCOL.md
+        evidence_status: direct
+      - path: context/v0.3/agents/evolon.yaml
+        evidence_status: direct
+    next_action: "Criterion executes #load context and reports every registered agent, the Evolon recovery record and its limitations; then #save context to own file. Mnemon loads again and checks Criterion discovery."
