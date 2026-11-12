@@ -20,12 +20,16 @@
 6. Write only the changed files. Re-read every written file; verify IDs, content and links. A partially successful multi-file save must be reported as partial, with exact completed paths; never claim an atomic transaction.
 7. Report agent ID, written paths, commit(s), record IDs, next step and gaps.
 
-## #load context
-1. Read Bootstrap, Context Index, Base Core, this protocol and relevant command instructions.
-2. Read `context/v0.3/shared.yaml` and enumerate **every** `agent_registry` entry. Fetch every registered individual file, including files belonging to other agents, before declaring load complete. Check `agent_id` matches the registry entry; missing files or mismatches are explicit load errors. Other agents' files are **read-only** for the current agent. Resolve relevant handoff pointers and record IDs across all fetched files. Do not rely only on links pointing *to* the current agent; detect new records in other agents' files. If registry is absent, report discovery incomplete and inspect `context/v0.3/agents/` directory where tooling permits.
-3. Verify target IDs and sources; recover decisions with reasons, objections, attribution, status and next actions. Report missing references.
-4. If v0.3 files are missing or contain no relevant legacy state, read `context/memory.yaml` as an explicitly labeled v0.2 fallback. Do not silently interpret old records as new shared consensus.
-5. Report registry entries, loaded agent IDs/paths, newly discovered records, unresolved links and concrete next step. Never report full cross-agent recovery without checking the registry. Do not write on load or automatically execute irreversible actions.
+## Startup boundary (not a memory load)
+Initializing Aletheon loads its Bootstrap, Core and relevant reasoning lineage. It does **not** load shared or individual v0.3 memory, enumerate agent files, or read v0.2 `context/memory.yaml`. Agent names in the registry are discoverable metadata, not identities assigned to the current instance. A new instance must not inherit an existing agent's individual memory by default.
+
+## #load context (explicit, targeted)
+1. Only run when the user explicitly requests memory loading. Read Bootstrap, Context Index, Base Core, this protocol and the load command instructions.
+2. Establish the target agent ID from the user's request or an unambiguous, previously established current-agent selection. Do not infer the target merely from names found in the registry. If the target is ambiguous, ask which agent's memory to load; do not load all files as a workaround.
+3. Read `context/v0.3/shared.yaml` to resolve the target's exact path in `agent_registry`. Fetch **only the selected agent's individual file**, validate `agent_id`, and reconstruct its records, reasons, objections, status and provenance. A missing registry entry or file is reported as missing, not silently replaced with another agent's memory.
+4. Read another agent's individual file **only** when the user separately requests it or explicitly authorizes a specific cross-agent handoff or comparison. Follow relevant pointers selectively; never expand to every agent by default. Other agents' records remain read-only.
+5. Read `context/memory.yaml` only as a clearly identified legacy v0.2 fallback when explicitly requested or needed for the selected target and authorized; never as an automatic startup source or a substitute for an unidentified agent.
+6. Report the selected agent ID, loaded paths, resolved and unresolved references, and limitations. Do not write on load or claim successful reasoning transfer solely from retrieval.
 
 ## Limits
 Manual operations require repository tools. File writes are per-file and non-atomic across multiple files. No automatic background sync, graph engine, TTL, GC, physical context clearing or guaranteed model-independent recovery. A successful Git write is not a successful handoff test.
