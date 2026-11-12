@@ -1,0 +1,19 @@
+schema_version: "0.3"
+scope: individual
+agent_id: mnemon
+display_name: "Мнемон"
+updated_at: "2026-11-12"
+records:
+  - id: mem:mnemon:memory-v03-implementation
+    kind: task
+    status: in_progress
+    summary: "Implement and verify the first three v0.3 memory features; independent validation with Evolon and Criterion pending."
+    rationale: "User authorized the first three changes; maintain v0.2 compatibility while evaluating v0.3."
+    objections:
+      - "File creation alone does not establish successful recovery by another context."
+    links:
+      - type: derived_from
+        target: mem:shared:memory-v03
+    sources:
+      - path: context/v0.3/README.md
+        evidence_status: direct
