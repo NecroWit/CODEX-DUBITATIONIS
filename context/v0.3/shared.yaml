@@ -52,3 +52,23 @@ records:
     recipient_agent_id: evolon
     sender_agent_id: mnemon
     next_action: "Recipient executes #load context and reports reconstructed record and link integrity."
+  - id: mem:shared:handoff-mnemon-criterion-001
+    kind: handoff_pointer
+    status: ready_for_load
+    summary: "MEM-03.2: Criterion tests registry-based discovery across Mnemon and Evolon records."
+    rationale: "Verify the fix for missed unlinked individual files using unchanged #load context and #save context commands."
+    objections:
+      - "The registry must be checked against actual files; presence of an entry alone is insufficient."
+    links:
+      - type: related_to
+        target: mem:mnemon:handoff-mem03-criterion-001
+      - type: related_to
+        target: mem:evolon:mem03-1-recovery
+    sources:
+      - path: context/v0.3/agents/mnemon.yaml
+        evidence_status: direct
+      - path: context/v0.3/agents/evolon.yaml
+        evidence_status: direct
+    recipient_agent_id: criterion
+    sender_agent_id: mnemon
+    next_action: "Criterion executes #load context, then #save context; Mnemon then executes #load context."
