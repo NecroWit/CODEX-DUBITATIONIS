@@ -1,16 +1,13 @@
-# Command context: #save context
+# Command context: #save context — v0.3
 
 **Entry point:** `#save context`
-**Shared contract:** [../../CONTEXT_PROTOCOL.md](../../CONTEXT_PROTOCOL.md)
+**Contract:** [../../CONTEXT_PROTOCOL.md](../../CONTEXT_PROTOCOL.md)
 
-Read the shared contract before writing.
+1. Read the shared v0.3 memory and the current agent's individual memory. Identify the current agent by stable ID, not display name. Consult legacy `context/memory.yaml` only when necessary.
+2. Reconcile the current conversation and relevant repository sources with existing records; preserve unrelated work, reasoning, objections and provenance.
+3. Save individual work to `context/v0.3/agents/<agent-id>.yaml`. Save explicitly shared decisions, handoffs or pointers to `context/v0.3/shared.yaml`, without silently promoting individual hypotheses to consensus.
+4. Use stable record IDs, explicit status, rationale, objections, typed links and source evidence status. Do not invent references.
+5. Re-fetch each target and compare blob SHA immediately before writing. Stop/reconcile on conflict; use create-file only for absent agent files.
+6. Re-read every written file and verify. Report each commit, saved IDs, missing links and whether the multi-file operation was complete or partial.
 
-1. Read the complete saved state in `context/memory.yaml`.
-2. Reconcile with the current conversation; retain still-relevant goals and decisions, including their rationale, provenance and unresolved questions.
-3. Validate important source paths and mark missing evidence.
-4. Prepare a **complete replacement** of `context/memory.yaml` with a new unique save ID. This is a single-slot game-style save, **not** an immutable checkpoint creation.
-5. Re-read `context/memory.yaml` immediately before updating; if its blob SHA changed, stop and reconcile.
-6. Update `context/memory.yaml` using its current blob SHA.
-7. Read it back and verify the new save ID and fields. Report the commit and next step; never claim success on failure.
-
-Do not alter Core, Evolution, or experiment records as a side effect. Two sequential saves are valid; overlapping saves must not silently overwrite each other.
+Do not overwrite `context/memory.yaml`, other agents' individual files, Core, Evolution or experiment logs as a side effect. No guarantee of atomic multi-file saves.
