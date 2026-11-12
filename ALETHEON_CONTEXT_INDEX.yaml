@@ -109,3 +109,12 @@ post_exp3_context_architecture:
     - ALETHEON_RESEARCH_LOG.md#R-019
     - experiments/aletheon-bridge/README.md
   rule: "Load this design when context architecture or post-EXP-3 planning is relevant; it is not part of always_load and not an adopted Core principle."
+
+# v0.3 memory extension (manual, validation pending)
+memory_v03:
+  status: "implemented_file_convention; cross_context_validation_pending"
+  documentation: context/v0.3/README.md
+  shared_index: context/v0.3/shared.yaml
+  individual_pattern: context/v0.3/agents/<agent-id>.yaml
+  fallback: context/memory.yaml
+  note: "Existing #save context and #load context commands continue to follow v0.2 until explicitly migrated. Do not merge individual records into shared by default."
