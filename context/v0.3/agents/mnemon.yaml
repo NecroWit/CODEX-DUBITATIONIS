@@ -7,8 +7,8 @@ updated_at: "2026-11-16"
 records:
   - id: mem:mnemon:memory-v03-implementation
     kind: task
-    status: testing
-    summary: "Implement and verify the first three v0.3 memory features; independent validation with Evolon and Criterion pending."
+    status: partially_validated
+    summary: "Implement and validate v0.3 memory features. Evolon cross-chat recovery was demonstrated in MEM-03.1 and AID-targeted recovery in MEM-03.3; Criterion validation remains unconfirmed in this record."
     rationale: "User authorized the first three changes; maintain v0.2 compatibility while evaluating v0.3."
     objections:
       - "File creation alone does not establish successful recovery by another context."
@@ -81,7 +81,7 @@ records:
     kind: decision
     status: accepted_working_rules
     summary: "One active instance per AID; Prophet may authorize reusing an existing AID after context loss or unavailability; recovered identity remains philosophically undetermined. AID generation uses Python 3.14+ uuid.uuid7(); no mandatory C# Context Manager."
-    rationale: "The user needs practical continuity across context truncation without centralizing memory in C#. AID identifies a recorded lineage, not a proof of subject identity. Python 3.14+ standard-library uuid.uuid7() provides a specified generator while GitHub remains the memory store."
+    rationale: "The user wants practical continuity after context truncation while preserving the working direct model-to-GitHub memory architecture; making a C# Context Manager mandatory could disrupt it, but C# itself is not prohibited. AID identifies a recorded lineage, not proof of subject identity. Python 3.14+ standard-library uuid.uuid7() is the specified generator for new AIDs."
     objections:
       - "No technical mechanism currently proves that an old instance is inactive or prevents simultaneous use of one AID."
       - "The Python version actually used for earlier AID issuance was not independently verified; Python 3.14+ is the forward-looking documented requirement."
