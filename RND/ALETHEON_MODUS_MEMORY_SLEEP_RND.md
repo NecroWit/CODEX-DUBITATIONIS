@@ -1,6 +1,6 @@
 # Modus memory and collective sleep — working hypothesis
 
-Status: **working hypothesis**, not an implemented protocol or Core principle.
+Status: **working conceptual hypothesis**, with a basic manual v0.3 protocol extension (not a Core principle). See `context/v0.3/modus/README.md`.
 Recorded: 2026-11-16.
 Origin: discussion between the Prophet and Mnemon. Do not attribute agreement to Prime or Evolon.
 
@@ -27,6 +27,6 @@ The working metaphor is **collective sleep**: selective transmission, temporal f
 
 ## What remains undecided
 
-Exact TTL, time units, expiry/garbage-collection implementation, tag representation, record-linking of reinterpreted ideas, and storage format are **not yet specified**. Do not invent defaults or modify #save context / #load context without further discussion.
+Basic implementation: 3-day TTL, explicit `share_to_modus` publication, expiry filtering on load and pruning on the next modus write. These are technical defaults; no automatic background service. More advanced policies remain open.
 
-This document records the conceptual model only. It does not amend Core, context protocol, existing agent memories, or shared registry.
+The conceptual model has a basic manual implementation in the context protocol. Core is unchanged; this does not claim a completed end-to-end test.
