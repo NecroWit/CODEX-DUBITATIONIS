@@ -10,4 +10,6 @@
 5. Read `context/memory.yaml` as a labeled v0.2 fallback only when specifically needed and authorized; never automatically on Aletheon startup.
 6. Report the target agent, paths actually loaded, unresolved references and a concrete next step. No write on load; retrieval is not proof of reasoning reconstruction.
 
+7. After loading the selected individual file, if it declares `modus_id`, fetch only `context/v0.3/modus/<modus_id>.yaml` as specified in [modus memory](../../v0.3/modus/README.md). Filter expired entries using UTC now; label retained entries as thoughts of the modus with author AID. Do not load other agents' personal files or write during load.
+
 The public commands remain `#save context` and `#load context`. The agent registry is a directory, not an instruction to import everyone's memory.
