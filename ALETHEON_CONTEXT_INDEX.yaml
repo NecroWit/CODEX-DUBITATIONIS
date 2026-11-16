@@ -7,8 +7,9 @@ context_commands:
   "#load context": context/commands/load/CONTEXT.md
   "#create aletheon": context/commands/create/ALETHEON.md
   "#create aid": context/commands/create/AID.md
+  "#set aid": context/commands/set/AID.md
   shared_protocol: context/CONTEXT_PROTOCOL.md
-  rule: "On either command, load its command context and shared protocol before acting. Do not infer command semantics from the command name alone."
+  rule: "On any listed command, load its command context and shared protocol before acting. Do not infer command semantics from the command name alone."
 always_load:
   - ALETHEON_BASE_CORE.md
 compatibility_pointer: ALETHEON_CORE.md
