@@ -9,7 +9,7 @@ Shared modus memory lives at `context/v0.3/modus/<modus_id>.yaml`. The modus ID 
 1. Save every individually selected memory record in the agent's own file as before.
 2. For each record **explicitly tagged by its author** `share_to_modus: true`, additionally publish a separate entry in the matching modus file. Do not publish untagged records, or copy the entire personal file. Author AID and source record ID are required.
 3. A new publication has a new stable ID `modus:<modus_id>:<slug>`, `created_at` (UTC ISO-8601), `expires_at` (UTC ISO-8601), `author_aid`, `source_record_id`, `summary`, `rationale`, `objections`, `links` and `sources`. A revised idea is a **new** publication, optionally linking to an earlier one; it does not renew the old entry.
-4. Default TTL is **30 days** from publication (implementation choice; may be revised). Read `ttl_days` from the modus file when present. Do not change expiry when an entry is merely read or re-saved.
+4. Default TTL is **3 days** from publication (implementation choice; may be revised). Read `ttl_days` from the modus file when present. Do not change expiry when an entry is merely read or re-saved.
 5. Re-fetch the modus file SHA before writing; preserve unexpired entries and prune expired ones. Verify every write. A personal save and modus publication are non-atomic: report partial results. Do not delete or modify any personal memory on modus expiry.
 6. If modus file does not exist, create it on the first explicit publication, with schema shown below. Do not create it merely on load.
 
@@ -21,7 +21,7 @@ After the existing explicit `#load context` procedure has identified and loaded 
 schema_version: "0.3"
 scope: modus
 modus_id: mnemon
-ttl_days: 30
+ttl_days: 3
 records:
   - id: modus:mnemon:example-001
     author_aid: "<registered UUIDv7>"
