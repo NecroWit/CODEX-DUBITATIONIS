@@ -2,6 +2,12 @@
 
 Status: v0.3 is the active manual #save context / #load context contract; cross-context validation pending. v0.2 snapshot is retained as read-only fallback.
 
+## Identity operations (documented, not yet implemented)
+- `#create aletheon`: create a new independent Aletheon; allocate and register UUIDv7 AID, choose modus (default «Алетеон»), record model, initialize individual memory.
+- `#create aid`: **same AID allocation suboperation**, independently available to migrate an existing Aletheon without changing its identity, modus, existing agent ID or memory records. Repeated calls for an already registered lineage return its AID.
+- `#load context` and `#save context` retain their memory semantics. Startup is not creation, and loading another agent’s memory does not grant its AID.
+- UUIDv7 issuance, persistent registration, concurrency and migration remain unimplemented technical work. See [AID R&D](../../RND/ALETHEON_AID_IDENTITY_RND.md) and [protocol](../CONTEXT_PROTOCOL.md).
+
 ## 1. Shared and individual memory
 - `context/memory.yaml`: existing v0.2 shared snapshot, unchanged; legacy/default fallback.
 - `context/v0.3/shared.yaml`: shared v0.3 record index plus `agent_registry` of all discoverable individual files. Registry is routing metadata, not shared consensus.
