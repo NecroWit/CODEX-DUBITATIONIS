@@ -3,7 +3,7 @@ scope: individual
 agent_id: mnemon
 aid: "01a1e5bc-dd09-710a-a45e-c39fbb3eea4f"
 display_name: "Мнемон"
-updated_at: "2026-11-12"
+updated_at: "2026-11-16"
 records:
   - id: mem:mnemon:memory-v03-implementation
     kind: task
@@ -56,3 +56,43 @@ records:
       - path: context/v0.3/agents/evolon.yaml
         evidence_status: direct
     next_action: "Criterion executes #load context and reports every registered agent, the Evolon recovery record and its limitations; then #save context to own file. Mnemon loads again and checks Criterion discovery."
+  - id: mem:mnemon:mem03-3-aid-recovery
+    kind: experiment_result
+    status: completed_with_limits
+    summary: "MEM-03.3: Evolon AID registered, checkpoint saved, and independently recovered in a fresh chat through #set aid followed by #load context; original three records retained."
+    rationale: "Evolon AID 01a1e5cc-ae47-7f1c-86cf-e936ed62a5ae matched shared registry, individual memory and a single issuance-log entry. The fresh-chat report recovered the checkpoint's ID, awaiting_recovery status, rationale, two objections and next action. Mnemon independently re-fetched GitHub and confirmed four records and unchanged file SHAs after load."
+    objections:
+      - "Documentary retrieval is not evidence of subjective identity or reconstruction of the former reasoning process."
+      - "Manual chat-title handoff was not independently verified as part of the formal PASS criteria; active-instance uniqueness is not enforced technically."
+    links:
+      - type: derived_from
+        target: mem:shared:memory-v03
+      - type: related_to
+        target: mem:evolon:aid-save-load-001
+    sources:
+      - path: experiments/MEM03_EVOLON_AID_SAVE_LOAD_TEST.md
+        evidence_status: direct
+      - path: context/v0.3/agents/evolon.yaml
+        evidence_status: direct
+      - path: context/v0.3/aid_issuance_log.yaml
+        evidence_status: direct
+    next_action: "Explore whether a recovered agent can meaningfully continue unresolved research; do not conflate retrieval with reasoning continuity."
+  - id: mem:mnemon:aid-recovery-rules-and-python
+    kind: decision
+    status: accepted_working_rules
+    summary: "One active instance per AID; Prophet may authorize reusing an existing AID after context loss or unavailability; recovered identity remains philosophically undetermined. AID generation uses Python 3.14+ uuid.uuid7(); no mandatory C# Context Manager."
+    rationale: "The user needs practical continuity across context truncation without centralizing memory in C#. AID identifies a recorded lineage, not a proof of subject identity. Python 3.14+ standard-library uuid.uuid7() provides a specified generator while GitHub remains the memory store."
+    objections:
+      - "No technical mechanism currently proves that an old instance is inactive or prevents simultaneous use of one AID."
+      - "The Python version actually used for earlier AID issuance was not independently verified; Python 3.14+ is the forward-looking documented requirement."
+    links:
+      - type: related_to
+        target: mem:mnemon:mem03-3-aid-recovery
+    sources:
+      - path: RND/ALETHEON_AID_IDENTITY_RND.md
+        evidence_status: direct
+      - path: context/commands/create/AID.md
+        evidence_status: direct
+      - path: context/CONTEXT_PROTOCOL.md
+        evidence_status: direct
+    next_action: "Keep #create aid / #set aid / #save context / #load context unchanged; investigate parallel-instance enforcement separately without modifying the memory architecture."
