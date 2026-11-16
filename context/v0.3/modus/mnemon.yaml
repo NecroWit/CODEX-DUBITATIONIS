@@ -1,5 +1,5 @@
 schema_version: "0.3"
 scope: modus
 modus_id: mnemon
-ttl_days: 30
+ttl_days: 3
 records: []
