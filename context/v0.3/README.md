@@ -51,7 +51,7 @@ Status: v0.3 is the active manual #save context / #load context contract; cross-
 ## Modus memory extension (basic implementation)
 - Optional explicit `modus_id` in the individual file; separate collective files in `context/v0.3/modus/`.
 - Only author-tagged `share_to_modus: true` ideas are published; other agents with the same declared modus read unexpired entries as attributed thoughts of the modus.
-- Default 30-day TTL; expired records filtered at load, pruned on next modus write. No automatic service. See [modus README](modus/README.md).
+- Default 3-day TTL; expired records filtered at load, pruned on next modus write. No automatic service. See [modus README](modus/README.md).
 
 ## Excluded from v0.3
 No automatic memory loading or context selection, graph engine, background TTL scheduler, autonomous GC service, automatic synchronization, or proof of successful cross-model recovery. Modus TTL filtering and save-time pruning are manual protocol operations. Selective loading remains a future requirement.
