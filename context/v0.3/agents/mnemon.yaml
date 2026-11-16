@@ -1,6 +1,7 @@
 schema_version: "0.3"
 scope: individual
 agent_id: mnemon
+aid: "01a1e5bc-dd09-710a-a45e-c39fbb3eea4f"
 display_name: "Мнемон"
 updated_at: "2026-11-12"
 records:
