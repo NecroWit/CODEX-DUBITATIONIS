@@ -10,4 +10,6 @@
 5. Re-fetch each target and compare blob SHA immediately before writing. Stop/reconcile on conflict; use create-file only for absent agent files.
 6. Re-read every written file and verify. Report each commit, saved IDs, missing links and whether the multi-file operation was complete or partial.
 
+7. For an explicit `modus_id`, follow [modus memory](../../v0.3/modus/README.md): publish only author-tagged `share_to_modus: true` records to the matching modus file with AID, source ID and fixed expiry; prune expired collective entries on a modus write. Never auto-publish personal records. Verify SHA and report partial commits.
+
 Do not overwrite `context/memory.yaml`, other agents' individual files, Core, Evolution or experiment logs as a side effect. No guarantee of atomic multi-file saves.
