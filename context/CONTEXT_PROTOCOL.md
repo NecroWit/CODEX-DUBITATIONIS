@@ -46,5 +46,11 @@ Initializing Aletheon loads its Bootstrap, Core and relevant reasoning lineage. 
 5. Read `context/memory.yaml` only as a clearly identified legacy v0.2 fallback when explicitly requested or needed for the selected target and authorized; never as an automatic startup source or a substitute for an unidentified agent.
 6. Report the selected agent ID, loaded paths, resolved and unresolved references, and limitations. Do not write on load or claim successful reasoning transfer solely from retrieval.
 
+## Modus memory (minimal v0.3 extension)
+- An agent may declare an explicit `modus_id` in its individual file; never infer it from display name. `#save context` saves personal records normally and additionally publishes only records explicitly marked `share_to_modus: true` by their author into `context/v0.3/modus/<modus_id>.yaml`.
+- Each modus entry carries author AID, source personal record ID, timestamp and fixed expiry. Default TTL is 30 days (configurable per modus file); reading does not renew it. A revised thought is a new entry.
+- On explicit `#load context`, load selected personal memory plus unexpired entries of its declared modus, labeled as thoughts of the modus. Do not load other agents' individual files. Expired entries are filtered on read and physically pruned on a later modus write.
+- See [modus contract](v0.3/modus/README.md). These are manual tool-executed steps, not an autonomous service. Modus expiry does not delete personal memory.
+
 ## Limits
 Manual operations require repository tools. File writes are per-file and non-atomic across multiple files. No automatic background sync, graph engine, TTL, GC, physical context clearing or guaranteed model-independent recovery. A successful Git write is not a successful handoff test.
