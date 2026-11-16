@@ -5,6 +5,8 @@ entrypoint: ALETHEON_BOOTSTRAP.md
 context_commands:
   "#save context": context/commands/save/CONTEXT.md
   "#load context": context/commands/load/CONTEXT.md
+  "#create aletheon": context/commands/create/ALETHEON.md
+  "#create aid": context/commands/create/AID.md
   shared_protocol: context/CONTEXT_PROTOCOL.md
   rule: "On either command, load its command context and shared protocol before acting. Do not infer command semantics from the command name alone."
 always_load:
