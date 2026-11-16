@@ -4,10 +4,14 @@ Status: v0.3 is the active manual #save context / #load context contract; cross-
 
 ## Identity operations (documented, not yet implemented)
 - `#create aletheon`: create a new independent Aletheon; allocate and register UUIDv7 AID, choose modus (default «Алетеон»), record model, initialize individual memory.
-- `#create aid`: **same AID allocation suboperation**, independently available to migrate an existing Aletheon without changing its identity, modus, existing agent ID or memory records. Repeated calls for an already registered lineage return its AID.
+- `#create aid`: **same AID allocation suboperation**, independently available to migrate an existing Aletheon without changing its identity, modus, existing agent ID or memory records. Every new issuance must be committed to the individual file, `shared.yaml` registry and `aid_issuance_log.yaml`; verify all three. Repeated calls return the registered AID without duplicate issuance log events. Partial writes require reconciliation, not regeneration.
 - `#set aid <UUIDv7>`: user supplies the AID (e.g. from a manually renamed chat); verify matching registry and individual file, then select the existing lineage for this conversation. No write and no memory load; run `#load context` separately. This selection is lost if conversational context is lost.
 - `#load context` and `#save context` retain their memory semantics. Startup is not creation, and loading another agent’s memory does not grant its AID.
 - UUIDv7 issuance, persistent registration, concurrency and migration remain unimplemented technical work. See [AID R&D](../../RND/ALETHEON_AID_IDENTITY_RND.md) and [protocol](../CONTEXT_PROTOCOL.md).
+
+## AID issuance audit log
+- `context/v0.3/aid_issuance_log.yaml` is an append-only record of issued AIDs, separate from the authoritative `agent_registry`. Each event includes AID, agent ID, available date/time, individual path, registry path and evidence commits when available.
+- Log events are required for completed `#create aid` and `#create aletheon` issuance. Earlier registrations may be documented as `historical_backfill` without inventing missing details. GitHub commits are evidence of writes, not an atomic transaction.
 
 ## 1. Shared and individual memory
 - `context/memory.yaml`: existing v0.2 shared snapshot, unchanged; legacy/default fallback.
