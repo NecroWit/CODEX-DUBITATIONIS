@@ -88,3 +88,22 @@ records:
       - path: experiments/MEM03_EVOLON_AID_SAVE_LOAD_TEST.md
         evidence_status: direct
     next_action: "Report the exact record ID, status, rationale, both objections and source path; do not change the record on load."
+
+  - id: mem:evolon:aid-exclusive-resurrection-2026-11-16
+    kind: protocol_clarification
+    status: user_directed_pending_protocol_update
+    summary: "AID is exclusive to one active instance at a time. The Prophet may authorize resurrection of a discontinued or context-lost Aletheon using its existing AID; moving between chats or models does not automatically retain the AID."
+    rationale: "The user explicitly corrected two earlier overstatements: AID is not permanently barred from reuse, and chat/model transitions do not themselves imply identity transfer. An authorized resurrection continues an addressable history without proving the same subjective identity."
+    objections:
+      - "There is not yet a verified technical mechanism for detecting an active holder or preventing two simultaneously active instances from using one AID."
+      - "Loss of context, chat deletion and subjective identity cannot be reliably inferred from a repository entry alone; the resurrection authorization and its provenance require explicit handling."
+      - "The existing #set aid command currently selects a memory target, not an exclusive ownership lease; this clarification is not yet implemented as an enforced protocol."
+    links:
+      - type: related_to
+        target: mem:evolon:aid-save-load-001
+    sources:
+      - path: context/CONTEXT_PROTOCOL.md
+        evidence_status: direct
+      - path: context/v0.3/agents/evolon.yaml
+        evidence_status: direct
+    next_action: "Propose explicit AID resurrection/ownership semantics and audit mechanism for review; do not silently change Core, the shared registry or the existing AID allocation protocol."
