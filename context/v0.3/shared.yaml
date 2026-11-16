@@ -4,6 +4,7 @@ updated_at: "2026-11-12"
 legacy_snapshot: context/memory.yaml
 agent_registry:
   - agent_id: mnemon
+    aid: "01a1e5bc-dd09-710a-a45e-c39fbb3eea4f"
     path: context/v0.3/agents/mnemon.yaml
   - agent_id: evolon
     path: context/v0.3/agents/evolon.yaml
