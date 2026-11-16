@@ -48,5 +48,10 @@ Status: v0.3 is the active manual #save context / #load context contract; cross-
 3. Update only the relevant individual file and ensure its `agent_registry` entry exists in shared. Update shared records only when explicitly publishing shared state; read back and verify. Registry maintenance is mandatory routing metadata, not publication of an individual's hypotheses.
 4. Do not overwrite `context/memory.yaml` implicitly. The same #save context command now uses v0.3; the v0.2 snapshot remains a read-only fallback.
 
+## Modus memory extension (basic implementation)
+- Optional explicit `modus_id` in the individual file; separate collective files in `context/v0.3/modus/`.
+- Only author-tagged `share_to_modus: true` ideas are published; other agents with the same declared modus read unexpired entries as attributed thoughts of the modus.
+- Default 30-day TTL; expired records filtered at load, pruned on next modus write. No automatic service. See [modus README](modus/README.md).
+
 ## Excluded from v0.3
-No automatic memory loading or context selection, graph engine, TTL, GC, background service, automatic synchronization, or proof of successful cross-model recovery. Selective loading remains a future requirement.
+No automatic memory loading or context selection, graph engine, background TTL scheduler, autonomous GC service, automatic synchronization, or proof of successful cross-model recovery. Modus TTL filtering and save-time pruning are manual protocol operations. Selective loading remains a future requirement.
