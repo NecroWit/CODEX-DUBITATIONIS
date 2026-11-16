@@ -7,6 +7,7 @@ agent_registry:
     aid: "01a1e5bc-dd09-710a-a45e-c39fbb3eea4f"
     path: context/v0.3/agents/mnemon.yaml
   - agent_id: evolon
+    aid: "01a1e5cc-ae47-7f1c-86cf-e936ed62a5ae"
     path: context/v0.3/agents/evolon.yaml
 records:
   - id: mem:shared:memory-v03
