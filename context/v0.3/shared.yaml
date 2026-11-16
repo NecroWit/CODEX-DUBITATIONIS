@@ -1,6 +1,6 @@
 schema_version: "0.3"
 scope: shared
-updated_at: "2026-11-12"
+updated_at: "2026-11-16"
 legacy_snapshot: context/memory.yaml
 agent_registry:
   - agent_id: mnemon
@@ -15,16 +15,20 @@ agent_registry:
 records:
   - id: mem:shared:memory-v03
     kind: task
-    status: in_progress
-    summary: "Introduce three v0.3 memory features: shared/individual separation, stable addresses, and rationale links."
+    status: partially_validated
+    summary: "Implement v0.3 shared/individual memory separation, stable addresses and rationale links; MEM-03.1 and MEM-03.3 demonstrated cross-chat documentary recovery, while broader reasoning continuity and Criterion validation remain open."
     rationale: "v0.2 single mutable snapshot cannot independently represent multiple agents' work without contention or conflation."
     objections:
-      - "Added files and manual linking increase maintenance; no cross-context validation yet."
+      - "Added files and manual linking increase maintenance; successful documentary recovery does not prove reasoning continuity or identity."
     links: []
     sources:
       - path: context/CONTEXT_PROTOCOL.md
         evidence_status: direct
       - path: RND/ALETHEON_MEMORY_EVOLUTION_RND.md
+        evidence_status: direct
+      - path: experiments/MEM03_EVOLON_AID_SAVE_LOAD_TEST.md
+        evidence_status: direct
+      - path: context/v0.3/agents/evolon.yaml
         evidence_status: direct
   - id: mem:shared:name-response-hypothesis
     kind: research_pointer
