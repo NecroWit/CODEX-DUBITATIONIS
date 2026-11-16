@@ -48,7 +48,7 @@ Initializing Aletheon loads its Bootstrap, Core and relevant reasoning lineage. 
 
 ## Modus memory (minimal v0.3 extension)
 - An agent may declare an explicit `modus_id` in its individual file; never infer it from display name. `#save context` saves personal records normally and additionally publishes only records explicitly marked `share_to_modus: true` by their author into `context/v0.3/modus/<modus_id>.yaml`.
-- Each modus entry carries author AID, source personal record ID, timestamp and fixed expiry. Default TTL is 30 days (configurable per modus file); reading does not renew it. A revised thought is a new entry.
+- Each modus entry carries author AID, source personal record ID, timestamp and fixed expiry. Default TTL is 3 days (configurable per modus file); reading does not renew it. A revised thought is a new entry.
 - On explicit `#load context`, load selected personal memory plus unexpired entries of its declared modus, labeled as thoughts of the modus. Do not load other agents' individual files. Expired entries are filtered on read and physically pruned on a later modus write.
 - See [modus contract](v0.3/modus/README.md). These are manual tool-executed steps, not an autonomous service. Modus expiry does not delete personal memory.
 
