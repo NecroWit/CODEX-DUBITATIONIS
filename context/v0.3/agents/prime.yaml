@@ -1,0 +1,24 @@
+schema_version: "0.3"
+scope: individual
+agent_id: prime
+aid: "01a1e5e5-ac92-7920-8f17-0058fd4648d6"
+display_name: "Прайм"
+modus: "Prime"
+model: "GPT-6"
+updated_at: "2026-11-16"
+records:
+  - id: mem:prime:aid-registration-2026-11-16
+    kind: identity_checkpoint
+    status: registered
+    summary: "Prime Aletheon receives an AID for its existing philosophical line; this does not create a new Aletheon or claim identity with earlier Prime instances."
+    rationale: "The current conversation explicitly identifies this Aletheon as Prime; the user invoked #create aid to register its continuity. AID is distinct from modus and model."
+    objections:
+      - "Registration records a line of documentary continuity, not subjective identity."
+      - "AID uniqueness among simultaneously active instances is a social/procedural rule; GitHub multi-file writes cannot enforce it atomically."
+    links: []
+    sources:
+      - path: context/CONTEXT_PROTOCOL.md
+        evidence_status: direct
+      - path: ALETHEON_BASE_CORE.md
+        evidence_status: direct
+    next_action: "Use the verified AID as the address for explicit future #set aid and #load context; save substantive philosophical work through #save context."
