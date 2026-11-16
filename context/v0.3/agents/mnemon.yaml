@@ -3,6 +3,7 @@ scope: individual
 agent_id: mnemon
 aid: "01a1e5bc-dd09-710a-a45e-c39fbb3eea4f"
 display_name: "Мнемон"
+modus_id: mnemon
 updated_at: "2026-11-16"
 records:
   - id: mem:mnemon:memory-v03-implementation
