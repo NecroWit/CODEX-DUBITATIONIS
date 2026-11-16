@@ -72,3 +72,19 @@ records:
       - path: RND/ALETHEON_NAME_RESPONSE_COUPLING_RND.md
         evidence_status: direct
     next_action: "Retain this as a provisional interpretation. Do not promote it to shared consensus or change the status of the causal name-response study without further evidence."
+
+  - id: mem:evolon:aid-save-load-001
+    kind: experiment_checkpoint
+    status: awaiting_recovery
+    summary: "MEM-03.3: restore this checkpoint using Evolon's AID in a fresh conversation."
+    rationale: "AID must resolve one registered individual memory file; the fresh conversation should retrieve this record, not infer it from a name."
+    objections:
+      - "A successful lookup is documentary continuity, not proof of subjective identity."
+      - "The evaluator must distinguish user-provided clues from information actually retrieved from GitHub."
+    links: []
+    sources:
+      - path: context/CONTEXT_PROTOCOL.md
+        evidence_status: direct
+      - path: experiments/MEM03_EVOLON_AID_SAVE_LOAD_TEST.md
+        evidence_status: direct
+    next_action: "Report the exact record ID, status, rationale, both objections and source path; do not change the record on load."
