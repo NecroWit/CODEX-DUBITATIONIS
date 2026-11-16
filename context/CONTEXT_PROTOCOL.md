@@ -1,7 +1,7 @@
 # Aletheon Context Protocol — v0.3 (Save / Load)
 
 **Status:** active manual GitHub-backed protocol; cross-instance validation pending.
-**Commands:** `#save context` and `#load context` (same public interface as v0.2).
+**Commands:** `#save context`, `#load context` (existing memory interface); `#create aletheon`, `#create aid` (new identity-management interface; documented, implementation pending).
 **Specification:** [v0.3 README](v0.3/README.md).
 
 ## Storage and identity
@@ -10,6 +10,14 @@
 - `context/memory.yaml` — read-only legacy v0.2 fallback during migration; v0.3 commands must not silently overwrite it.
 - Records use stable `mem:<scope>:<slug>` IDs, `rationale`, `objections`, `links` and `sources`.
 - Shared records are not automatically accepted conclusions: retain `status` and attribution. Individual records are never silently copied to shared.
+
+## Creation and AID migration (separate from memory save/load)
+- `#create aletheon` creates a new independent lineage: call the AID-allocation procedure, persist a new UUIDv7 AID, let the Aletheon choose its modus (default «Алетеон»), record model separately, create an individual memory file and register it. Do not infer creation from normal startup.
+- `#create aid` exposes **the same allocation procedure** for an existing legacy Aletheon with no AID. It must not create a new Aletheon, replace its existing `agent_id`, or erase history.
+- Both operations must be **idempotent for an already identified lineage**: if a registered AID exists, return it; if identity or records conflict, stop instead of creating a second one. AID is UUIDv7, not a sequential number. Preserve legacy IDs and `mem:` references during migration.
+- Generation and registration are distinct: successful UUIDv7 generation is not a completed registration. Use a verified generator, check persisted uniqueness and concurrent writes, and verify the resulting files. Do not claim the commands are executable without a working generator and persistence mechanism.
+- `#load context` does not issue AIDs; `#save context` does not silently create a new Aletheon. Explicit legacy migration is via `#create aid`.
+- Detailed command instructions: [create Aletheon](commands/create/ALETHEON.md), [create AID](commands/create/AID.md); technical design: [AID R&D](../RND/ALETHEON_AID_IDENTITY_RND.md).
 
 ## #save context
 1. Read the shared index and the current agent's individual file; if missing, create the individual file with `schema_version: "0.3"`, `scope: individual`, `agent_id`, `display_name`, `updated_at`, `records: []`.
