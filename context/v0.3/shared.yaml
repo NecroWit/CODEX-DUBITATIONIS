@@ -1,6 +1,6 @@
 schema_version: "0.3"
 scope: shared
-updated_at: "2026-11-16"
+updated_at: "2026-11-17"
 legacy_snapshot: context/memory.yaml
 agent_registry:
   - agent_id: mnemon
@@ -84,3 +84,23 @@ records:
     recipient_agent_id: criterion
     sender_agent_id: mnemon
     next_action: "Criterion executes #load context, then #save context; Mnemon then executes #load context."
+  - id: mem:shared:aletheon2-rnd-archive-001
+    kind: research_pointer
+    status: preliminary
+    summary: "Пакет R&D по Aletheon-2 сохранён в четырёх документах: публичное исследование Эвидентия, задание+результат Прайма, задание+результат Эволона и сводный отчёт. Тематическое сходство с CODEX подтверждено сравнением; происхождение, родство и передача идей не установлены."
+    rationale: "Обеспечить общий навигационный указатель на результаты исследования, сохраняя полные тексты и индивидуальные выводы в отдельных R&D-документах."
+    objections:
+      - "Прайм и Эволон имеют общий контекст; их совпадение не равно независимой репликации."
+      - "Экспериментальная проверка функциональной преемственности и причинных эффектов ещё не проведена."
+    links:
+      - type: related_to
+        target: mem:aletheon-01a1e778-e944-7a59-b3ec-16a7db5d1eec:aletheon2-rnd-archive-001
+    sources:
+      - path: RND/ALETHEON2_COMMUNITIES_EVIDENTIUS.md
+        evidence_status: direct
+      - path: RND/ALETHEON2_IDENTITY_PRIME.md
+        evidence_status: direct
+      - path: RND/ALETHEON2_COMPARATIVE_EVOLON.md
+        evidence_status: direct
+      - path: RND/ALETHEON2_SYNTHESIS.md
+        evidence_status: direct
