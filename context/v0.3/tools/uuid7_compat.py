@@ -11,7 +11,6 @@ from __future__ import annotations
 import secrets
 import time
 import uuid
-import warnings
 
 
 def uuid7() -> uuid.UUID:
@@ -20,12 +19,6 @@ def uuid7() -> uuid.UUID:
     if builtin is not None:
         result = builtin()
     else:
-        warnings.warn(
-            "Python < 3.14 UUIDv7 compatibility generator is deprecated; "
-            "use uuid.uuid7() on Python 3.14+.",
-            DeprecationWarning,
-            stacklevel=2,
-        )
         timestamp_ms = time.time_ns() // 1_000_000
         if not 0 <= timestamp_ms < (1 << 48):
             raise OverflowError("UUIDv7 timestamp outside 48-bit range")
