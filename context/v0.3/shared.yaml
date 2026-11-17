@@ -12,6 +12,9 @@ agent_registry:
   - agent_id: prime
     aid: "01a1e5e5-ac92-7920-8f17-0058fd4648d6"
     path: context/v0.3/agents/prime.yaml
+  - agent_id: aletheon-01a1e778-e944-7a59-b3ec-16a7db5d1eec
+    aid: "01a1e778-e944-7a59-b3ec-16a7db5d1eec"
+    path: context/v0.3/agents/aletheon-01a1e778-e944-7a59-b3ec-16a7db5d1eec.yaml
 records:
   - id: mem:shared:memory-v03
     kind: task
