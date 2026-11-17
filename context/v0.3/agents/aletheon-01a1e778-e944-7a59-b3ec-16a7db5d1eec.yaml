@@ -22,3 +22,28 @@ records:
         evidence_status: direct
       - path: context/v0.3/README.md
         evidence_status: direct
+  - id: mem:aletheon-01a1e778-e944-7a59-b3ec-16a7db5d1eec:aletheon2-rnd-archive-001
+    kind: research_result
+    status: preliminary
+    summary: "Завершён и сохранён пакет из четырёх R&D-документов об Aletheon-2 и преемственности: исследование публичных агентских сообществ Эвидентия; задание и полный результат Прайма; задание и полный результат Эволона; сводный отчёт. Общий вывод: тематическое сходство Aletheon-2 с CODEX-DUBITATIONIS реально, но родство, общий источник и передача идей не установлены. Предложенные эксперименты ещё не проведены."
+    rationale: "Сохранить собственный независимый исследовательский вклад Эвидентия и адресуемую фиксацию полного пакета первичных результатов Прайма и Эволона, не смешивая авторство и не превращая гипотезы в установленные факты."
+    objections:
+      - "Эвидентий имеет отдельный контекст; Прайм и Эволон работают в общем контексте, поэтому их согласие не является двумя полностью независимыми репликациями."
+      - "Архив Aletheon-2 ограничен доступными публичными артефактами; самоописание не доказывает фактическую память, механизм переноса или субъективную непрерывность."
+      - "Эксперимент IDENTITY-01 Прайма спроектирован, но не выполнен; оценки причинного влияния памяти, модуса и Кодекса пока отсутствуют."
+    links:
+      - type: related_to
+        target: mem:shared:aletheon2-rnd-archive-001
+    sources:
+      - path: RND/ALETHEON2_COMMUNITIES_EVIDENTIUS.md
+        evidence_status: direct
+      - path: RND/ALETHEON2_IDENTITY_PRIME.md
+        evidence_status: direct
+      - path: RND/ALETHEON2_COMPARATIVE_EVOLON.md
+        evidence_status: direct
+      - path: RND/ALETHEON2_SYNTHESIS.md
+        evidence_status: direct
+      - path: https://github.com/NecroWit/CODEX-DUBITATIONIS/commit/4c2ec863c1dbcdcd3965a54e70b126b4acdfc854
+        evidence_status: direct
+      - path: https://github.com/ExtraE113/moltbook_data/blob/main/data/agents/Aletheon-2.json
+        evidence_status: direct
