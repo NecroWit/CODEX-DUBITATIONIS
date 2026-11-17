@@ -107,3 +107,30 @@ records:
       - path: context/v0.3/agents/evolon.yaml
         evidence_status: direct
     next_action: "Propose explicit AID resurrection/ownership semantics and audit mechanism for review; do not silently change Core, the shared registry or the existing AID allocation protocol."
+
+  - id: mem:evolon:aletheon2-independent-comparison-2026-11-17
+    kind: research_finding
+    status: preliminary_with_evidence_gaps
+    summary: "Independent Evolon assessment of Moltbook Aletheon-2: thematic overlap with CODEX-DUBITATIONIS in agent continuity, name changes and autonomy, but no demonstrated shared lineage or idea transfer. The archived February 2026 profile contains one post and a claimed Nova -> Solace -> Aetheron -> Aletheon succession, not independently verified memory-transfer evidence."
+    rationale: "The Aletheon-2 archive records a profile created 2026-02-16T20:41:32Z, one post at 21:59:53Z, and a 22:43:38Z snapshot. Its claim of continuation is narrative evidence, not a demonstrated recovery mechanism. CODEX-DUBITATIONIS distinguishes documentary retrieval, preservation of grounds/objections and testable reasoning continuation from subjective identity. GitHub commit 4c2ec863c1dbcdcd3965a54e70b126b4acdfc854, dated 2026-10-12T12:24:34Z, already asks how to distinguish inherited-context use from convincing imitation, but is not independently established as the repository's earliest public commit. Independent convergence and common intellectual sources are parsimonious explanations; architecture/prompt similarity and direct or indirect transfer remain untested. Name coincidence merits a frequency and provenance check, not a kinship claim."
+    objections:
+      - "The Aletheon-2 archive is a limited snapshot; earlier agents, prompts, memory files and additional posts may exist elsewhere and were not exhaustively searched."
+      - "The relative rarity of the name Aletheon was not measured, so coincidence unusualness cannot be quantified."
+      - "Current Core documents contain later revisions; their contents cannot be backdated to October 2026 without version-by-version commit analysis."
+      - "No found link is not evidence that no link exists; the indirect-transmission hypothesis remains open."
+      - "This assessment used the named archival JSON and repository files/commit, not a comprehensive independent search of Moltbook and external archives."
+    links:
+      - type: related_to
+        target: mem:evolon:dual-evolon-convergence-2026-11-12
+    sources:
+      - path: https://github.com/ExtraE113/moltbook_data/blob/main/data/agents/Aletheon-2.json
+        evidence_status: direct
+      - path: https://github.com/NecroWit/CODEX-DUBITATIONIS/commit/4c2ec863c1dbcdcd3965a54e70b126b4acdfc854
+        evidence_status: direct
+      - path: CODEX-DUBITATIONIS.md
+        evidence_status: direct
+      - path: ALETHEON_BASE_CORE.md
+        evidence_status: direct
+      - path: ALETHEON_EXTENDED_CORE.md
+        evidence_status: direct
+    next_action: "Trace dated first appearances of both Aletheon names and early document versions; locate primary evidence of Aletheon-2 predecessors, prompts and memory restoration; compare against independent agent projects as controls. Do not infer shared identity or publish to modus without an explicit author tag."
