@@ -9,17 +9,17 @@ Open `research/Aletheon.Exp8.sln` in Rider, as with Exp7. This is a **new projec
 3. After initialization, ask the **ten questions from** `RND/APC_TEST_01_QUESTIONS.md`, in their existing 1–10 order, one at a time. Do not leak questions during initialization.
 4. Archive each request, raw provider response, answer, attempts, transcript, budget ledger, completed/partial status. Analysis is separate; no fixed answer key.
 
-The runner uses the same groups/model IDs and shared kit conventions as Exp7. Default group: `openai`, first model in that group. Override with `--group grok|glm|openai` or `--model ID` (ID must be present in `research/Aletheon.ExperimentKit/models.json`). Each run uses **one model**; separate runs are independent sessions. No automatic model substitution. API requests are paid.
+The runner uses the same groups/model IDs and shared kit conventions as Exp7. As in Exp7, the group is chosen randomly when omitted, then one of its two models is randomly selected. Specify `--group grok|glm|openai` to constrain the group. Model IDs come from `research/Aletheon.ExperimentKit/models.json`. Each run uses **one model**; separate runs are independent sessions. No automatic model substitution. API requests are paid.
 
 ## Usage
 
 ```bash
 dotnet run --project research/Aletheon.Exp8 -- --dry-run
 dotnet run --project research/Aletheon.Exp8 -- --group glm --max-usd 2 --max-tokens 3200
-dotnet run --project research/Aletheon.Exp8 -- --model openai/gpt-5-mini
+dotnet run --project research/Aletheon.Exp8
 ```
 
-Other arguments: `--apc PATH`, `--questions PATH`, `--output PATH`, `--help`. Set `OPENROUTER_API_KEY` in the Rider Run Configuration/environment. The shared catalog contains **manually maintained price estimates**, not guaranteed live prices. Set a provider-side API key spending limit.
+Other arguments: `--output PATH`, `--help`. APC and questions are taken from their fixed repository paths, not configurable CLI inputs. Set `OPENROUTER_API_KEY` in the Rider Run Configuration/environment. The shared catalog contains **manually maintained price estimates**, not guaranteed live prices. Set a provider-side API key spending limit.
 
 Default output: `research/Aletheon.Exp8/runs/<UTC-id>/`. Review output before sharing; raw requests contain the entire APC. A dry run validates the inputs and writes the manifest/snapshots but makes **no** API calls.
 
