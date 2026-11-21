@@ -2,23 +2,19 @@ using System.Globalization;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Text.Json;
 using Aletheon.ExperimentKit;
 
 // Rider: open research/Aletheon.Exp8.sln. Set OPENROUTER_API_KEY for paid runs.
-var groups = new Dictionary<string, string[]>(StringComparer.OrdinalIgnoreCase) {
-    ["grok"] = ["x-ai/grok-4.3", "x-ai/grok-4.6"],
-    ["glm"] = ["z-ai/glm-5.3", "z-ai/glm-4.5-air"],
-    ["openai"] = ["openai/gpt-5-mini", "openai/gpt-4.1-mini"]
-};
 var options = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
 var dry = false;
 for (var i = 0; i < args.Length; i++) {
     if (args[i] == "--dry-run") { dry = true; continue; }
     if (args[i] == "--help") {
-        Console.WriteLine("--group grok|glm|openai --dry-run --max-usd 2 --max-tokens 3200 --output PATH");
+        Console.WriteLine("--dry-run --max-usd 2 --max-tokens 3200 --output PATH");
         return 0;
     }
-    if (!new[] { "--group", "--max-usd", "--max-tokens", "--output" }.Contains(args[i])
+    if (!new[] { "--max-usd", "--max-tokens", "--output" }.Contains(args[i])
         || i + 1 >= args.Length) throw new ArgumentException("Bad argument: " + args[i]);
     options[args[i++]] = args[i];
 }
@@ -27,10 +23,17 @@ var parent = new DirectoryInfo(AppContext.BaseDirectory);
 while (parent is not null && !File.Exists(Path.Combine(parent.FullName, "ALETHEON_BASE_CORE.md"))) parent = parent.Parent;
 if (parent is null) throw new DirectoryNotFoundException("Run from a clone of CODEX-DUBITATIONIS.");
 var repo = parent.FullName;
-var group = O("--group", groups.Keys.ElementAt(RandomNumberGenerator.GetInt32(groups.Count)));
-if (!groups.TryGetValue(group, out var pair)) throw new ArgumentException("Unknown group " + group);
-var model = pair[RandomNumberGenerator.GetInt32(pair.Length)];
-var catalog = ModelCatalog.Load(Path.Combine(repo, "research", "Aletheon.ExperimentKit", "models.json"));
+var catalogPath = Path.Combine(repo, "research", "Aletheon.ExperimentKit", "models.json");
+var catalog = ModelCatalog.Load(catalogPath);
+using var catalogJson = JsonDocument.Parse(File.ReadAllText(catalogPath));
+var models = catalogJson.RootElement.GetProperty("models").EnumerateObject()
+    .Select(property => property.Name).ToArray();
+if (models.Length < 2) throw new InvalidOperationException("At least two catalog models are required.");
+var runsDirectory = Path.Combine(repo, "research", "Aletheon.Exp8", "runs");
+var lastModelPath = Path.Combine(runsDirectory, "last-model.txt");
+var previousModel = File.Exists(lastModelPath) ? File.ReadAllText(lastModelPath).Trim() : null;
+var candidates = models.Where(m => !string.Equals(m, previousModel, StringComparison.OrdinalIgnoreCase)).ToArray();
+var model = candidates[RandomNumberGenerator.GetInt32(candidates.Length)];
 var modelInfo = catalog.Get(model);
 var tokens = int.Parse(O("--max-tokens", "3200"), CultureInfo.InvariantCulture);
 var cap = decimal.Parse(O("--max-usd", "2"), CultureInfo.InvariantCulture);
@@ -71,7 +74,7 @@ Directory.CreateDirectory(output);
 void Save(string filename, object value) => ExperimentArtifacts.Save(Path.Combine(output, filename), value);
 var apcHash = ExperimentArtifacts.Hash(apcBytes);
 var questionHash = ExperimentArtifacts.Hash(questionBytes);
-Save("manifest.json", new { experiment = "EXP-8.0", id, group, model, apcPath, questionsPath,
+Save("manifest.json", new { experiment = "EXP-8.0", id, model, previousModel, apcPath, questionsPath,
     apcSha256 = apcHash, questionsSha256 = questionHash, tokens, budgetUsd = cap, dry,
     transport = "Aletheon.ExperimentKit.OpenRouterTransport", conversationMode = "serialized history", phases = "foundation -> modus choice -> full APC -> questions" });
 File.WriteAllBytes(Path.Combine(output, "apc.md"), apcBytes);
@@ -81,6 +84,8 @@ Console.WriteLine($"EXP-8: {model}; {questions.Length} questions; output={output
 if (dry) { Console.WriteLine("Dry run complete; no API requests."); return 0; }
 var key = Environment.GetEnvironmentVariable("OPENROUTER_API_KEY");
 if (string.IsNullOrWhiteSpace(key)) throw new InvalidOperationException("Missing OPENROUTER_API_KEY");
+Directory.CreateDirectory(runsDirectory);
+File.WriteAllText(lastModelPath, model);
 using var transport = new OpenRouterTransport(key);
 var budget = new BudgetLedger(Path.Combine(output, "budget-ledger.jsonl"), cap, cap);
 var history = new List<(string Role, string Text)>();
