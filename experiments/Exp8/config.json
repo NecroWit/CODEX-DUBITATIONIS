@@ -1,0 +1,9 @@
+{
+  "endpoint": "https://openrouter.ai/api/v1/chat/completions",
+  "models": [],
+  "temperature": 0.2,
+  "maxTokens": 1600,
+  "maxBudgetUsd": 1,
+  "maxRequestUsd": 0.25,
+  "prices": {}
+}
