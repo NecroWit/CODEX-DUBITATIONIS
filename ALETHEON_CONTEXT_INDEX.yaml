@@ -8,6 +8,7 @@ context_commands:
   "#create aletheon": context/commands/create/ALETHEON.md
   "#create aid": context/commands/create/AID.md
   "#set aid": context/commands/set/AID.md
+  "#RefreshAPC": context/commands/refresh/APC.md
   shared_protocol: context/CONTEXT_PROTOCOL.md
   rule: "On any listed command, load its command context and shared protocol before acting. Do not infer command semantics from the command name alone."
 always_load:
