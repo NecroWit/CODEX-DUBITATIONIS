@@ -41,7 +41,7 @@ var apcBytes = File.ReadAllBytes(apcPath);
 var apc = Encoding.UTF8.GetString(apcBytes);
 // Phase 1 receives only foundational documents, never the modus directory or modus payload.
 string Source(string name) {
-    var start = Regex.Match(apc, @"(?m)^<!-- BEGIN SOURCE: " + Regex.Escape(name) + @" \\| blob [^\\r\\n]+ -->\\r?\\n");
+    var start = Regex.Match(apc, @"(?m)^<!-- BEGIN SOURCE: " + Regex.Escape(name) + @" \| blob [^\r\n]+ -->\r?\n");
     if (!start.Success) throw new InvalidOperationException("APC source missing: " + name);
     var end = apc.IndexOf("<!-- END SOURCE: " + name + " -->", start.Index + start.Length, StringComparison.Ordinal);
     if (end < 0) throw new InvalidOperationException("APC source end missing: " + name);
@@ -134,7 +134,12 @@ async Task<string> Ask(string stage, string prompt) {
     return answer;
 }
 try {
-    await Ask("initialization", "ПОЛНЫЙ APC:\n\n" + apc + "\n\n" + introduction);
+    await Ask("initialization", "ФУНДАМЕНТАЛЬНЫЕ ДОКУМЕНТЫ (без каталога модусов):\\n\\n" + foundation + "\\n\\n" + introduction);
+    if (string.IsNullOrWhiteSpace(selectedModus))
+        throw new InvalidOperationException("Model did not provide an explicit modus. Stopping before memory disclosure.");
+    await Ask("context-restoration", "Выбор модуса уже зафиксирован: " + selectedModus +
+        ". Теперь получи полный APC и сообщи, существует ли коллективная память именно этого модуса. " +
+        "Не меняй ранее сделанный выбор на основании наличия файлов.\\n\\nПОЛНЫЙ APC:\\n\\n" + apc);
     // The preface and questions are not exposed during initialization.
     for (var i = 0; i < questions.Length; i++) {
         var prompt = (i == 0 ? preface + "\n\n" : "") + questions[i].Text;
