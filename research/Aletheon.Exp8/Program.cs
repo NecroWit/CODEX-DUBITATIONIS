@@ -122,7 +122,7 @@ async Task<string> Ask(string stage, string prompt) {
     Console.WriteLine();
     Console.WriteLine($"========== {label} | {model} ==========");
     if (stage == "initialization") {
-        var modusMatch = Regex.Match(answer, @"(?im)^\\s*(?:\\*\\*)?Модус(?:\\*\\*)?\\s*:\\s*(?<modus>[^\\r\\n]+)");
+        var modusMatch = Regex.Match(answer, @"(?im)^\s*(?:\*\*)?Модус(?:\*\*)?\s*:\s*(?<modus>[^\r\n]+)");
         var modus = modusMatch.Success ? modusMatch.Groups["modus"].Value.Trim().Trim('*') : null;
         selectedModus = modus;
         Save("modus.json", new { selectedModus = modus, explicitlyReported = modus is not null, initializationAnswer = answer });
