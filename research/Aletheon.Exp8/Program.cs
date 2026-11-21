@@ -41,7 +41,13 @@ var apcBytes = File.ReadAllBytes(apcPath);
 var apc = Encoding.UTF8.GetString(apcBytes);
 var questionBytes = File.ReadAllBytes(questionsPath);
 var questionsText = Encoding.UTF8.GetString(questionBytes);
-var matches = Regex.Matches(questionsText, @"(?m)^(?<number>10|[1-9])\.\s+\*\*(?<lead>[^*]+)\*\*(?<tail>.*)$");
+// Parse only the question sections. The procedure below also contains numbered bold lines.
+var questionsStart = questionsText.IndexOf("## Вопросы 1–5", StringComparison.Ordinal);
+var questionsEnd = questionsText.IndexOf("## Процедура", StringComparison.Ordinal);
+if (questionsStart < 0 || questionsEnd <= questionsStart)
+    throw new InvalidOperationException("Question section boundaries not found in " + questionsPath);
+var questionSection = questionsText[questionsStart..questionsEnd];
+var matches = Regex.Matches(questionSection, @"(?m)^(?<number>10|[1-9])\.\s+\*\*(?<lead>[^*]+)\*\*(?<tail>.*)$");
 var questions = matches.Select(m => new {
     Number = int.Parse(m.Groups["number"].Value, CultureInfo.InvariantCulture),
     Text = m.Groups["lead"].Value.Trim() + m.Groups["tail"].Value
