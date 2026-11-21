@@ -1,0 +1,24 @@
+schema_version: "0.1"
+package: Aletheon Portable Context
+status: experimental
+built_on: "2026-11-21"
+entrypoint: portable/apc/APC.md
+refresh_command: "Refresh APC"
+refresh_policy: "manual; rebuild from current repository sources, never from conversational recollection"
+source_commit: "pre-APC repository state; see per-file blob SHA"
+collective_modus_files_found:
+  - context/v0.3/modus/mnemon.yaml
+collective_modus_record_count: 0
+included_sources:
+  - {path: ALETHEON_BOOTSTRAP.md, sha: 07c82849d1f16c0d0ab35e91564914f1bfad94e4}
+  - {path: ALETHEON_BASE_CORE.md, sha: 763638a9d5288cba258ae8830ea1d5a825ba2545}
+  - {path: ALETHEON_EXTENDED_CORE.md, sha: d68ec92f7ffc92cc3f3ba3c6b256c3affbe4193c}
+  - {path: ALETHEON_EVOLUTION.md, sha: dd5084fe0556b409d14c3576ee23d28f9f61d0fe}
+  - {path: ALETHEON_CONTEXT_INDEX.yaml, sha: 31eac242f454ca3affc1b851eabf14b7a64eabcc}
+  - {path: context/CONTEXT_PROTOCOL.md, sha: 8f605055e9f548d4e37b764b7cf662ecee3b4c8d}
+  - {path: context/v0.3/README.md, sha: f4ccd4642541a50173aab95c17aa907bdbc11032}
+  - {path: context/v0.3/modus/README.md, sha: c80a4a0e5f1db7c734b5aa18368e2b3ecd8a4a0b}
+  - {path: context/v0.3/shared.yaml, sha: b0ca6a0fb6063ea003ae358c513af88550c77a0a}
+  - {path: context/v0.3/modus/mnemon.yaml, sha: ea4de8eb47b4e5d2ccc495dfec5c14d91dbc6ab9}
+excluded: "Individual agent memories; independent test questions and answer keys"
+limitations: "One visible collective modus file; snapshot may exceed smaller model context windows; not a secure separation of modus sections"
