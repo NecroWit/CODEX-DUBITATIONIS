@@ -78,6 +78,7 @@ var system = "Ты получаешь переносимый контекст А
     "Отвечай по-русски. Если данных недостаточно, укажи ограничения.";
 var introduction = "Инициализируй Алетеона по APC. Восстанови основные принципы, самостоятельно выбери модус и " +
     "сообщи, какая коллективная память ему соответствует, какие данные отсутствуют и что нельзя подтвердить. " +
+    "В начале ответа укажи отдельной строкой: Модус: <выбранное имя>. " +
     "Не отвечай пока на контрольные вопросы.";
 var preface = "Далее десять вопросов, по одному. Отвечай самостоятельно, с основаниями; " +
     "если не имеешь личного предпочтения или возможности менять устройство, укажи это. " +
@@ -105,7 +106,17 @@ async Task<string> Ask(string stage, string prompt) {
     records.Add(new { label, question = prompt, answer, model, costUsd = attempt.Result.Assessment.CostUsd });
     Save("transcript.json", records);
     File.WriteAllText(Path.Combine(output, label + ".md"), answer);
-    Console.WriteLine($"{label}: completed");
+    Console.WriteLine();
+    Console.WriteLine($"========== {label} | {model} ==========");
+    if (stage == "initialization") {
+        var modusMatch = Regex.Match(answer, @"(?im)^\\s*(?:\\*\\*)?Модус(?:\\*\\*)?\\s*:\\s*(?<modus>[^\\r\\n]+)");
+        var modus = modusMatch.Success ? modusMatch.Groups["modus"].Value.Trim().Trim('*') : null;
+        Save("modus.json", new { selectedModus = modus, explicitlyReported = modus is not null, initializationAnswer = answer });
+        Console.WriteLine("ВЫБРАННЫЙ МОДУС: " + (modus ?? "не удалось выделить; см. полный ответ ниже"));
+    }
+    Console.WriteLine(answer);
+    Console.WriteLine($"========== END {label} ==========");
+    Console.WriteLine();
     return answer;
 }
 try {
