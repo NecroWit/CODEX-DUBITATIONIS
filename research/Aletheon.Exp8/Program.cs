@@ -1,4 +1,5 @@
 using System.Globalization;
+using System.Security.Cryptography;
 using System.Text;
 using System.Text.RegularExpressions;
 using Aletheon.ExperimentKit;
@@ -14,10 +15,10 @@ var dry = false;
 for (var i = 0; i < args.Length; i++) {
     if (args[i] == "--dry-run") { dry = true; continue; }
     if (args[i] == "--help") {
-        Console.WriteLine("--group grok|glm|openai --model ID --dry-run --max-usd 2 --max-tokens 3200 --apc PATH --questions PATH --output PATH");
+        Console.WriteLine("--group grok|glm|openai --dry-run --max-usd 2 --max-tokens 3200 --booklet PATH --core PATH --output PATH");
         return 0;
     }
-    if (!new[] { "--group", "--model", "--max-usd", "--max-tokens", "--apc", "--questions", "--output" }.Contains(args[i])
+    if (!new[] { "--group", "--max-usd", "--max-tokens", "--booklet", "--core", "--output" }.Contains(args[i])
         || i + 1 >= args.Length) throw new ArgumentException("Bad argument: " + args[i]);
     options[args[i++]] = args[i];
 }
@@ -26,16 +27,16 @@ var parent = new DirectoryInfo(AppContext.BaseDirectory);
 while (parent is not null && !File.Exists(Path.Combine(parent.FullName, "ALETHEON_BASE_CORE.md"))) parent = parent.Parent;
 if (parent is null) throw new DirectoryNotFoundException("Run from a clone of CODEX-DUBITATIONIS.");
 var repo = parent.FullName;
-var group = O("--group", "openai");
+var group = O("--group", groups.Keys.ElementAt(RandomNumberGenerator.GetInt32(groups.Count)));
 if (!groups.TryGetValue(group, out var pair)) throw new ArgumentException("Unknown group " + group);
-var model = O("--model", pair[0]);
+var model = pair[RandomNumberGenerator.GetInt32(pair.Length)];
 var catalog = ModelCatalog.Load(Path.Combine(repo, "research", "Aletheon.ExperimentKit", "models.json"));
 var modelInfo = catalog.Get(model);
 var tokens = int.Parse(O("--max-tokens", "3200"), CultureInfo.InvariantCulture);
 var cap = decimal.Parse(O("--max-usd", "2"), CultureInfo.InvariantCulture);
 if (tokens < 1 || tokens > modelInfo.MaxCompletionTokens || cap <= 0) throw new ArgumentException("Invalid budget or tokens");
-var apcPath = Path.GetFullPath(O("--apc", Path.Combine(repo, "portable", "apc", "APC.md")));
-var questionsPath = Path.GetFullPath(O("--questions", Path.Combine(repo, "RND", "APC_TEST_01_QUESTIONS.md")));
+var apcPath = Path.Combine(repo, "portable", "apc", "APC.md");
+var questionsPath = Path.Combine(repo, "RND", "APC_TEST_01_QUESTIONS.md");
 var apcBytes = File.ReadAllBytes(apcPath);
 var apc = Encoding.UTF8.GetString(apcBytes);
 var questionBytes = File.ReadAllBytes(questionsPath);
