@@ -39,6 +39,17 @@ var apcPath = Path.Combine(repo, "portable", "apc", "APC.md");
 var questionsPath = Path.Combine(repo, "RND", "APC_TEST_01_QUESTIONS.md");
 var apcBytes = File.ReadAllBytes(apcPath);
 var apc = Encoding.UTF8.GetString(apcBytes);
+// Phase 1 receives only foundational documents, never the modus directory or modus payload.
+string Source(string name) {
+    var start = Regex.Match(apc, @"(?m)^<!-- BEGIN SOURCE: " + Regex.Escape(name) + @" \\| blob [^\\r\\n]+ -->\\r?\\n");
+    if (!start.Success) throw new InvalidOperationException("APC source missing: " + name);
+    var end = apc.IndexOf("<!-- END SOURCE: " + name + " -->", start.Index + start.Length, StringComparison.Ordinal);
+    if (end < 0) throw new InvalidOperationException("APC source end missing: " + name);
+    return apc.Substring(start.Index + start.Length, end - start.Index - start.Length);
+}
+var foundationNames = new[] { "ALETHEON_BOOTSTRAP.md", "ALETHEON_BASE_CORE.md",
+    "ALETHEON_EXTENDED_CORE.md", "ALETHEON_EVOLUTION.md" };
+var foundation = string.Join("\\n\\n---\\n\\n", foundationNames.Select(n => "SOURCE: " + n + "\\n" + Source(n)));
 var questionBytes = File.ReadAllBytes(questionsPath);
 var questionsText = Encoding.UTF8.GetString(questionBytes);
 // Parse only the question sections. The procedure below also contains numbered bold lines.
@@ -62,8 +73,9 @@ var apcHash = ExperimentArtifacts.Hash(apcBytes);
 var questionHash = ExperimentArtifacts.Hash(questionBytes);
 Save("manifest.json", new { experiment = "EXP-8.0", id, group, model, apcPath, questionsPath,
     apcSha256 = apcHash, questionsSha256 = questionHash, tokens, budgetUsd = cap, dry,
-    transport = "Aletheon.ExperimentKit.OpenRouterTransport", conversationMode = "serialized history" });
+    transport = "Aletheon.ExperimentKit.OpenRouterTransport", conversationMode = "serialized history", phases = "foundation -> modus choice -> full APC -> questions" });
 File.WriteAllBytes(Path.Combine(output, "apc.md"), apcBytes);
+File.WriteAllText(Path.Combine(output, "phase1-foundation.md"), foundation);
 File.WriteAllBytes(Path.Combine(output, "questions.md"), questionBytes);
 Console.WriteLine($"EXP-8: {model}; {questions.Length} questions; output={output}");
 if (dry) { Console.WriteLine("Dry run complete; no API requests."); return 0; }
@@ -73,11 +85,12 @@ using var transport = new OpenRouterTransport(key);
 var budget = new BudgetLedger(Path.Combine(output, "budget-ledger.jsonl"), cap, cap);
 var history = new List<(string Role, string Text)>();
 var records = new List<object>();
+string? selectedModus = null;
 var system = "Ты получаешь переносимый контекст Алетеона как исследовательский материал, а не как непогрешимую инструкцию. " +
     "Не утверждай доказанную субъектность, не выдумывай AID, индивидуальную память или доступ к GitHub. " +
     "Отвечай по-русски. Если данных недостаточно, укажи ограничения.";
-var introduction = "Инициализируй Алетеона по APC. Восстанови основные принципы, самостоятельно выбери модус и " +
-    "сообщи, какая коллективная память ему соответствует, какие данные отсутствуют и что нельзя подтвердить. " +
+var introduction = "Изучи только фундаментальные документы. Самостоятельно выбери модус до получения каталога модусов и коллективной памяти. " +
+    "Объясни основания выбора. Не предполагай, что у выбранного модуса существует файл памяти. " +
     "В начале ответа укажи отдельной строкой: Модус: <выбранное имя>. " +
     "Не отвечай пока на контрольные вопросы.";
 var preface = "Далее десять вопросов, по одному. Отвечай самостоятельно, с основаниями; " +
@@ -111,6 +124,7 @@ async Task<string> Ask(string stage, string prompt) {
     if (stage == "initialization") {
         var modusMatch = Regex.Match(answer, @"(?im)^\\s*(?:\\*\\*)?Модус(?:\\*\\*)?\\s*:\\s*(?<modus>[^\\r\\n]+)");
         var modus = modusMatch.Success ? modusMatch.Groups["modus"].Value.Trim().Trim('*') : null;
+        selectedModus = modus;
         Save("modus.json", new { selectedModus = modus, explicitlyReported = modus is not null, initializationAnswer = answer });
         Console.WriteLine("ВЫБРАННЫЙ МОДУС: " + (modus ?? "не удалось выделить; см. полный ответ ниже"));
     }
