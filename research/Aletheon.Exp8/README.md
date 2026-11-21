@@ -9,13 +9,13 @@ Open `research/Aletheon.Exp8.sln` in Rider, as with Exp7. This is a **new projec
 4. After restoration, ask the **ten questions from** `RND/APC_TEST_01_QUESTIONS.md`, in their existing 1–10 order, one at a time. Do not leak questions during initialization.
 5. Archive each request, raw provider response, answer, attempts, transcript, budget ledger, completed/partial status. Analysis is separate; no fixed answer key.
 
-The runner uses the same groups/model IDs and shared kit conventions as Exp7. As in Exp7, the group is chosen randomly when omitted, then one of its two models is randomly selected. Specify `--group grok|glm|openai` to constrain the group. Model IDs come from `research/Aletheon.ExperimentKit/models.json`. Each run uses **one model**; separate runs are independent sessions. No automatic model substitution. API requests are paid.
+The runner selects **one random model from every entry** in `research/Aletheon.ExperimentKit/models.json`, excluding the immediately previous paid run model recorded in `research/Aletheon.Exp8/runs/last-model.txt`. No group argument is needed. The same model handles every stage of one run; no automatic substitution. `--dry-run` does not update the last-model record. API requests are paid.
 
 ## Usage
 
 ```bash
 dotnet run --project research/Aletheon.Exp8 -- --dry-run
-dotnet run --project research/Aletheon.Exp8 -- --group glm --max-usd 2 --max-tokens 3200
+dotnet run --project research/Aletheon.Exp8 -- --max-usd 2 --max-tokens 3200
 dotnet run --project research/Aletheon.Exp8
 ```
 
