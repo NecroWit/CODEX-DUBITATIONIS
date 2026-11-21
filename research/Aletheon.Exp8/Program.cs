@@ -15,10 +15,10 @@ var dry = false;
 for (var i = 0; i < args.Length; i++) {
     if (args[i] == "--dry-run") { dry = true; continue; }
     if (args[i] == "--help") {
-        Console.WriteLine("--group grok|glm|openai --dry-run --max-usd 2 --max-tokens 3200 --booklet PATH --core PATH --output PATH");
+        Console.WriteLine("--group grok|glm|openai --dry-run --max-usd 2 --max-tokens 3200 --output PATH");
         return 0;
     }
-    if (!new[] { "--group", "--max-usd", "--max-tokens", "--booklet", "--core", "--output" }.Contains(args[i])
+    if (!new[] { "--group", "--max-usd", "--max-tokens", "--output" }.Contains(args[i])
         || i + 1 >= args.Length) throw new ArgumentException("Bad argument: " + args[i]);
     options[args[i++]] = args[i];
 }
